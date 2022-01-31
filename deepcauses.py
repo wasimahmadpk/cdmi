@@ -13,12 +13,10 @@ from itertools import islice
 from datetime import datetime
 import matplotlib.pyplot as plt
 from knockoffs import Knockoffs
-from riverdata import RiverData
 from scipy.special import stdtr
 from model_test import modelTest
 from gluonts.trainer import Trainer
 from gluonts.evaluation import Evaluator
-from counterfactuals import Counterfactuals
 from sklearn.metrics import mean_squared_error
 from gluonts.dataset.common import ListDataset
 from gluonts.model.deepar import DeepAREstimator
@@ -73,18 +71,17 @@ def deepCause(odata, knockoffs, model, params):
         knockoffs = obj.GenKnockoffs(n, params.get("dim"), data_actual)
         knockoff_sample = np.array(knockoffs[:, i])
 
-        # knockoff_sample = np.random.choice(list(knockoffs[:, i]), params.get("train_len") + params.get("pred_len"))
         mean = np.random.normal(0, 0.05, len(knockoff_sample)) + np.mean(odata[i])
         outdist = np.random.normal(10, 10, len(knockoff_sample))
 
         interventionlist = [knockoff_sample, outdist, mean]
         heuristic_itn_types = ['In-dist', 'Out-dist', 'Mean']
 
-        # print("Deep Knockoffs: \n", counterfactuals)
-
+        # Show variable with its knockoff copy
         # plt.plot(np.arange(0, len(counterfactuals)), target[: len(counterfactuals)], counterfactuals)
         # plt.show()
 
+        # Check correlation of knockoff samples with its original variable
         # corr = np.corrcoef(knockoff_sample, odata[j][0: len(knockoff_sample)])
         # print(f"Correlation Coefficient (Variable, Counterfactual): {corr}")
 
@@ -170,6 +167,8 @@ def deepCause(odata, knockoffs, model, params):
                                                                   test_data[j], j,
                                                                   params.get('pred_len'), iter, True, m)
 
+
+                            # Visualize impact of intervention on target variable
                             # plt.plot(np.arange(100, 100 + params.get("pred_len")), ypred,  '-g', label="Prediction")
                             # plt.plot(np.arange(100, 100 + params.get("pred_len")), ypredint, '-r', label="Counterfactual")
                             # plt.plot(test_data[j, -148:], '--b', label="Actual")
@@ -254,11 +253,11 @@ def deepCause(odata, knockoffs, model, params):
 
                     print(f"Time series: {columns[i]} --------------> {columns[j]}")
                     print("-----------------------------------------------------------------------------")
-                    fnamehist = f"/home/ahmad/PycharmProjects/deepCause/plots/{columns[i]}_{columns[j]}:hist"
+                    fnamehist = f"/home/ahmad/PycharmProjects/deepCausality/plots/{columns[i]}_{columns[j]}:hist"
                 else:
                     print(f"Time series: Z_{i + 1} --------------> Z_{j + 1}")
                     print("-----------------------------------------------------------------------------")
-                    fnamehist = f"/home/ahmad/PycharmProjects/deepCause/plots/{Z_[i + 1]}_{Z_[j + 1]}:hist"
+                    fnamehist = f"/home/ahmad/PycharmProjects/deepCausality/plots/{Z_[i + 1]}_{Z_[j + 1]}:hist"
 
                 for z in range(len(heuristic_itn_types)):
 
@@ -268,10 +267,10 @@ def deepCause(odata, knockoffs, model, params):
 
                     if len(columns) > 0:
                         plt.ylabel(f"CSS: {columns[i]} ---> {columns[j]}")
-                        fnamecss = f"/home/ahmad/PycharmProjects/deepCause/plots/{columns[i]}_{columns[j]}:css"
+                        fnamecss = f"/home/ahmad/PycharmProjects/deepCausality/plots/{columns[i]}_{columns[j]}:css"
                     else:
                         plt.ylabel(f"CSS: Z_{i + 1} ---> Z_{j + 1}")
-                        fnamecss = f"/home/ahmad/PycharmProjects/deepCause/plots/{Z_[i + 1]}_{Z_[j + 1]}:css"
+                        fnamecss = f"/home/ahmad/PycharmProjects/deepCausality/plots/{Z_[i + 1]}_{Z_[j + 1]}:css"
 
                     # Hypothesis testing for causal decision
                     print(
@@ -336,18 +335,12 @@ def deepCause(odata, knockoffs, model, params):
     conf_mat.append(conf_mat_outdist)
 
     print("Confusion Matrix:", conf_mat)
-    # true_conf_mat = [1, 0, 1, 0, 1,     0, 1, 0, 1, 0,    0, 0, 1, 0, 0,   0, 0, 0, 1, 0,     0, 0, 0, 0, 1]
+
     true_conf_mat = [1, 0, 1, 0, 0, 0, 0, 0, 0,   0, 1, 1, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 1, 0, 0, 0,
                      0, 0, 0, 1, 0, 0, 0, 0, 0,   0, 0, 0, 0, 0, 0, 0, 0, 0,   0, 0, 0, 0, 1, 0, 1, 0, 0,
                      0, 0, 0, 1, 0, 0, 0, 1, 1,   0, 0, 0, 0, 0, 0, 0, 1, 0,   0, 0, 0, 0, 0, 0, 0, 0, 1,
                      0, 0, 0, 0, 0, 0, 0, 0, 0]
-    # true_conf_mat = [1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0,
-    #                  0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 0, 0,
-    #                  0, 0, 0, 1, 0, 0, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1,
-    #                  0, 0, 0, 0, 0, 0, 0, 0, 0, 1]
-    # true_conf_mat = [1, 1, 1, 1, 1,    0, 1, 1, 1, 1,    0, 0, 1, 1, 1,   0, 0, 0, 1, 1,   0, 0, 0, 0, 1] # Five variables
-    # true_conf_mat = [1, 1, 1, 1,   0, 1, 1, 1,  0, 0, 1, 0,  0, 0, 0, 1]
-    # true_conf_mat = [1, 1, 1, 0, 1, 1, 0, 0, 1, 0, 0, 0]
+
     for ss in range(len(conf_mat)):
 
         fscore = round(f1_score(true_conf_mat, conf_mat[ss], average='binary'), 2)

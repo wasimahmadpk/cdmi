@@ -1,5 +1,5 @@
 import math
-import netCDF
+# import netCDF
 import pickle
 import random
 import pathlib
@@ -14,12 +14,10 @@ from datetime import datetime
 from deepcauses import deepCause
 import matplotlib.pyplot as plt
 from knockoffs import Knockoffs
-from riverdata import RiverData
 from scipy.special import stdtr
 from model_test import modelTest
 from gluonts.trainer import Trainer
 from gluonts.evaluation import Evaluator
-from counterfactuals import Counterfactuals
 from sklearn.metrics import mean_squared_error
 from gluonts.dataset.common import ListDataset
 from gluonts.model.deepar import DeepAREstimator
@@ -206,7 +204,7 @@ num_samples = 10
 # reco = normalize(fluxnet['RECO_NT_VUT_25'])
 
 # LOad synthetic data *************************
-df = pd.read_csv("/home/ahmad/PycharmProjects/deepCause/datasets/ncdata/synthetic_data.csv")
+df = pd.read_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/ncdata/synthetic_data.csv")
 # X1 = normalize(down_sample(np.array(df['Z1']), win_size))
 # X2 = normalize(down_sample(np.array(df['Z2']), win_size))
 # X3 = normalize(down_sample(np.array(df['Z3']), win_size))
