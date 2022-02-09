@@ -47,12 +47,12 @@ class SyntheticDataset:
 
     def generate_data(self):
 
-        for t in range(15, self.time_steps):
+        for t in range(10, self.time_steps):
 
             self.X1.append(self.root[t])
             self.X2.append(C.get('c1') * self.X1[t - Tao.get('t1')] + ey[t])
             self.X3.append(C.get('c2') ** ((self.X1[t - Tao.get('t2')]) / 2 + ez[t]))
-            self.X4.append(C.get('c3') * self.X3[t - Tao.get('t3')] + C.get('c4') * self.X4[t - Tao.get('t4')] + er[t])
+            self.X4.append(C.get('c3') * self.X3[t - Tao.get('t3')] + C.get('c4') * self.X2[t - Tao.get('t4')] + er[t])
 
         return self.X1, self.X2, self.X3, self.X4
 
@@ -73,29 +73,23 @@ if __name__ == '__main__':
     yts = data['Dillingen']
     zts = data['Lenggries']
 
-    root = np.random.normal(0, 0.10, 30015)
-    t = np.arange(0, 30015, 1)
-    season = 3*np.cos(t)
-    roots = np.abs(root) + np.abs(season)
+    Fs = 10000
+    f = 25
+    sample = 10000
+    t = np.arange(sample)
+    pattern = 0.5 * np.sin(np.pi * 3 * f * t * t / Fs)
+    signal = 2 * np.sin(2 * np.pi * f * t / Fs)
+    intrinsic_noise = np.random.normal(0, 0.10, 10000)
+    roots = np.abs(signal) + pattern + intrinsic_noise
     # roots = xts + root[0: len(xts)]
 
-    stateone = np.random.normal(0.3, 0.3, 1000)
-    anom_idxone = random.sample(list(range(30015)), 1000)
-
-    # statetwo = np.random.normal(1.25, 0.15, 2000)
-    anom_idxtwo = random.sample(list(range(30015)), 1000)
-
-    for s in range(len(stateone)):
-        roots[anom_idxone[s]] = stateone[s]
-        # xtss[anom_idxtwo[s]] = statetwo[s]
-
-    time_steps, Tref = round(len(root)), 15
+    time_steps, Tref = round(len(roots)), 15
     ey = np.random.normal(0, 0.05, time_steps)
     ez = np.random.normal(0, 0.15, time_steps)
     er = np.random.normal(0, 0.10, time_steps)
 
-    C = {'c1': 0.50, 'c2': 0.25, 'c3': 0.75, 'c4': 0.90, 'c5': 0.80}          # c2:1.75, c5:1.85
-    Tao = {'t1': 1, 't2': 2, 't3': 3, 't4': 4, 't5': 5, 't6': 6}
+    C = {'c1': 0.75, 'c2': 0.25, 'c3': 0.75, 'c4': 0.90, 'c5': 0.80}          # c2:1.75, c5:1.85
+    Tao = {'t1': 2, 't2': 1, 't3': 4, 't4': 3, 't5': 5, 't6': 6}
     data_obj = SyntheticDataset(roots, time_steps, Tref, C, Tao, ey, ez, er)
     X1, X2, X3, X4 = data_obj.generate_data()
 
@@ -107,22 +101,22 @@ if __name__ == '__main__':
     data = {'Z1': X1[150:], 'Z2': X2[150:], 'Z3': X3[150:], 'Z4': X4[150:]}
     df = pd.DataFrame(data, columns=['Z1', 'Z2', 'Z3', 'Z4'])
     df.to_csv(r'/home/ahmad/PycharmProjects/deepCause/datasets/ncdata/synthetic_data.csv', index_label=False, header=True)
-    print(df.head(15000))
+    print(df.head(100))
 
     fig = plt.figure()
     ax1 = fig.add_subplot(411)
-    ax1.plot(X1[15:500])
+    ax1.plot(X1[15:1500])
     ax1.set_ylabel('X1')
 
     ax2 = fig.add_subplot(412)
-    ax2.plot(X2[15:500])
+    ax2.plot(X2[15:1500])
     ax2.set_ylabel("X2")
 
     ax3 = fig.add_subplot(413)
-    ax3.plot(X3[15:500])
+    ax3.plot(X3[15:1500])
     ax3.set_ylabel("X3")
 
     ax4 = fig.add_subplot(414)
-    ax4.plot(X4[15:500])
+    ax4.plot(X4[15:1500])
     ax4.set_ylabel("X4")
     plt.show()
