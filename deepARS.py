@@ -88,7 +88,7 @@ freq = '30min'
 epochs = 100
 win_size = 1
 
-training_length = 555
+training_length = 500
 prediction_length = 50
 num_samples = 10
 
@@ -136,8 +136,8 @@ estimator = DeepAREstimator(
     prediction_length=prediction_length,
     context_length=prediction_length,
     freq=freq,
-    num_layers=3,
-    num_cells=30,
+    num_layers=4,
+    num_cells=40,
     dropout_rate=0.1,
     trainer=Trainer(
         ctx="cpu",
@@ -149,7 +149,7 @@ estimator = DeepAREstimator(
 )
 
 # model_path = "models/trained_model_eco22Dec.sav"
-model_path = "models/trained_model_syn10Feb.sav"
+model_path = "models/trained_model_syn12Feb.sav"
 filename = pathlib.Path(model_path)
 if not filename.exists():
     print("Training forecasting model....")
