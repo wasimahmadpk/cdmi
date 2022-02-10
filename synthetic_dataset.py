@@ -50,9 +50,9 @@ class SyntheticDataset:
         for t in range(10, self.time_steps):
 
             self.X1.append(self.root[t])
-            self.X2.append(C.get('c1') * self.X1[t - Tao.get('t1')] + ey[t])
-            self.X3.append(C.get('c2') ** ((self.X1[t - Tao.get('t2')]) / 2 + ez[t]))
-            self.X4.append(C.get('c3') * self.X3[t - Tao.get('t3')] + C.get('c4') * self.X2[t - Tao.get('t4')] + er[t])
+            self.X2.append(C.get('c4') * self.X2[t - Tao.get('t1')] + C.get('c1') * self.X1[t - Tao.get('t1')] + ey[t])
+            self.X3.append(C.get('c4') * self.X3[t - Tao.get('t3')] + C.get('c1') ** ((self.X1[t - Tao.get('t2')]) / 2 + ez[t]))
+            self.X4.append(C.get('c4') * self.X4[t - Tao.get('t5')] + C.get('c3') * self.X3[t - Tao.get('t3')] + C.get('c4') * self.X2[t - Tao.get('t4')] + er[t])
 
         return self.X1, self.X2, self.X3, self.X4
 
@@ -73,13 +73,13 @@ if __name__ == '__main__':
     yts = data['Dillingen']
     zts = data['Lenggries']
 
-    Fs = 10000
-    f = 25
-    sample = 10000
+    Fs = 5000
+    f = 100
+    sample = 5000
     t = np.arange(sample)
-    pattern = 0.5 * np.sin(np.pi * 3 * f * t * t / Fs)
+    pattern = 0.5 * np.cos(np.pi * 0.5 * f * t * t / Fs)
     signal = 2 * np.sin(2 * np.pi * f * t / Fs)
-    intrinsic_noise = np.random.normal(0, 0.10, 10000)
+    intrinsic_noise = np.random.normal(0, 0.20, 5000)
     roots = np.abs(signal) + pattern + intrinsic_noise
     # roots = xts + root[0: len(xts)]
 
@@ -88,7 +88,7 @@ if __name__ == '__main__':
     ez = np.random.normal(0, 0.15, time_steps)
     er = np.random.normal(0, 0.10, time_steps)
 
-    C = {'c1': 0.75, 'c2': 0.25, 'c3': 0.75, 'c4': 0.90, 'c5': 0.80}          # c2:1.75, c5:1.85
+    C = {'c1': 0.95, 'c2': 0.75, 'c3': 0.50, 'c4': 0.25, 'c5': 0.99}          # c2:1.75, c5:1.85
     Tao = {'t1': 2, 't2': 1, 't3': 4, 't4': 3, 't5': 5, 't6': 6}
     data_obj = SyntheticDataset(roots, time_steps, Tref, C, Tao, ey, ez, er)
     X1, X2, X3, X4 = data_obj.generate_data()
@@ -100,7 +100,8 @@ if __name__ == '__main__':
 
     data = {'Z1': X1[150:], 'Z2': X2[150:], 'Z3': X3[150:], 'Z4': X4[150:]}
     df = pd.DataFrame(data, columns=['Z1', 'Z2', 'Z3', 'Z4'])
-    df.to_csv(r'/home/ahmad/PycharmProjects/deepCause/datasets/ncdata/synthetic_data.csv', index_label=False, header=True)
+    # df.to_csv(r'/home/ahmad/PycharmProjects/deepCause/datasets/ncdata/synthetic_data.csv', index_label=False, header=True)
+    df.to_csv(r'/home/ahmad/PycharmProjects/deepCausality/datasets/ncdata/synthetic_data.csv', index_label=False, header=True)
     print(df.head(100))
 
     fig = plt.figure()
