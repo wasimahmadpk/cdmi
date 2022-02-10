@@ -4,6 +4,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 from netCDF4 import Dataset
 from riverdata import RiverData
+import parameters
 import netCDF
 import math
 
@@ -66,31 +67,34 @@ class SyntheticDataset:
 
 if __name__ == '__main__':
 
-    # River data as base
-    dataobj = RiverData()
-    data = dataobj.get_data()
-    xts = data['Kempten']
-    yts = data['Dillingen']
-    zts = data['Lenggries']
+    def generate_sine_wave(freq, sample_rate, duration):
+        t = np.linspace(0, duration, sample_rate * duration, endpoint=False)
+        frequencies = t * freq
+        # 2pi because np.sin takes radians
+        y = np.sin((2 * np.pi) * frequencies)
+        return t, y
 
-    Fs = 5000
-    f = 100
-    sample = 5000
-    t = np.arange(sample)
-    pattern = 0.5 * np.cos(np.pi * 0.5 * f * t * t / Fs)
-    signal = 2 * np.sin(2 * np.pi * f * t / Fs)
-    intrinsic_noise = np.random.normal(0, 0.20, 5000)
-    roots = np.abs(signal) + pattern + intrinsic_noise
-    # roots = xts + root[0: len(xts)]
+    # Generate sine wave
+    pars = parameters.get_sig_params()
+    SAMPLE_RATE = pars.get("sample_rate")  # Hertz
+    DURATION = pars.get("duration")  # Seconds
 
-    time_steps, Tref = round(len(roots)), 15
-    ey = np.random.normal(0, 0.05, time_steps)
-    ez = np.random.normal(0, 0.15, time_steps)
-    er = np.random.normal(0, 0.10, time_steps)
+    # Generate a 2 hertz sine wave that lasts for 5 seconds
+    # t, y = generate_sine_wave(2, SAMPLE_RATE, DURATION)
+
+    _, nice_wave = generate_sine_wave(400, SAMPLE_RATE, DURATION)
+    _, noise_wave = generate_sine_wave(4000, SAMPLE_RATE, DURATION)
+    noise_wave = noise_wave * 0.3
+    root = nice_wave + noise_wave
+
+    time_steps, Tref = round(len(root)), 15
+    ey = np.random.normal(0, 0.15, time_steps)
+    ez = np.random.normal(0, 0.25, time_steps)
+    er = np.random.normal(0, 0.20, time_steps)
 
     C = {'c1': 0.95, 'c2': 0.75, 'c3': 0.50, 'c4': 0.25, 'c5': 0.99}          # c2:1.75, c5:1.85
     Tao = {'t1': 2, 't2': 1, 't3': 4, 't4': 3, 't5': 5, 't6': 6}
-    data_obj = SyntheticDataset(roots, time_steps, Tref, C, Tao, ey, ez, er)
+    data_obj = SyntheticDataset(root, time_steps, Tref, C, Tao, ey, ez, er)
     X1, X2, X3, X4 = data_obj.generate_data()
 
     corr1 = np.corrcoef(ey, ez)
