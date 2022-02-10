@@ -1,3 +1,9 @@
+def get_sig_params():
+    pars = dict()
+    pars["sample_rate"] = 44100  # Hertz
+    pars["duration"] = 5   # seconds
+    return pars
+
 def GetDistributionParams(model,p):
     """
     Returns parameters for generating different data distributions
