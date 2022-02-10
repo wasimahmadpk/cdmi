@@ -88,8 +88,8 @@ freq = '30min'
 epochs = 100
 win_size = 1
 
-training_length = 666
-prediction_length = 24
+training_length = 555
+prediction_length = 50
 num_samples = 10
 
 # LOad synthetic data *************************
@@ -136,20 +136,20 @@ estimator = DeepAREstimator(
     prediction_length=prediction_length,
     context_length=prediction_length,
     freq=freq,
-    num_layers=7,
-    num_cells=70,
+    num_layers=3,
+    num_cells=30,
     dropout_rate=0.1,
     trainer=Trainer(
         ctx="cpu",
         epochs=epochs,
         hybridize=False,
-        batch_size=48
+        batch_size=32
     ),
     distr_output=MultivariateGaussianOutput(dim=dim)
 )
 
 # model_path = "models/trained_model_eco22Dec.sav"
-model_path = "models/trained_model_syn26Jan.sav"
+model_path = "models/trained_model_syn10Feb.sav"
 filename = pathlib.Path(model_path)
 if not filename.exists():
     print("Training forecasting model....")
@@ -174,10 +174,7 @@ knockoffs = obj.GenKnockoffs(n, dim, data_actual)
 # print(f"Correlation Coefficient (Variable, Counterfactual): {corr}")
 
 # Causal skeletion based on prior assumptions/ expert knowledge
-prior_graph = np.array([[1, 0, 1, 0, 0, 0, 0, 0, 0],   [0, 1, 1, 0, 0, 0, 0, 0, 0],   [0, 0, 0, 0, 0, 1, 0, 0, 0],
-               [0, 0, 0, 1, 0, 0, 0, 0, 0],   [0, 0, 0, 0, 0, 0, 0, 0, 0],   [0, 0, 0, 0, 1, 0, 1, 0, 0],
-               [0, 0, 0, 1, 0, 0, 0, 1, 1],   [0, 0, 0, 0, 0, 0, 0, 1, 0],   [0, 0, 0, 0, 0, 0, 0, 0, 1],
-               [0, 0, 0, 0, 0, 0, 0, 0, 0]])
+prior_graph = np.array([[1, 1, 1, 1], [0, 1, 0, 1], [0, 0, 1, 1], [0, 0, 0, 1]])
 
 # Parameters dict
 params = {
