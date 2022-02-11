@@ -81,6 +81,11 @@ def deepCause(odata, knockoffs, model, params):
         indist_cause = []
         outdist_cause = []
 
+        # Break temporal dependency and generate a new time series
+        pars = parameters.get_sig_params()
+        SAMPLE_RATE = pars.get("sample_rate")  # Hertz
+        DURATION = pars.get("duration")  # Seconds
+
         # Generate Knockoffs
         data_actual = np.array(odata[:, 0: params.get('train_len') + params.get('pred_len')]).transpose()
         obj = Knockoffs()
@@ -89,9 +94,10 @@ def deepCause(odata, knockoffs, model, params):
         knockoff_sample = np.array(knockoffs[:, i])
 
         mean = np.random.normal(0, 0.05, len(knockoff_sample)) + np.mean(odata[i])
-        outdist = np.random.normal(10, 10, len(knockoff_sample))
+        # outdist = np.random.normal(10, 10, len(knockoff_sample))
+        outdist = get_shuffled_ts(SAMPLE_RATE, DURATION, odata[i])
 
-        interventionlist = [knockoff_sample, outdist, mean]
+        interventionlist = [knockoff_sample, outdist[: len(knockoff_sample)], mean]
         heuristic_itn_types = ['In-dist', 'Out-dist', 'Mean']
 
         # Show variable with its knockoff copy
@@ -102,20 +108,16 @@ def deepCause(odata, knockoffs, model, params):
         # corr = np.corrcoef(knockoff_sample, odata[j][0: len(knockoff_sample)])
         # print(f"Correlation Coefficient (Variable, Counterfactual): {corr}")
 
-        # Break temporal dependency and generate a new time series
-        pars = parameters.get_sig_params()
-        SAMPLE_RATE = pars.get("sample_rate")  # Hertz
-        DURATION = pars.get("duration")  # Seconds
-
         for j in range(len(odata)):
 
             back_door_int = []
             back_door = prior_graph[:, j].nonzero()[0]
             print(f"Front/Backdoor Paths: {np.array(back_door) + 1} ---> {j + 1}")
             for g in range(len(odata)):
-                # back_door_int.append(np.array(knockoffs[:, g]))
-                back_door_int.append(get_shuffled_ts(SAMPLE_RATE, DURATION, odata[g]))
-                # back_door_int.append(np.random.normal(np.mean(odata[j]), 10.00, len(knockoff_sample)))
+
+                back_door_int.append(np.array(knockoffs[:, g]))
+                # back_door_int.append(get_shuffled_ts(SAMPLE_RATE, DURATION, odata[g]))
+                # back_door_int.append(np.random.normal(100, 10, len(knockoff_sample)))
 
             columns = params.get('col')
             pred_var = odata[j]
@@ -143,18 +145,19 @@ def deepCause(odata, knockoffs, model, params):
                 diff = []
                 start = 10
 
-                for iter in range(15):
+                for iter in range(30):
 
                     mselist_batch = []
                     mselistint_batch = []
                     mapelist_batch = []
                     mapelistint_batch = []
-                    for r in range(5):
+                    for r in range(3):
 
                         test_data = odata[:, start: start + params.get('train_len') + params.get('pred_len')].copy()
 
-                        for q in range(len(odata)):
-                            test_data[q, :] = back_door_int[q][0:550]
+                        # for q in range(len(odata)):
+                        #     if q != j:
+                        #         test_data[q, :] = back_door_int[q][0:550]
 
                         test_ds = ListDataset(
                             [
@@ -167,9 +170,10 @@ def deepCause(odata, knockoffs, model, params):
                         )
                         # rg[0:-50] + list(intervene[-50:])
                         int_data = odata[:, start: start + params.get('train_len') + params.get('pred_len')].copy()
-                        for v in range(len(odata)):
-                            if v != i:
-                                int_data[v, :] = back_door_int[v][0:550]
+                        # for v in range(len(odata)):
+                        #     if v != i or v != j:
+                        #         int_data[v, :] = back_door_int[v][0:550]
+                        int_data[i, :] = intervene
 
                         test_dsint = ListDataset(
                             [
@@ -249,7 +253,7 @@ def deepCause(odata, knockoffs, model, params):
 
                 for k in range(len(mselist)):
                     # Calculate causal significan score (CSS)
-                    css_score.append(np.log(mapelist[k] / mapelistint[k]))
+                    css_score.append(np.log(mapelistint[k] / mapelist[k]))
                     # css_score.append(np.log(mselistint[k] / mselist[k]))
                     # css_score.append(mapelistint[k] - mapelist[k])
                     # css_score.append(mapelistint[k] / mapelist[k])
@@ -292,7 +296,7 @@ def deepCause(odata, knockoffs, model, params):
                 # print(f"Average Causal Strength using {heuristic_itn_types[z]} Intervention: {np.mean(np.array(mselolint[z]) - np.array(mselol[z]))}")
                 # print("CSS: ", css_score)
                 # t, p = ttest_ind(np.array(mapelolint[z]), np.array(mapelol[z]), equal_var=True)
-                t, p = ttest_1samp(css_list[z], popmean=0.0, alternative="greater")
+                t, p = ttest_1samp(css_list[z], popmean=0.0, alternative="greater")  #
                 # plt.hist(mselolint[z])
                 # plt.hist(mselol[z])
                 # plt.show()
@@ -350,7 +354,7 @@ def deepCause(odata, knockoffs, model, params):
     conf_mat.append(conf_mat_outdist)
 
     print("Confusion Matrix:", conf_mat)
-    true_conf_mat = [1, 1, 1, 1,   0, 1, 0, 1,   0, 0, 1, 1,    0, 0, 0, 1]
+    true_conf_mat = [1, 1, 1, 1, 1,   0, 1, 0, 1, 0,   0, 0, 1, 0, 1,   0, 0, 0, 1, 0,   0, 0, 0, 0, 1]
 
     for ss in range(len(conf_mat)):
 
