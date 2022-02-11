@@ -51,11 +51,11 @@ class SyntheticDataset:
         for t in range(10, self.time_steps):
 
             self.X1.append(self.root[t])
-            self.X2.append(C.get('c4') * self.X2[t - Tao.get('t1')] + C.get('c1') * self.X1[t - Tao.get('t1')] + ey[t])
-            self.X3.append(C.get('c4') * self.X3[t - Tao.get('t3')] + C.get('c1') ** ((self.X1[t - Tao.get('t2')]) / 2 + ez[t]))
-            self.X4.append(C.get('c4') * self.X4[t - Tao.get('t5')] + C.get('c3') * self.X3[t - Tao.get('t3')] + C.get('c4') * self.X2[t - Tao.get('t4')] + er[t])
-
-        return self.X1, self.X2, self.X3, self.X4
+            self.X2.append(C.get('c4') * self.X2[t - Tao.get('t1')] + C.get('c2') * self.X1[t - Tao.get('t1')] + ey[t])
+            self.X3.append(C.get('c3') * self.X3[t - Tao.get('t3')] + C.get('c1') ** ((self.X1[t - Tao.get('t2')]) / 2 + ez[t]))
+            self.X4.append(C.get('c4') * self.X4[t - Tao.get('t5')] + C.get('c3') * self.X2[t - Tao.get('t4')] + er[t])
+            self.X5.append(C.get('c4') * self.X5[t - Tao.get('t1')] + C.get('c5') * self.X3[t - Tao.get('t1')] + ey[t])
+        return self.X1, self.X2, self.X3, self.X4, self.X5
 
     def SNR(self, s, n):
 
@@ -85,43 +85,49 @@ if __name__ == '__main__':
     _, nice_wave = generate_sine_wave(400, SAMPLE_RATE, DURATION)
     _, noise_wave = generate_sine_wave(4000, SAMPLE_RATE, DURATION)
     noise_wave = noise_wave * 0.3
-    root = nice_wave + noise_wave
+    noise = np.random.normal(0, 1, len(nice_wave))
+    root = nice_wave + noise_wave + noise
 
     time_steps, Tref = round(len(root)), 15
     ey = np.random.normal(0, 0.15, time_steps)
     ez = np.random.normal(0, 0.25, time_steps)
     er = np.random.normal(0, 0.20, time_steps)
 
-    C = {'c1': 0.95, 'c2': 0.75, 'c3': 0.50, 'c4': 0.25, 'c5': 0.99}          # c2:1.75, c5:1.85
+    C = {'c1': 0.95, 'c2': 0.75, 'c3': 0.50, 'c4': 0.75, 'c5': 0.99}          # c2:1.75, c5:1.85
     Tao = {'t1': 2, 't2': 1, 't3': 4, 't4': 3, 't5': 5, 't6': 6}
     data_obj = SyntheticDataset(root, time_steps, Tref, C, Tao, ey, ez, er)
-    X1, X2, X3, X4 = data_obj.generate_data()
+    X1, X2, X3, X4, X5 = data_obj.generate_data()
 
     corr1 = np.corrcoef(ey, ez)
 
     print("Correlation Coefficient (ey, ez): ", corr1)
     # print("SNR (Temperature)", data_obj.SNR(Yts, ez))
 
-    data = {'Z1': X1[150:], 'Z2': X2[150:], 'Z3': X3[150:], 'Z4': X4[150:]}
-    df = pd.DataFrame(data, columns=['Z1', 'Z2', 'Z3', 'Z4'])
+    data = {'Z1': X1[150:], 'Z2': X2[150:], 'Z3': X3[150:], 'Z4': X4[150:], 'Z5': X5[150:]}
+    df = pd.DataFrame(data, columns=['Z1', 'Z2', 'Z3', 'Z4', 'Z5'])
     # df.to_csv(r'/home/ahmad/PycharmProjects/deepCause/datasets/ncdata/synthetic_data.csv', index_label=False, header=True)
     df.to_csv(r'/home/ahmad/PycharmProjects/deepCausality/datasets/ncdata/synthetic_data.csv', index_label=False, header=True)
     print(df.head(100))
 
     fig = plt.figure()
-    ax1 = fig.add_subplot(411)
-    ax1.plot(X1[15:1500])
+    ax1 = fig.add_subplot(511)
+    ax1.plot(X1[150:1500])
     ax1.set_ylabel('X1')
 
-    ax2 = fig.add_subplot(412)
-    ax2.plot(X2[15:1500])
+    ax2 = fig.add_subplot(512)
+    ax2.plot(X2[150:1500])
     ax2.set_ylabel("X2")
 
-    ax3 = fig.add_subplot(413)
-    ax3.plot(X3[15:1500])
+    ax3 = fig.add_subplot(513)
+    ax3.plot(X3[150:1500])
     ax3.set_ylabel("X3")
 
-    ax4 = fig.add_subplot(414)
-    ax4.plot(X4[15:1500])
+    ax4 = fig.add_subplot(514)
+    ax4.plot(X4[150:1500])
     ax4.set_ylabel("X4")
+
+    ax5 = fig.add_subplot(515)
+    ax5.plot(X5[150:1500])
+    ax5.set_ylabel("X5")
+
     plt.show()
