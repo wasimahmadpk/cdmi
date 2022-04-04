@@ -84,12 +84,13 @@ def running_avg_effect(y, yint):
     return rae
 
 # Parameters for synthetic data
+
 freq = '30min'
 epochs = 100
 win_size = 1
 
 training_length = 500
-prediction_length = 50
+prediction_length = 35
 num_samples = 10
 
 # LOad synthetic data *************************
@@ -149,7 +150,7 @@ estimator = DeepAREstimator(
 )
 
 # model_path = "models/trained_model_eco22Dec.sav"
-model_path = "models/trained_model_syn111Feb.sav"
+model_path = "models/trained_model_syn03Mar.sav"
 filename = pathlib.Path(model_path)
 if not filename.exists():
     print("Training forecasting model....")
@@ -174,7 +175,7 @@ knockoffs = obj.GenKnockoffs(n, dim, data_actual)
 # print(f"Correlation Coefficient (Variable, Counterfactual): {corr}")
 
 # Causal skeletion based on prior assumptions/ expert knowledge
-prior_graph = np.array([[1, 1, 1, 1, 1], [0, 1, 0, 1, 0], [0, 0, 1, 0, 1], [0, 0, 0, 1, 0], [0, 0, 0, 0, 1]])
+prior_graph = np.array([[0, 1, 1, 1, 1], [0, 0, 0, 1, 0], [0, 0, 0, 0, 1], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]])
 
 # Parameters dict
 params = {
