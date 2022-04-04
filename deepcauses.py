@@ -36,7 +36,7 @@ mx.random.seed(2)
 
 
 def mutual_information(x, y):
-    mi = mutual_info_regression(X, y)
+    mi = mutual_info_regression(x, y)
     mi /= np.max(mi)
     return mi
 
@@ -49,7 +49,6 @@ def get_shuffled_ts(SAMPLE_RATE, DURATION, root):
     # plt.plot(xf, np.abs(yf))
     # plt.show()
     new_ts = irfft(shuffle(yf))
-
     return new_ts
 
 
@@ -62,6 +61,17 @@ def running_avg_effect(y, yint):
 
 
 def deepCause(odata, knockoffs, model, params):
+
+    mutual_info = []
+    for a in range(len(odata)):
+        mi = []
+        for b in range(len(odata)):
+            if a != b:
+                mi.append(mutual_information(odata[a], odata[b]))
+            else:
+                mi.append(1)
+
+        mutual_info.append(mi)
 
     filename = pathlib.Path(model)
     if not filename.exists():
