@@ -1,2 +1,2 @@
-# deepCausality
-Estimate cause effect relation in multivariate dynamic system using counterfactual reasoning in trained deep networks
+# deepCause
+Time series forecasting with DeepAR and DeepState models using GluonTS API
