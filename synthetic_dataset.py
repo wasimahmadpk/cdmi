@@ -51,10 +51,10 @@ class SyntheticDataset:
         for t in range(10, self.time_steps):
 
             self.X1.append(self.root[t])
-            self.X2.append(C.get('c4') * self.X2[t - Tao.get('t1')] + C.get('c2') * self.X1[t - Tao.get('t1')] + ey[t])
-            self.X3.append(C.get('c3') * self.X3[t - Tao.get('t3')] + C.get('c1') ** ((self.X1[t - Tao.get('t2')]) / 2 + ez[t]))
-            self.X4.append(C.get('c4') * self.X4[t - Tao.get('t5')] + C.get('c3') * self.X2[t - Tao.get('t4')] + er[t])
-            self.X5.append(C.get('c4') * self.X5[t - Tao.get('t1')] + C.get('c5') * self.X3[t - Tao.get('t1')] + ey[t])
+            self.X2.append(C.get('c2') * self.X1[t - Tao.get('t1')] + ey[t])
+            self.X3.append(C.get('c1') ** ((self.X1[t - Tao.get('t2')]) / 2 + ez[t]))
+            self.X4.append(C.get('c3') * self.X2[t - Tao.get('t4')] + er[t])
+            self.X5.append(C.get('c5') * self.X3[t - Tao.get('t1')] + ey[t])
         return self.X1, self.X2, self.X3, self.X4, self.X5
 
     def SNR(self, s, n):
