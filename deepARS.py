@@ -175,7 +175,7 @@ knockoffs = obj.GenKnockoffs(n, dim, data_actual)
 # print(f"Correlation Coefficient (Variable, Counterfactual): {corr}")
 
 # Causal skeletion based on prior assumptions/ expert knowledge
-prior_graph = np.array([[0, 1, 1, 1, 1], [0, 0, 0, 1, 0], [0, 0, 0, 0, 1], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]])
+prior_graph = np.array([[1, 1, 1, 1, 1], [0, 1, 0, 1, 0], [0, 0, 1, 0, 1], [0, 0, 0, 1, 0], [0, 0, 0, 0, 1]])
 
 # Parameters dict
 params = {
