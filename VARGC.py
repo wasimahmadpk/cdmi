@@ -69,18 +69,14 @@ win_size = 1
 # print("Length:", len(rg))
 
 # "Load synthetic data"
-syndata = pd.read_csv("/home/ahmad/PycharmProjects/deepCause/datasets/ncdata/synthetic_data.csv", sep=',')
+syndata = pd.read_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/ncdata/synthetic_data.csv", sep=',')
 
 x1 = normalize(down_sample(np.array(syndata['Z1']), win_size))
 x2 = normalize(down_sample(np.array(syndata['Z2']), win_size))
 x3 = normalize(down_sample(np.array(syndata['Z3']), win_size))
 x4 = normalize(down_sample(np.array(syndata['Z4']), win_size))
 x5 = normalize(down_sample(np.array(syndata['Z5']), win_size))
-x6 = normalize(down_sample(np.array(syndata['Z6']), win_size))
-x7 = normalize(down_sample(np.array(syndata['Z7']), win_size))
-x8 = normalize(down_sample(np.array(syndata['Z8']), win_size))
-x9 = normalize(down_sample(np.array(syndata['Z9']), win_size))
-x10 = normalize(down_sample(np.array(syndata['Z10']), win_size))
+
 
 # dataobj = RiverData()
 # data = dataobj.get_data()
@@ -96,10 +92,10 @@ x10 = normalize(down_sample(np.array(syndata['Z10']), win_size))
 # reco = normalize(down_sample(np.array(syndata['Reco']), win_size))
 #
 #
-col_list = ['Z1', 'Z2', 'Z3', 'Z4', 'Z5', 'Z6', 'Z7', 'Z8', 'Z9', 'Z10']
+col_list = ['Z1', 'Z2', 'Z3', 'Z4', 'Z5']
 # # col_list = ['Kts', 'Dts', 'Lts']
 # col_list = ['Rg', 'T', 'GPP', 'Reco']
-dt = {'Z1': x1, 'Z2': x2, 'Z3': x3, 'Z4': x4, 'Z5': x5, 'Z6': x6, 'Z7': x7, 'Z8': x8, 'Z9': x9, 'Z10': x10}
+dt = {'Z1': x1, 'Z2': x2, 'Z3': x3, 'Z4': x4, 'Z5': x5}
 data = pd.DataFrame(dt, columns=col_list)
 # # data = pd.DataFrame({'Kts': kts, 'Dts': dts, 'Lts': lts}, columns=col_list)
 # data = pd.DataFrame({'Rg': rg[0:1000], 'T': temp[0:1000], 'GPP': gpp[0: 1000], 'Reco': reco[0: 1000]}, columns=col_list)
@@ -126,7 +122,7 @@ data = pd.DataFrame(dt, columns=col_list)
 
 # make a VAR model
 model = VAR(data)
-results = model.fit(7)
+results = model.fit(5)
 # print(results.summary())
 for i in range(len(col_list)):
     for j in range(len(col_list)):
