@@ -68,8 +68,8 @@ links_coeffs = {0: [((0, -1), 0.8)],
 # var_names = [r"$Xts$", r"$Yts$", r"$Zts$", r"$Rts$"]
 # col_names = ['Xts', 'Yts', 'Zts', 'Rts']
 
-var_names = [r"$Z1$", r"$Z2$", r"$Z3$", r"$Z4$", r"$Z5$", r"$Z6$", r"$Z7$", r"$Z8$", r"$Z9$", r"$Z10$"]
-col_names = ['Z1', 'Z2', 'Z3', 'Z4', 'Z5', 'Z6', 'Z7', 'Z8', 'Z9', 'Z10']
+var_names = [r"$Z1$", r"$Z2$", r"$Z3$", r"$Z4$", r"$Z5$"]
+col_names = ['Z1', 'Z2', 'Z3', 'Z4', 'Z5']
 # # #
 # var_names = [r"$Rg$", r"$T$", r"$GPP$", r"$Reco$"]
 # col_names = ['Rg', 'T', 'GPP' 'Reco']
@@ -99,18 +99,14 @@ col_names = ['Z1', 'Z2', 'Z3', 'Z4', 'Z5', 'Z6', 'Z7', 'Z8', 'Z9', 'Z10']
 
 
 # # # External dataframe
-syndata = pd.read_csv("/home/ahmad/PycharmProjects/deepCause/datasets/ncdata/synthetic_data.csv", sep=',')
+syndata = pd.read_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/ncdata/synthetic_data.csv", sep=',')
 
 x1 = normalize(down_sample(np.array(syndata['Z1']), win_size))
 x2 = normalize(down_sample(np.array(syndata['Z2']), win_size))
 x3 = normalize(down_sample(np.array(syndata['Z3']), win_size))
 x4 = normalize(down_sample(np.array(syndata['Z4']), win_size))
 x5 = normalize(down_sample(np.array(syndata['Z5']), win_size))
-x6 = normalize(down_sample(np.array(syndata['Z6']), win_size))
-x7 = normalize(down_sample(np.array(syndata['Z7']), win_size))
-x8 = normalize(down_sample(np.array(syndata['Z8']), win_size))
-x9 = normalize(down_sample(np.array(syndata['Z9']), win_size))
-x10 = normalize(down_sample(np.array(syndata['Z10']), win_size))
+
 
 # # River Discharge Data
 # dataobj = RiverData()
@@ -134,7 +130,7 @@ x10 = normalize(down_sample(np.array(syndata['Z10']), win_size))
 # gpp = normalize(down_sample(np.array(syndata['GPP']), win_size))
 # reco = normalize(down_sample(np.array(syndata['Reco']), win_size))
 
-data = np.array([x1[:150], x2[:150], x3[:150], x4[:150], x5[:150], x6[:150], x7[:150], x8[:150], x9[:150], x10[:150]])
+data = np.array([x1[:150], x2[:150], x3[:150], x4[:150], x5[:150]])
 # # data = np.array([kts, dts, lts])
 # data = np.array([rg[7000:7500], temp[7000:7500], gpp[7000:7500], reco[7000:7500]])
 print(data)
