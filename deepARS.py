@@ -30,11 +30,6 @@ np.random.seed(1)
 mx.random.seed(2)
 
 
-def normalize(var):
-    nvar = (np.array(var) - np.mean(var)) / np.std(var)
-    return nvar
-
-
 def deseasonalize(var, interval):
 
     deseasonalize_data = []
@@ -42,6 +37,11 @@ def deseasonalize(var, interval):
         value = var[i] - var[i - interval]
         deseasonalize_data.append(value)
     return deseasonalize_data
+
+
+def normalize(var):
+    nvar = (np.array(var) - np.mean(var)) / np.std(var)
+    return nvar
 
 
 def down_sample(data, win_size, partition=None):
@@ -84,31 +84,76 @@ def running_avg_effect(y, yint):
     return rae
 
 # Parameters for synthetic data
-
 freq = '30min'
-epochs = 100
+epochs = 150
 win_size = 1
 
-training_length = 500
-prediction_length = 35
+training_length = 666
+prediction_length = 33
 num_samples = 10
+
+# # Parameters for ecosystem data
+# freq = 'D'
+# dim = 5
+# epochs = 150
+# win_size = 1
+#
+# training_length = 700
+# prediction_length = 48
+# num_samples = 10
 
 # LOad synthetic data *************************
 df = pd.read_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/ncdata/synthetic_data.csv")
 
+# # "Load fluxnet 2015 data for grassland IT-Mbo site"
+# fluxnet = pd.read_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/fluxnet2015/FLX_IT-MBo_FLUXNET2015_SUBSET_2003-2013_1-4/FLX_IT-MBo_FLUXNET2015_SUBSET_HH_2003-2013_1-4.csv")
+# org = fluxnet['SW_IN_F']
+# otemp = fluxnet['TA_F']
+# ovpd = fluxnet['VPD_F']
+# # oppt = fluxnet['P_F']
+# nee = fluxnet['NEE_VUT_50']
+# ogpp = fluxnet['GPP_NT_VUT_50']
+# oreco = fluxnet['RECO_NT_VUT_50']
+#
 # # ************* LOad FLUXNET2015 data ************************
-# rg = normalize(down_sample(org, win_size))
-# temp = normalize(down_sample(otemp, win_size))
-# gpp = normalize(down_sample(nee, win_size, partition='gpp'))
-# reco = normalize(down_sample(nee, win_size, partition='reco'))
+#
+# rg = deseasonalize(normalize(down_sample(org, win_size)), 1)
+# temp = deseasonalize(normalize(down_sample(otemp, win_size)), 1)
+# # gpp = normalize(down_sample(nee, win_size, partition='gpp'))
+# # reco = normalize(down_sample(nee, win_size, partition='reco'))
+# gpp = deseasonalize(normalize(down_sample(ogpp, win_size)), 1)
+# reco = deseasonalize(normalize(down_sample(oreco, win_size)), 1)
 # # ppt = normalize(down_sample(oppt, win_size))
-# vpd = normalize(down_sample(ovpd, win_size))
-# swc = normalize(down_sample(oswc, win_size))
-# heat = normalize(down_sample(oheat, win_size))
+# vpd = deseasonalize(normalize(down_sample(ovpd, win_size)), 1)
+# # swc = normalize(down_sample(oswc, win_size))
+# # heat = normalize(down_sample(oheat, win_size))
 # # # print("Length:", len(rg))
+#
+# # # Plot fluxnet after normalization and (daily) aggregation
+# # fig = plt.figure()
+# # ax1 = fig.add_subplot(411)
+# # ax1.plot(reco[8000:8700])
+# # # ax1.plot(recoo)
+# # ax1.set_ylabel('Reco')
+# #
+# # ax2 = fig.add_subplot(412)
+# # ax2.plot(vpd[8000:8700])
+# # # ax2.plot(tempp)
+# # ax2.set_ylabel("Temp")
+# #
+# # ax3 = fig.add_subplot(413)
+# # ax3.plot(gpp[8000:8700])
+# # # ax3.plot(gppp)
+# # ax3.set_ylabel("GPP")
+# #
+# # ax4 = fig.add_subplot(414)
+# # ax4.plot(rg[8000:8700])
+# # # ax4.plot(rgg)
+# # ax4.set_ylabel("Rg")
+# # plt.show()
 
-# data = {'Rg': rg[7000: 17000], 'T': temp[7000: 17000], 'GPP': gpp[7000: 17000], 'Reco': reco[7000: 17000]}
-# df = pd.DataFrame(data, columns=['Rg', 'T', 'GPP', 'Reco'])
+# data = {'Rg': rg[8000:12000], 'T': temp[8000:12000], 'GPP': gpp[8000:12000], 'Reco': reco[8000:12000], 'VPD': vpd[8000:12000]}
+# df = pd.DataFrame(data, columns=['Rg', 'T', 'GPP', 'Reco', 'VPD'])
 
 # /////////////////////////////////////////////////////////////
 original_data = []
@@ -150,7 +195,7 @@ estimator = DeepAREstimator(
 )
 
 # model_path = "models/trained_model_eco22Dec.sav"
-model_path = "models/trained_model_syn03Mar.sav"
+model_path = "models/trained_model_synApr12.sav"
 filename = pathlib.Path(model_path)
 if not filename.exists():
     print("Training forecasting model....")
@@ -175,7 +220,8 @@ knockoffs = obj.GenKnockoffs(n, dim, data_actual)
 # print(f"Correlation Coefficient (Variable, Counterfactual): {corr}")
 
 # Causal skeletion based on prior assumptions/ expert knowledge
-prior_graph = np.array([[1, 1, 1, 1, 1], [0, 1, 0, 1, 0], [0, 0, 1, 0, 1], [0, 0, 0, 1, 0], [0, 0, 0, 0, 1]])
+# prior_graph = np.array([[1, 1, 1, 1, 1], [0, 1, 0, 1, 0], [0, 0, 1, 0, 1], [0, 0, 0, 1, 0], [0, 0, 0, 0, 1]])
+prior_graph = np.array([[1, 1, 1, 1, 1], [0, 1, 0, 0, 1], [0, 0, 1, 0, 1], [0, 0, 0, 1, 1], [0, 0, 0, 0, 1]])
 
 # Parameters dict
 params = {
