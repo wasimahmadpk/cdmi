@@ -367,7 +367,7 @@ def deepCause(odata, knockoffs, model, params):
     conf_mat.append(conf_mat_outdist)
 
     print("Confusion Matrix:", conf_mat)
-    true_conf_mat = [1, 1, 1, 1, 1,   0, 1, 0, 1, 0,   0, 0, 1, 0, 1,   0, 0, 0, 1, 0,   0, 0, 0, 0, 1]
+    true_conf_mat = [1, 1, 1, 1, 1,    0, 1, 0, 0, 1,   0, 0, 1, 0, 1,   0, 0, 0, 1, 1,    0, 0, 0, 0, 1]
 
     for ss in range(len(conf_mat)):
 
@@ -379,7 +379,7 @@ def deepCause(odata, knockoffs, model, params):
         
         print("---------***-----------***----------***----------")
         print(f"Intervention: {heuristic_itn_types[ss]}")
-        print(f"TN: {tn}, TP: {tp}, FP: {fp}, FN: {fn}")  # 1 1 1 1
+        print(f"TP: {tp}, TN: {tn}, FP: {fp}, FN: {fn}")  
         print(f"Accuracy: {acc}")
         print(f"F-score: {fscore}")
         print(f"Precision: {precision}")
