@@ -53,7 +53,7 @@ def modelTest(model_path, test_ds, num_samples, data, idx, prediction_length, co
     )
 
     if intervention == True:
-        heuristic_itn_types = ['In-dist', 'Out-dist', 'Mean']
+        heuristic_itn_types = ['In-dist', 'Out-dist', 'Mean', 'Uniform']
         int_title = 'After ' + heuristic_itn_types[in_type] + ' Intervention'
     else:
         int_title = ''
