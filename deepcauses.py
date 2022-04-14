@@ -108,11 +108,11 @@ def deepCause(odata, knockoffs, model, params):
         knockoff_sample = np.array(knockoffs[:, i])
 
         mean = np.random.normal(0, 0.05, len(knockoff_sample)) + np.mean(odata[i])
-        # outdist = np.random.normal(10, 10, len(knockoff_sample))
-        outdist = get_shuffled_ts(SAMPLE_RATE, DURATION, odata[i])
-
-        interventionlist = [knockoff_sample, outdist[: len(knockoff_sample)], mean]
-        heuristic_itn_types = ['In-dist', 'Out-dist', 'Mean']
+        outdist = np.random.normal(10, 10, len(knockoff_sample))
+        # outdist = get_shuffled_ts(SAMPLE_RATE, DURATION, odata[i])
+        uniform = np.random.uniform(np.min(odata[i]), np.min(odata[i]), len(knockoff_sample))
+        interventionlist = [knockoff_sample, outdist[: len(knockoff_sample)], mean, uniform]
+        heuristic_itn_types = ['In-dist', 'Out-dist', 'Mean', 'Uniform']
 
         # Show variable with its knockoff copy
         # plt.plot(np.arange(0, len(counterfactuals)), target[: len(counterfactuals)], counterfactuals)
