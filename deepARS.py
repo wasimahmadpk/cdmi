@@ -83,51 +83,51 @@ def running_avg_effect(y, yint):
         ace = 1/((params.get("train_len") + 1 + i) - params.get("train_len")) * (rae + (y[i] - yint[i]))
     return rae
 
-# Parameters for synthetic data
-freq = '30min'
-epochs = 150
-win_size = 1
-
-training_length = 666
-prediction_length = 33
-num_samples = 10
-
-# # Parameters for ecosystem data
-# freq = 'D'
-# dim = 5
+# # Parameters for synthetic data
+# freq = '30min'
 # epochs = 150
 # win_size = 1
 #
-# training_length = 700
-# prediction_length = 48
+# training_length = 666
+# prediction_length = 33
 # num_samples = 10
 
-# LOad synthetic data *************************
-df = pd.read_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/ncdata/synthetic_data.csv")
+# Parameters for ecosystem data
+freq = '30min'
+dim = 5
+epochs = 150
+win_size = 1
 
-# # "Load fluxnet 2015 data for grassland IT-Mbo site"
-# fluxnet = pd.read_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/fluxnet2015/FLX_IT-MBo_FLUXNET2015_SUBSET_2003-2013_1-4/FLX_IT-MBo_FLUXNET2015_SUBSET_HH_2003-2013_1-4.csv")
-# org = fluxnet['SW_IN_F']
-# otemp = fluxnet['TA_F']
-# ovpd = fluxnet['VPD_F']
-# # oppt = fluxnet['P_F']
+training_length = 700
+prediction_length = 48
+num_samples = 10
+
+# LOad synthetic data *************************
+# df = pd.read_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/ncdata/synthetic_data.csv")
+
+# "Load fluxnet 2015 data for grassland IT-Mbo site"
+fluxnet = pd.read_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/fluxnet2015/FLX_IT-MBo_FLUXNET2015_SUBSET_2003-2013_1-4/FLX_IT-MBo_FLUXNET2015_SUBSET_HH_2003-2013_1-4.csv")
+org = fluxnet['SW_IN_F']
+otemp = fluxnet['TA_F']
+ovpd = fluxnet['VPD_F']
+# oppt = fluxnet['P_F']
 # nee = fluxnet['NEE_VUT_50']
-# ogpp = fluxnet['GPP_NT_VUT_50']
-# oreco = fluxnet['RECO_NT_VUT_50']
+ogpp = fluxnet['GPP_NT_VUT_50']
+oreco = fluxnet['RECO_NT_VUT_50']
 #
-# # ************* LOad FLUXNET2015 data ************************
-#
-# rg = deseasonalize(normalize(down_sample(org, win_size)), 1)
-# temp = deseasonalize(normalize(down_sample(otemp, win_size)), 1)
-# # gpp = normalize(down_sample(nee, win_size, partition='gpp'))
-# # reco = normalize(down_sample(nee, win_size, partition='reco'))
-# gpp = deseasonalize(normalize(down_sample(ogpp, win_size)), 1)
-# reco = deseasonalize(normalize(down_sample(oreco, win_size)), 1)
-# # ppt = normalize(down_sample(oppt, win_size))
-# vpd = deseasonalize(normalize(down_sample(ovpd, win_size)), 1)
-# # swc = normalize(down_sample(oswc, win_size))
-# # heat = normalize(down_sample(oheat, win_size))
-# # # print("Length:", len(rg))
+# ************* LOad FLUXNET2015 data ************************
+
+rg = normalize(down_sample(org, win_size))
+temp = normalize(down_sample(otemp, win_size))
+# gpp = normalize(down_sample(nee, win_size, partition='gpp'))
+# reco = normalize(down_sample(nee, win_size, partition='reco'))
+gpp = normalize(down_sample(ogpp, win_size))
+reco = normalize(down_sample(oreco, win_size))
+# ppt = normalize(down_sample(oppt, win_size))
+vpd = normalize(down_sample(ovpd, win_size))
+# swc = normalize(down_sample(oswc, win_size))
+# heat = normalize(down_sample(oheat, win_size))
+# # print("Length:", len(rg))
 #
 # # # Plot fluxnet after normalization and (daily) aggregation
 # # fig = plt.figure()
@@ -152,8 +152,8 @@ df = pd.read_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/ncdata/synt
 # # ax4.set_ylabel("Rg")
 # # plt.show()
 
-# data = {'Rg': rg[8000:12000], 'T': temp[8000:12000], 'GPP': gpp[8000:12000], 'Reco': reco[8000:12000], 'VPD': vpd[8000:12000]}
-# df = pd.DataFrame(data, columns=['Rg', 'T', 'GPP', 'Reco', 'VPD'])
+data = {'Rg': rg[8000:12000], 'T': temp[8000:12000], 'GPP': gpp[8000:12000], 'Reco': reco[8000:12000], 'VPD': vpd[8000:12000]}
+df = pd.DataFrame(data, columns=['Rg', 'T', 'GPP', 'Reco', 'VPD'])
 
 # /////////////////////////////////////////////////////////////
 original_data = []
@@ -194,8 +194,8 @@ estimator = DeepAREstimator(
     distr_output=MultivariateGaussianOutput(dim=dim)
 )
 
-# model_path = "models/trained_model_eco22Dec.sav"
-model_path = "models/trained_model_synApr12.sav"
+model_path = "models/trained_model_eco22Apr.sav"
+# model_path = "models/trained_model_synApr12.sav"
 filename = pathlib.Path(model_path)
 if not filename.exists():
     print("Training forecasting model....")
