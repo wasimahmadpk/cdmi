@@ -81,6 +81,7 @@ def deepCause(odata, knockoffs, model, params):
     conf_mat_mean = []
     conf_mat_indist = []
     conf_mat_outdist = []
+    conf_mat_uniform = []
 
     # Get prior skeleton
     prior_graph = params.get('prior_graph')
@@ -89,11 +90,12 @@ def deepCause(odata, knockoffs, model, params):
 
         int_var = odata[i]
         int_var_name = "Z_" + str(i + 1) + ""
+        var_list = []
         causal_decision = []
         mean_cause = []
-        var_list = []
         indist_cause = []
         outdist_cause = []
+        uni_cause = []
 
         # Break temporal dependency and generate a new time series
         pars = parameters.get_sig_params()
@@ -351,6 +353,7 @@ def deepCause(odata, knockoffs, model, params):
             mean_cause.append(causal_decision[0])
             indist_cause.append(causal_decision[1])
             outdist_cause.append(causal_decision[2])
+            uni_cause.append(causal_decision[3])
             causal_decision = []
             print("-------------******----------------*******-------------*******--------------")
             print("Variances:", var_list)
@@ -360,11 +363,13 @@ def deepCause(odata, knockoffs, model, params):
         conf_mat_mean = conf_mat_mean + mean_cause
         conf_mat_indist = conf_mat_indist + indist_cause
         conf_mat_outdist = conf_mat_outdist + outdist_cause
-        mean_cause, indist_cause, outdist_cause = [], [], []
+        conf_mat_uniform = conf_mat_uniform + uni_cause
+        mean_cause, indist_cause, outdist_cause, uni_cause = [], [], [], []
 
     conf_mat.append(conf_mat_mean)
     conf_mat.append(conf_mat_indist)
     conf_mat.append(conf_mat_outdist)
+    conf_mat.append(conf_mat_uniform)
 
     print("Confusion Matrix:", conf_mat)
     true_conf_mat = [1, 1, 1, 1, 1,    0, 1, 0, 0, 1,   0, 0, 1, 0, 1,   0, 0, 0, 1, 1,    0, 0, 0, 0, 1]
