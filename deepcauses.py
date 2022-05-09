@@ -26,7 +26,7 @@ from gluonts.dataset.common import ListDataset
 from gluonts.model.deepar import DeepAREstimator
 from gluonts.model.deepar._network import DeepARTrainingNetwork
 from gluonts.evaluation.backtest import make_evaluation_predictions
-from scipy.stats import ttest_ind, ttest_ind_from_stats, ttest_1samp
+from scipy.stats import ttest_ind, ttest_ind_from_stats, ttest_1samp, ks_2samp
 from sklearn.feature_selection import f_regression, mutual_info_regression
 from gluonts.distribution.multivariate_gaussian import MultivariateGaussianOutput
 from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score, accuracy_score
@@ -159,13 +159,13 @@ def deepCause(odata, knockoffs, model, params):
                 diff = []
                 start = 10
 
-                for iter in range(25):
+                for iter in range(30):
 
                     mselist_batch = []
                     mselistint_batch = []
                     mapelist_batch = []
                     mapelistint_batch = []
-                    for r in range(4):
+                    for r in range(5):
 
                         test_data = odata[:, start: start + params.get('train_len') + params.get('pred_len')].copy()
 
@@ -238,9 +238,9 @@ def deepCause(odata, knockoffs, model, params):
                         mapelist_batch.append(mape)
                         mselistint_batch.append(mseint)
                         mapelistint_batch.append(mapeint)
-                        # step = step + 96
+                        # start = start + 96
 
-                    start = start + 25  # Step size for sliding window
+                    start = start + 10  # Step size for sliding window
                     mselist.append(np.mean(mselist_batch))  # mselist = mselist_batch
                     mapelist.append(np.mean(mapelist_batch))  # mapelist = mapelist_batch
                     mselistint.append(np.mean(mselistint_batch))  # mselistint = mselistint_batch
@@ -310,13 +310,14 @@ def deepCause(odata, knockoffs, model, params):
                     f"Average Causal Strength using {heuristic_itn_types[z]} Intervention: {np.mean(css_list[z])}")
                 # print(f"Average Causal Strength using {heuristic_itn_types[z]} Intervention: {np.mean(np.array(mselolint[z]) - np.array(mselol[z]))}")
                 # print("CSS: ", css_score)
-                t, p = ttest_ind(np.array(mapelolint[z]), np.array(mapelol[z]), equal_var=True)
+                # t, p = ttest_ind(np.array(mapelolint[z]), np.array(mapelol[z]), equal_var=True)
+                t, p = ks_2samp(np.array(mapelolint[z]), np.array(mapelol[z]))
                 # t, p = ttest_1samp(css_list[z], popmean=0.0, alternative="greater")  #
                 # plt.hist(mselolint[z])
                 # plt.hist(mselol[z])
                 # plt.show()
                 print(f'Test statistic: {t}, p-value: {p}')
-                if p < 0.05 or mutual_info[i][j] > 0.33:
+                if p < 0.10 or mutual_info[i][j] > 0.33:
                     print("Null hypothesis is rejected")
                     causal_decision.append(1)
                 else:
@@ -372,7 +373,8 @@ def deepCause(odata, knockoffs, model, params):
     conf_mat.append(conf_mat_uniform)
 
     print("Confusion Matrix:", conf_mat)
-    true_conf_mat = [1, 1, 1, 1, 1,    0, 1, 0, 0, 1,   0, 0, 1, 0, 1,   0, 0, 0, 1, 1,    0, 0, 0, 0, 1]
+    true_conf_mat = [1, 1, 1, 1, 1,    0, 1, 0, 0, 0,   0, 0, 1, 0, 1,  0, 0, 0, 1, 1,  0, 0, 0, 0, 1]
+    # true_conf_mat = [1, 1, 0,   0, 1, 0,   0, 0, 1]
 
     for ss in range(len(conf_mat)):
 
