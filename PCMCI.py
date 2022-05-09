@@ -130,7 +130,7 @@ x5 = normalize(down_sample(np.array(syndata['Z5']), win_size))
 # gpp = normalize(down_sample(np.array(syndata['GPP']), win_size))
 # reco = normalize(down_sample(np.array(syndata['Reco']), win_size))
 
-data = np.array([x1[:150], x2[:150], x3[:150], x4[:150], x5[:150]])
+data = np.array([x1[:500], x2[:500], x3[:500], x4[:500], x5[:500]])
 # # data = np.array([kts, dts, lts])
 # data = np.array([rg[7000:7500], temp[7000:7500], gpp[7000:7500], reco[7000:7500]])
 print(data)
