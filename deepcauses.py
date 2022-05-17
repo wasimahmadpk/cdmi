@@ -110,7 +110,7 @@ def deepCause(odata, knockoffs, model, params):
         knockoff_sample = np.array(knockoffs[:, i])
 
         mean = np.random.normal(0, 0.05, len(knockoff_sample)) + np.mean(odata[i])
-        outdist = np.random.normal(10, 10, len(knockoff_sample))
+        outdist = np.random.normal(150, 120, len(knockoff_sample))
         # outdist = get_shuffled_ts(SAMPLE_RATE, DURATION, odata[i])
         uniform = np.random.uniform(np.min(odata[i]), np.min(odata[i]), len(knockoff_sample))
         interventionlist = [knockoff_sample, outdist[: len(knockoff_sample)], mean, uniform]
@@ -373,7 +373,7 @@ def deepCause(odata, knockoffs, model, params):
     conf_mat.append(conf_mat_uniform)
 
     print("Confusion Matrix:", conf_mat)
-    true_conf_mat = [1, 1, 1, 1, 1,    0, 1, 0, 0, 0,   0, 0, 1, 0, 1,  0, 0, 0, 1, 1,  0, 0, 0, 0, 1]
+    true_conf_mat = [1, 1, 1, 1, 1,    0, 1, 0, 0, 1,   0, 0, 1, 0, 0,  0, 0, 0, 1, 0,  0, 0, 0, 0, 1]
     # true_conf_mat = [1, 1, 0,   0, 1, 0,   0, 0, 1]
 
     for ss in range(len(conf_mat)):
@@ -386,9 +386,9 @@ def deepCause(odata, knockoffs, model, params):
         
         print("---------***-----------***----------***----------")
         print(f"Intervention: {heuristic_itn_types[ss]}")
-        print(f"TP: {tp}, TN: {tn}, FP: {fp}, FN: {fn}")  
-        print(f"Accuracy: {acc}")
-        print(f"F-score: {fscore}")
+        print(f"TP: {tp}, TN: {tn}, FP: {fp}, FN: {fn}")
         print(f"Precision: {precision}")
         print(f"Recall: {recall}")
+        print(f"Accuracy: {acc}")
+        print(f"F-score: {fscore}")
         print("---------***-----------***----------***----------")
