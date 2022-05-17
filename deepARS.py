@@ -209,7 +209,7 @@ estimator = DeepAREstimator(
 )
 
 # model_path = "models/trained_model_eco28Apr.sav"
-model_path = "models/trained_model_synMay9.sav"
+model_path = "models/trained_model_syn17May.sav"
 filename = pathlib.Path(model_path)
 if not filename.exists():
     print("Training forecasting model....")
@@ -235,7 +235,7 @@ knockoffs = obj.GenKnockoffs(n, dim, data_actual)
 
 # Causal skeletion based on prior assumptions/ expert knowledge
 # prior_graph = np.array([[1, 1, 0], [0, 1, 0], [0, 0, 1]])
-prior_graph = np.array([[1, 1, 1, 1, 1], [0, 1, 0, 0, 0], [0, 0, 1, 0, 1], [0, 0, 0, 1, 1], [0, 0, 0, 0, 1]])
+prior_graph = np.array([[1, 1, 1, 1, 1], [0, 1, 0, 0, 1], [0, 0, 1, 0, 0], [0, 0, 0, 1, 0], [0, 0, 0, 0, 1]])
 
 # Parameters dict
 params = {
