@@ -93,9 +93,11 @@ x5 = normalize(down_sample(np.array(syndata['Z5']), win_size))
 #
 #
 col_list = ['Z1', 'Z2', 'Z3', 'Z4', 'Z5']
+
 # # col_list = ['Kts', 'Dts', 'Lts']
 # col_list = ['Rg', 'T', 'GPP', 'Reco']
 dt = {'Z1': x1, 'Z2': x2, 'Z3': x3, 'Z4': x4, 'Z5': x5}
+
 data = pd.DataFrame(dt, columns=col_list)
 # # data = pd.DataFrame({'Kts': kts, 'Dts': dts, 'Lts': lts}, columns=col_list)
 # data = pd.DataFrame({'Rg': rg[0:1000], 'T': temp[0:1000], 'GPP': gpp[0: 1000], 'Reco': reco[0: 1000]}, columns=col_list)
