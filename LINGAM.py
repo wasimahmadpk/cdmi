@@ -4,10 +4,10 @@ import numpy as np
 import pandas as pd
 import statsmodels.api as sm
 from riverdata import RiverData
-from lingam.utils import make_dot
 from statsmodels.tsa.api import VAR
 from statsmodels.tsa.arima.model import ARIMA
 from statsmodels.tsa.base.datetools import dates_from_str
+from lingam.utils import print_causal_directions, print_dagc, make_dot
 
 
 def normalize(var):
@@ -83,9 +83,11 @@ x5 = normalize(down_sample(np.array(syndata['Z5']), win_size))
 #
 #
 col_list = ['Z1', 'Z2', 'Z3', 'Z4', 'Z5']
+
 # # col_list = ['Kts', 'Dts', 'Lts']
 # col_list = ['Rg', 'T', 'GPP', 'Reco']
 dt = {'Z1': x1, 'Z2': x2, 'Z3': x3, 'Z4': x4, 'Z5': x5}
+
 data = pd.DataFrame(dt, columns=col_list)
 # # data = pd.DataFrame({'Kts': kts, 'Dts': dts, 'Lts': lts}, columns=col_list)
 # data = pd.DataFrame({'Rg': rg[0:1000], 'T': temp[0:1000], 'GPP': gpp[0: 1000], 'Reco': reco[0: 1000]}, columns=col_list)
@@ -123,17 +125,20 @@ data = pd.DataFrame(dt, columns=col_list)
 
 # To run causal discovery, we create a DirectLiNGAM object and call the fit method.
 model = lingam.DirectLiNGAM()
-model.fit(data)
+# model.fit(data)
+result = model.bootstrap(data, n_sampling=5)
+cdc = result.get_causal_direction_counts(n_directions=10, min_causal_effect=0.01, split_by_causal_effect_sign=True)
+print_causal_directions(cdc, 5)
 
-# Using the causal_order_ properties,
-# we can see the causal ordering as a result of the causal discovery.
-print(model.causal_order_)
-
-# Also, using the adjacency_matrix_ properties,
-# we can see the adjacency matrix as a result of the causal discovery.
-print(model.adjacency_matrix_)
-dot = make_dot(model.adjacency_matrix_)
-print(dot)
-# p_values = model.get_error_independence_p_values(data)
-# print(p_values)
+# # Using the causal_order_ properties,
+# # we can see the causal ordering as a result of the causal discovery.
+# print(model.causal_order_)
+#
+# # Also, using the adjacency_matrix_ properties,
+# # we can see the adjacency matrix as a result of the causal discovery.
+# print(model.adjacency_matrix_)
+# dot = make_dot(model.adjacency_matrix_)
+# print(dot)
+# # p_values = model.get_error_independence_p_values(data)
+# # print(p_values)
 
