@@ -68,14 +68,14 @@ links_coeffs = {0: [((0, -1), 0.8)],
 # var_names = [r"$Xts$", r"$Yts$", r"$Zts$", r"$Rts$"]
 # col_names = ['Xts', 'Yts', 'Zts', 'Rts']
 
-var_names = [r"$Z1$", r"$Z2$", r"$Z3$", r"$Z4$", r"$Z5$"]
-col_names = ['Z1', 'Z2', 'Z3', 'Z4', 'Z5']
+# var_names = [r"$Z1$", r"$Z2$", r"$Z3$", r"$Z4$", r"$Z5$"]
+# col_names = ['Z1', 'Z2', 'Z3', 'Z4', 'Z5']
 # # #
 # var_names = [r"$Rg$", r"$T$", r"$GPP$", r"$Reco$"]
 # col_names = ['Rg', 'T', 'GPP' 'Reco']
 
-# var_names = [r"$Kts$", r"$Dts$", r"$Lts$"]
-# col_names = ['Kts', 'Dts', 'Lts']
+var_names = [r"$Kts$", r"$Dts$", r"$Lts$"]
+col_names = ['Kts', 'Dts', 'Lts']
 
 # data, true_parents = pp.var_process(links_coeffs, T=1000)
 # # Data must be array of shape (time, variables)
@@ -99,21 +99,23 @@ col_names = ['Z1', 'Z2', 'Z3', 'Z4', 'Z5']
 
 
 # # # External dataframe
-syndata = pd.read_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/ncdata/synthetic_data.csv", sep=',')
+# syndata = pd.read_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/ncdata/synthetic_data.csv", sep=',')
 
-x1 = normalize(down_sample(np.array(syndata['Z1']), win_size))
-x2 = normalize(down_sample(np.array(syndata['Z2']), win_size))
-x3 = normalize(down_sample(np.array(syndata['Z3']), win_size))
-x4 = normalize(down_sample(np.array(syndata['Z4']), win_size))
-x5 = normalize(down_sample(np.array(syndata['Z5']), win_size))
+# x1 = normalize(down_sample(np.array(syndata['Z1']), win_size))
+# x2 = normalize(down_sample(np.array(syndata['Z2']), win_size))
+# x3 = normalize(down_sample(np.array(syndata['Z3']), win_size))
+# x4 = normalize(down_sample(np.array(syndata['Z4']), win_size))
+# x5 = normalize(down_sample(np.array(syndata['Z5']), win_size))
 
 
-# # River Discharge Data
-# dataobj = RiverData()
-# data = dataobj.get_data()
-# kts = data['Kempten']
-# dts = data['Dillingen']
-# lts = data['Lenggries']
+# River Discharge Data
+dataobj = RiverData()
+data = dataobj.get_data()
+
+dts = data.iloc[:, 1].tolist()
+kts = data.iloc[:, 2].tolist()
+lts = data.iloc[:, 3].tolist()
+
 
 # "Load semi-synthetic data"
 # syndata = pd.read_csv("/home/ahmad/PycharmProjects/deepCause/datasets/ncdata/artificial_data.csv", sep=',')
@@ -130,8 +132,8 @@ x5 = normalize(down_sample(np.array(syndata['Z5']), win_size))
 # gpp = normalize(down_sample(np.array(syndata['GPP']), win_size))
 # reco = normalize(down_sample(np.array(syndata['Reco']), win_size))
 
-data = np.array([x1[:500], x2[:500], x3[:500], x4[:500], x5[:500]])
-# # data = np.array([kts, dts, lts])
+# data = np.array([x1[:500], x2[:500], x3[:500], x4[:500], x5[:500]])
+data = np.array([kts[0:555], dts[:555], lts[:555]])
 # data = np.array([rg[7000:7500], temp[7000:7500], gpp[7000:7500], reco[7000:7500]])
 print(data)
 data = data.transpose()
@@ -164,10 +166,10 @@ dataframe = pp.DataFrame(data,
 #                     path_node_array=graph_data['path_node_array'],
 #                     )
 
-cond_ind_test = GPDC()             # ParCorr()  # #CMIknn()
+cond_ind_test = GPDC()  # CMIknn()   # ParCorr()
 pcmci = PCMCI(dataframe=dataframe, cond_ind_test=cond_ind_test, verbosity=1)
-results = pcmci.run_pcmciplus(tau_min=1, tau_max=5, pc_alpha=.05)
+results = pcmci.run_pcmciplus(tau_min=1, tau_max=5, pc_alpha=.10)
 pcmci.print_significant_links(p_matrix=results['p_matrix'],
                                      val_matrix=results['val_matrix'],
-                                     alpha_level=0.05)
+                                     alpha_level=0.025)
 ## Significant parents at alpha = 0.05:
