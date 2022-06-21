@@ -82,7 +82,7 @@ def modelTest(model_path, test_ds, num_samples, data, idx, prediction_length, co
     y_true = data[-prediction_length:]
 
     # mape = mean_absolute_percentage_error(y_true, np.mean(y_pred, axis=0))
-    mape = mean_absolute_error(y_true, np.mean(y_pred, axis=0))*100
+    mape = mean_absolute_error(y_true, np.mean(y_pred, axis=0))
     mse = mean_squared_error(y_true, np.mean(y_pred, axis=0))
     mae = mean_absolute_error(y_true, np.mean(y_pred, axis=0))
 
