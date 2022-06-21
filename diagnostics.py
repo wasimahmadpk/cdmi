@@ -59,19 +59,20 @@ def ScatterCovariance(X, Xk):
 
     # Originality
     XX = np.corrcoef(X.T)
-    print("Shape X:", np.shape(X))
+    # print("Shape X:", np.shape(X))
     print("Cov X:", XX)
     XkXk = np.corrcoef(Xk.T)
-    print("Shape Xk:", np.shape(Xk))
-    print("Cov XkXk:", XkXk)
+    # print("Shape Xk:", np.shape(Xk))
+    # print("Cov XkXk:", XkXk)
 
     # Plot data
     fig = plt.figure()
     ax1 = fig.add_subplot(111)
     sns.distplot(X[:, 0], color='red', label='Actual')
     sns.distplot(Xk[:, 0], color='green', label='Knockoffs')
-    ax1.set_ylabel('Xt')
+    ax1.set_ylabel('')
     ax1.legend()
+    plt.savefig('Distribution.pdf')
     plt.show()
 
     PlotScatterHelper(XX, XkXk, ax=axarr[0])
