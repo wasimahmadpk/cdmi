@@ -84,19 +84,21 @@ def running_avg_effect(y, yint):
         ace = 1/((params.get("train_len") + 1 + i) - params.get("train_len")) * (rae + (y[i] - yint[i]))
     return rae
 
-# # Parameters for River discharge data
-# freq = 'D'
-# dim = 3
-# epochs = 150
-# win_size = 1
 
-# Parameters for synthetic data
-freq = '30min'
+# Parameters for River discharge data
+
+freq = 'D'
+dim = 3
 epochs = 150
 win_size = 1
 
-training_length = 666
-prediction_length = 33
+# # Parameters for synthetic data
+# freq = '30min'
+# epochs = 150
+# win_size = 1
+
+training_length = 555    # 555
+prediction_length = 28   # 28
 num_samples = 10
 
 # # Parameters for ecosystem data
@@ -110,12 +112,14 @@ num_samples = 10
 # num_samples = 10
 
 
-# # Load river discharges data
-# dataobj = RiverData()
-# data = dataobj.get_data()
-# kempton = data['Kempten']
-# dillingen = data['Dillingen']
-# lenggries = data['Lenggries']
+# Load river discharges data
+dataobj = RiverData()
+data = dataobj.get_data()
+
+dillingen = data.iloc[:, 1].tolist()
+kempton = data.iloc[:, 2].tolist()
+# kempton = [0, 0, 0, 0, 0] + kempton
+lenggries = data.iloc[:, 3].tolist()
 
 # # Plot River data after normalization and (daily) aggregation
 # fig = plt.figure()
@@ -135,9 +139,8 @@ num_samples = 10
 # ax3.set_ylabel("Lt")
 # plt.show()
 
-
 # Load synthetic data *************************
-df = pd.read_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/ncdata/synthetic_data.csv")
+# df = pd.read_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/ncdata/synthetic_data.csv")
 
 
 # # "Load fluxnet 2015 data for grassland IT-Mbo site"
@@ -151,7 +154,7 @@ df = pd.read_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/ncdata/synt
 # oreco = fluxnet['RECO_NT_VUT_50']
 # #
 # # ************* LOad FLUXNET2015 data ************************
-#
+
 # rg = normalize(down_sample(org, win_size))
 # temp = normalize(down_sample(otemp, win_size))
 # # gpp = normalize(down_sample(nee, win_size, partition='gpp'))
@@ -166,9 +169,10 @@ df = pd.read_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/ncdata/synt
 # data = {'Rg': rg[8000:12000], 'T': temp[8000:12000], 'GPP': gpp[8000:12000], 'Reco': reco[8000:12000]}
 # df = pd.DataFrame(data, columns=['Rg', 'T', 'GPP', 'Reco'])
 
-# data = {'Kt': kempton, 'Dt': dillingen, 'Lt': lenggries}
-# df = pd.DataFrame(data, columns=['Kt', 'Dt', 'Lt'])
-
+data = {'Kt': normalize(kempton), 'Dt': normalize(dillingen), 'Lt': normalize(lenggries)}
+df = pd.DataFrame(data, columns=['Kt', 'Dt', 'Lt'])
+# print(df.isnull().sum(axis=0))
+# print(df.head())
 # /////////////////////////////////////////////////////////////
 original_data = []
 train_data = []
@@ -196,8 +200,8 @@ estimator = DeepAREstimator(
     prediction_length=prediction_length,
     context_length=prediction_length,
     freq=freq,
-    num_layers=5,
-    num_cells=50,
+    num_layers=3,  # 3
+    num_cells=33,  # 33
     dropout_rate=0.1,
     trainer=Trainer(
         ctx="cpu",
@@ -208,8 +212,8 @@ estimator = DeepAREstimator(
     distr_output=MultivariateGaussianOutput(dim=dim)
 )
 
-# model_path = "models/trained_model_eco28Apr.sav"
-model_path = "models/trained_model_syn17May1.sav"
+# model_path = "models/trained_model_syn08Jun.sav"
+model_path = "models/trained_model_river16Jun.sav"
 filename = pathlib.Path(model_path)
 if not filename.exists():
     print("Training forecasting model....")
