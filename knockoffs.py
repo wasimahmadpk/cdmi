@@ -109,7 +109,7 @@ class Knockoffs:
 
         # Sample test data
         # X_test = DataSampler.sample(n, test=True)
-        X_test = datax[: round(len(datax)*1.0), :]
+        X_test = datax[:round(len(datax)*1.0):, :]
         # print("Test shape:", X_test.shape)
         # print("Generated a test dataset of size: %d x %d." % (X_test.shape))
 
@@ -136,24 +136,24 @@ class Knockoffs:
         # Plot diagnostics for oracle knockoffs
         # diagnostics.ScatterCovariance(X_test, Xk_test_o)
 
-        # Compute goodness of fit diagnostics on 50 test sets containing 100 observations each
-        n_exams = 50
-        n_samples = 100
+        # # Compute goodness of fit diagnostics on 50 test sets containing 100 observations each
+        # n_exams = 50
+        # n_samples = 100
         # exam = diagnostics.KnockoffExam(DataSampler,
         #                                 {'Second-order': second_order})    # 'Machine': machine, 'Second-order': second_order
         # diagnostics = exam.diagnose(n_samples, n_exams)
-
-        # Summarize diagnostics
+        #
+        # # Summarize diagnostics
         # diagnostics.groupby(['Method', 'Metric', 'Swap']).describe()
         # print(diagnostics.head())
-
-        # Plot covariance goodness-of-fit statistics
+        #
+        # # Plot covariance goodness-of-fit statistics
         # data = diagnostics[(diagnostics.Metric == "Covariance") & (diagnostics.Swap != "self")]
         # fig, ax = plt.subplots(figsize=(12, 6))
         # sns.boxplot(x="Swap", y="Value", hue="Method", data=data)
         # plt.title("Covariance goodness-of-fit")
         # plt.show()
-
+        #
         # # Plot k-nearest neighbors goodness-of-fit statistics
         # data = diagnostics[(diagnostics.Metric == "KNN") & (diagnostics.Swap != "self")]
         # fig, ax = plt.subplots(figsize=(12, 6))
