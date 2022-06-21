@@ -9,6 +9,7 @@ import mxnet as mx
 import pandas as pd
 from os import path
 from math import sqrt
+import seaborn as sns
 from netCDF4 import Dataset
 from scipy.fft import irfft
 from itertools import islice
@@ -26,7 +27,7 @@ from gluonts.dataset.common import ListDataset
 from gluonts.model.deepar import DeepAREstimator
 from gluonts.model.deepar._network import DeepARTrainingNetwork
 from gluonts.evaluation.backtest import make_evaluation_predictions
-from scipy.stats import ttest_ind, ttest_ind_from_stats, ttest_1samp, ks_2samp
+from scipy.stats import ttest_ind, ttest_ind_from_stats, ttest_1samp, ks_2samp, kstest
 from sklearn.feature_selection import f_regression, mutual_info_regression
 from gluonts.distribution.multivariate_gaussian import MultivariateGaussianOutput
 from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score, accuracy_score
@@ -159,13 +160,13 @@ def deepCause(odata, knockoffs, model, params):
                 diff = []
                 start = 10
 
-                for iter in range(30):
+                for iter in range(30):  # 30
 
                     mselist_batch = []
                     mselistint_batch = []
                     mapelist_batch = []
                     mapelistint_batch = []
-                    for r in range(5):
+                    for r in range(3):
 
                         test_data = odata[:, start: start + params.get('train_len') + params.get('pred_len')].copy()
 
@@ -240,7 +241,7 @@ def deepCause(odata, knockoffs, model, params):
                         mapelistint_batch.append(mapeint)
                         # start = start + 96
 
-                    start = start + 10  # Step size for sliding window
+                    start = start + 10  # Step size for sliding window # 10
                     mselist.append(np.mean(mselist_batch))  # mselist = mselist_batch
                     mapelist.append(np.mean(mapelist_batch))  # mapelist = mapelist_batch
                     mselistint.append(np.mean(mselistint_batch))  # mselistint = mselistint_batch
@@ -295,61 +296,76 @@ def deepCause(odata, knockoffs, model, params):
             for z in range(len(heuristic_itn_types)):
 
                 # months = ['7 Aug', '14 Aug', '21 Aug', '28 Aug', '7 Sep', '14 Sep', '21 Sep', '28 Sep']
-                plt.plot(css_list[z])
-                plt.xlabel("Vegetation season")
+                # plt.plot(css_list[z])
+                # plt.xlabel("Vegetation season")
 
-                if len(columns) > 0:
-                    plt.ylabel(f"CSS: {columns[i]} ---> {columns[j]}")
-                    fnamecss = f"/home/ahmad/PycharmProjects/deepCausality/plots/{columns[i]}_{columns[j]}:css"
-                else:
-                    plt.ylabel(f"CSS: Z_{i + 1} ---> Z_{j + 1}")
-                    fnamecss = f"/home/ahmad/PycharmProjects/deepCausality/plots/{Z_[i + 1]}_{Z_[j + 1]}:css"
+                # if len(columns) > 0:
+                #     plt.ylabel(f"CSS: {columns[i]} ---> {columns[j]}")
+                #     fnamecss = f"/home/ahmad/PycharmProjects/deepCausality/plots/{columns[i]}_{columns[j]}:css"
+                # else:
+                #     plt.ylabel(f"CSS: Z_{i + 1} ---> Z_{j + 1}")
+                #     fnamecss = f"/home/ahmad/PycharmProjects/deepCausality/plots/{Z_[i + 1]}_{Z_[j + 1]}:css"
 
                 # Hypothesis testing for causal decision
                 print(
                     f"Average Causal Strength using {heuristic_itn_types[z]} Intervention: {np.mean(css_list[z])}")
                 # print(f"Average Causal Strength using {heuristic_itn_types[z]} Intervention: {np.mean(np.array(mselolint[z]) - np.array(mselol[z]))}")
                 # print("CSS: ", css_score)
+                print(f"Mean: {np.mean(mapelol[z])}, Mean Intervention: {np.mean(mapelolint[z])}")
+                print(f"Variance: {np.var(mapelol[z])}, Variance Intervention: {np.var(mapelolint[z])}")
                 # t, p = ttest_ind(np.array(mapelolint[z]), np.array(mapelol[z]), equal_var=True)
-                t, p = ks_2samp(np.array(mapelolint[z]), np.array(mapelol[z]))
-                # t, p = ttest_1samp(css_list[z], popmean=0.0, alternative="greater")  #
+                t, p = ks_2samp(np.array(mapelol[z]), np.array(mapelolint[z]))
+                # t, p = kstest(np.array(mapelolint[z]), np.array(mapelol[z]))
+                # t, p = ttest_1samp(css_list[z], popmean=0.0)   # alternative="greater"
+                # t, p = ttest_1samp(np.array(mapelolint[z]), popmean=np.mean(mapelol[z]))
                 # plt.hist(mselolint[z])
                 # plt.hist(mselol[z])
                 # plt.show()
                 print(f'Test statistic: {t}, p-value: {p}')
-                if p < 0.10 or mutual_info[i][j] > 0.33:
+                if p < 0.10 or mutual_info[i][j] > 0.66:
                     print("Null hypothesis is rejected")
                     causal_decision.append(1)
                 else:
                     print("Fail to reject null hypothesis")
                     causal_decision.append(0)
 
-            plt.plot(np.arange(1, 22), np.zeros(21), 'b--')
-            plt.legend(heuristic_itn_types)
-            plt.gcf()
+            # plt.plot(np.arange(1, 22), np.zeros(21), 'b--')
+            # plt.legend(heuristic_itn_types)
+            # plt.gcf()
             # plt.show()
-            plt.savefig(fnamecss, dpi=100, facecolor='w', edgecolor='w',
-                        orientation='portrait', papertype=None, format=None,
-                        transparent=False, bbox_inches=None, pad_inches=0.1,
-                        frameon=None, metadata=None)
-            plt.close()
+            # plt.savefig(fnamecss, dpi=100, facecolor='w', edgecolor='w',
+            #             orientation='portrait', papertype=None, format=None,
+            #             transparent=False, bbox_inches=None, pad_inches=0.1,
+            #             frameon=None, metadata=None)
+            # plt.close()
 
-            plt.hist(css_list[0], bins=5)
-            # plt.hist(mapelol[1], bins=7, color='red')
-            # plt.hist(mapelolint[1], bins=7, color='green')
+            # plt.hist(css_list[0], bins=5)
+            # plt.hist(mapelol[0], bins=7, color='red', label='Actual')
+            # plt.hist(mapelolint[0], bins=7, color='green', label='Counterfactual')
+
+            # Plot data
+            fig = plt.figure()
+            ax1 = fig.add_subplot(111)
+            sns.distplot(mapelol[0], color='red', label='Actual')
+            sns.distplot(mapelolint[0], color='green', label='Counterfactual')
 
             if len(columns) > 0:
-                plt.ylabel(f"CSS: {columns[i]} ---> {columns[j]}")
+                # plt.ylabel(f"CSS: {columns[i]} ---> {columns[j]}")
+                ax1.set_ylabel(f"{columns[i]} ---> {columns[j]}")
             else:
-                plt.ylabel(f"CSS: Z_{i + 1} ---> Z_{j + 1}")
+                # plt.ylabel(f"CSS: Z_{i + 1} ---> Z_{j + 1}")
+                ax1.set_ylabel(f"Z_{i + 1} ---> Z_{j + 1}")
 
             plt.gcf()
+            ax1.legend()
+            plt.savefig(f"/home/ahmad/PycharmProjects/deepCausality/plots/{columns[i]} ---> {columns[j]}.pdf")
             # plt.show()
-            plt.savefig(fnamehist, dpi=100, facecolor='w', edgecolor='w',
-                        orientation='portrait', papertype=None, format=None,
-                        transparent=False, bbox_inches=None, pad_inches=0.1,
-                        frameon=None, metadata=None)
-            plt.close()
+
+            # plt.savefig(fnamehist, dpi=100, facecolor='w', edgecolor='w',
+            #             orientation='portrait', papertype=None, format=None,
+            #             transparent=False, bbox_inches=None, pad_inches=0.1,
+            #             frameon=None, metadata=None)
+            # plt.close()
 
             mean_cause.append(causal_decision[0])
             indist_cause.append(causal_decision[1])
@@ -373,8 +389,8 @@ def deepCause(odata, knockoffs, model, params):
     conf_mat.append(conf_mat_uniform)
 
     print("Confusion Matrix:", conf_mat)
-    true_conf_mat = [1, 1, 1, 1, 1,    0, 1, 0, 0, 1,   0, 0, 1, 0, 0,  0, 0, 0, 1, 0,  0, 0, 0, 0, 1]
-    # true_conf_mat = [1, 1, 0,   0, 1, 0,   0, 0, 1]
+    # true_conf_mat = [1, 1, 1, 1, 1,    0, 1, 0, 0, 1,   0, 0, 1, 0, 0,  0, 0, 0, 1, 0,  0, 0, 0, 0, 1]
+    true_conf_mat = [1, 1, 0,   0, 1, 0,   0, 0, 1]
 
     for ss in range(len(conf_mat)):
 
