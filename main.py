@@ -121,24 +121,6 @@ kempton = data.iloc[:, 2].tolist()
 # kempton = [0, 0, 0, 0, 0] + kempton
 lenggries = data.iloc[:, 3].tolist()
 
-# # Plot River data after normalization and (daily) aggregation
-# fig = plt.figure()
-# ax1 = fig.add_subplot(311)
-# ax1.plot(kempton)
-# # ax1.plot(recoo)
-# ax1.set_ylabel('Kt')
-#
-# ax2 = fig.add_subplot(312)
-# ax2.plot(dillingen)
-# # ax2.plot(tempp)
-# ax2.set_ylabel("Dt")
-#
-# ax3 = fig.add_subplot(313)
-# ax3.plot(lenggries)
-# # ax3.plot(gppp)
-# ax3.set_ylabel("Lt")
-# plt.show()
-
 # Load synthetic data *************************
 # df = pd.read_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/ncdata/synthetic_data.csv")
 
@@ -171,18 +153,13 @@ lenggries = data.iloc[:, 3].tolist()
 
 data = {'Kt': normalize(kempton), 'Dt': normalize(dillingen), 'Lt': normalize(lenggries)}
 df = pd.DataFrame(data, columns=['Kt', 'Dt', 'Lt'])
-# print(df.isnull().sum(axis=0))
-# print(df.head())
 # /////////////////////////////////////////////////////////////
 original_data = []
-train_data = []
-columns = df.columns
 dim = len(df.columns)
 print(f"Dimension {dim} and Columns: {df.columns}")
 
 for col in df:
     original_data.append(df[col])
-    # original_data.append(normalize(down_sample(df[col], win_size)))
 
 original_data = np.array(original_data)
 train_ds = ListDataset(
@@ -222,20 +199,10 @@ if not filename.exists():
     pickle.dump(predictor, open(filename, 'wb'))
 
 # Generate Knockoffs
-category = 3
 data_actual = np.array(original_data[:, :]).transpose()
 n = len(original_data[:, 0])
 obj = Knockoffs()
 knockoffs = obj.GenKnockoffs(n, dim, data_actual)
-
-# counterfactuals = np.array(knockoffs[:, category-1])
-# Show variables with its knockoff copy
-# plt.plot(np.arange(0, len(counterfactuals)), original_data[3][: len(counterfactuals)], counterfactuals)
-# plt.show()
-
-# Check for correlation between knockoff and original variable
-# corr = np.corrcoef(counterfactuals, target[0: len(counterfactuals)])
-# print(f"Correlation Coefficient (Variable, Counterfactual): {corr}")
 
 # Causal skeletion based on prior assumptions/ expert knowledge
 # prior_graph = np.array([[1, 1, 0], [0, 1, 0], [0, 0, 1]])
