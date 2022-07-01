@@ -17,7 +17,7 @@ from datetime import datetime
 import matplotlib.pyplot as plt
 from knockoffs import Knockoffs
 from scipy.special import stdtr
-from model_test import modelTest
+from forecast import modelTest
 from sklearn.utils import shuffle
 from gluonts.trainer import Trainer
 from gluonts.evaluation import Evaluator
@@ -117,22 +117,10 @@ def deepCause(odata, knockoffs, model, params):
         interventionlist = [knockoff_sample, outdist[: len(knockoff_sample)], mean, uniform]
         heuristic_itn_types = ['In-dist', 'Out-dist', 'Mean', 'Uniform']
 
-        # Show variable with its knockoff copy
-        # plt.plot(np.arange(0, len(counterfactuals)), target[: len(counterfactuals)], counterfactuals)
-        # plt.show()
-
-        # Check correlation of knockoff samples with its original variable
-        # corr = np.corrcoef(knockoff_sample, odata[j][0: len(knockoff_sample)])
-        # print(f"Correlation Coefficient (Variable, Counterfactual): {corr}")
-
         for j in range(len(odata)):
             back_door_int = []
             back_door = prior_graph[:, j].nonzero()[0]
             print(f"Front/Backdoor Paths: {np.array(back_door) + 1} ---> {j + 1}")
-            for g in range(len(back_door)):
-                # back_door_int.append(np.array(knockoffs[:, g]))
-                # back_door_int.append(get_shuffled_ts(SAMPLE_RATE, DURATION, odata[g]))
-                back_door_int.append(np.random.normal(10, 10, len(knockoff_sample)))
 
             columns = params.get('col')
             pred_var = odata[j]
@@ -143,7 +131,6 @@ def deepCause(odata, knockoffs, model, params):
             css_score_new = []
             mselol = []
             mapelol = []
-            acelol = []
             mselolint = []
             mapelolint = []
 
@@ -169,11 +156,6 @@ def deepCause(odata, knockoffs, model, params):
                     for r in range(3):
 
                         test_data = odata[:, start: start + params.get('train_len') + params.get('pred_len')].copy()
-
-                        # for q in range(len(back_door)):
-                        #     if back_door[q] != j or back_door[q] != i:
-                        #         test_data[q, :] = back_door_int[q][0:550]
-
                         test_ds = ListDataset(
                             [
                                 {'start': "01/01/1961 00:00:00",
@@ -183,13 +165,8 @@ def deepCause(odata, knockoffs, model, params):
                             freq=params.get('freq'),
                             one_dim_target=False
                         )
-                        # rg[0:-50] + list(intervene[-50:])
                         int_data = odata[:, start: start + params.get('train_len') + params.get('pred_len')].copy()
-                        # for v in range(len(back_door)):
-                        #     if back_door[v] != j:
-                        # int_data[v, :] = back_door_int[v][0:550]
                         int_data[i, :] = intervene
-
                         test_dsint = ListDataset(
                             [
                                 {'start': "01/01/1961 00:00:00",
@@ -206,22 +183,6 @@ def deepCause(odata, knockoffs, model, params):
                         mseint, mapeint, ypredint = modelTest(model, test_dsint, params.get('num_samples'),
                                                               test_data[j], j,
                                                               params.get('pred_len'), iter, True, m)
-
-                        # Visualize impact of intervention on target variable
-                        # plt.plot(np.arange(100, 100 + params.get("pred_len")), ypred,  '-g', label="Prediction")
-                        # plt.plot(np.arange(100, 100 + params.get("pred_len")), ypredint, '-r', label="Counterfactual")
-                        # plt.plot(test_data[j, -148:], '--b', label="Actual")
-
-                        # # x coordinates for the lines
-                        # xcoords = [100]
-                        # # colors for the lines
-                        # colors = ['black']
-                        #
-                        # for xc, c in zip(xcoords, colors):
-                        #     plt.axvline(x=xc, label="Intervention", ls='--', c=c,)
-                        #
-                        # plt.legend()
-                        # plt.show()
 
                         if (m == 0):
                             # Generate multiple version Knockoffs
@@ -256,30 +217,8 @@ def deepCause(odata, knockoffs, model, params):
                 mapevar = np.var(mapelist)
                 mselol.append(mselist)
                 mapelol.append(mapelist)
-                # acelol.append(acelist)
-                # print(f"MSE: {mselist}, MAPE: {mape}%")
-                # print(f"ACE: {acelist}")
-
                 mselolint.append(mselistint)
                 mapelolint.append(mapelistint)
-                # print(f"MSE: {mselistint}, MAPE: {mape}%")
-                # avg_diff = np.mean(diff, axis=0)
-                # plt.plot(avg_diff)
-                # plt.show()
-
-                for k in range(len(mselist)):
-                    # Calculate causal significan score (CSS)
-                    css_score.append(np.log(mapelistint[k] / mapelist[k]))
-                    # css_score.append(np.log(mselistint[k] / mselist[k]))
-                    # css_score.append(mapelistint[k] - mapelist[k])
-                    # css_score.append(mapelistint[k] / mapelist[k])
-
-                # Absolute casual score
-                # css_score = [abs(x) if x < 0 else x for x in css_score]
-                print("-----------------------------------------------------------------------------")
-                css_list.append(css_score)
-                print("CSS: ", css_score)
-                print("-----------------------------------------------------------------------------")
 
             var_list.append(np.var(mapelolint[1]))
             # print(f"MSE(Mean): {list(np.mean(mselol, axis=0))}")
@@ -295,22 +234,6 @@ def deepCause(odata, knockoffs, model, params):
 
             for z in range(len(heuristic_itn_types)):
 
-                # months = ['7 Aug', '14 Aug', '21 Aug', '28 Aug', '7 Sep', '14 Sep', '21 Sep', '28 Sep']
-                # plt.plot(css_list[z])
-                # plt.xlabel("Vegetation season")
-
-                # if len(columns) > 0:
-                #     plt.ylabel(f"CSS: {columns[i]} ---> {columns[j]}")
-                #     fnamecss = f"/home/ahmad/PycharmProjects/deepCausality/plots/{columns[i]}_{columns[j]}:css"
-                # else:
-                #     plt.ylabel(f"CSS: Z_{i + 1} ---> Z_{j + 1}")
-                #     fnamecss = f"/home/ahmad/PycharmProjects/deepCausality/plots/{Z_[i + 1]}_{Z_[j + 1]}:css"
-
-                # Hypothesis testing for causal decision
-                print(
-                    f"Average Causal Strength using {heuristic_itn_types[z]} Intervention: {np.mean(css_list[z])}")
-                # print(f"Average Causal Strength using {heuristic_itn_types[z]} Intervention: {np.mean(np.array(mselolint[z]) - np.array(mselol[z]))}")
-                # print("CSS: ", css_score)
                 print(f"Mean: {np.mean(mapelol[z])}, Mean Intervention: {np.mean(mapelolint[z])}")
                 print(f"Variance: {np.var(mapelol[z])}, Variance Intervention: {np.var(mapelolint[z])}")
                 # t, p = ttest_ind(np.array(mapelolint[z]), np.array(mapelol[z]), equal_var=True)
@@ -329,21 +252,7 @@ def deepCause(odata, knockoffs, model, params):
                     print("Fail to reject null hypothesis")
                     causal_decision.append(0)
 
-            # plt.plot(np.arange(1, 22), np.zeros(21), 'b--')
-            # plt.legend(heuristic_itn_types)
-            # plt.gcf()
-            # plt.show()
-            # plt.savefig(fnamecss, dpi=100, facecolor='w', edgecolor='w',
-            #             orientation='portrait', papertype=None, format=None,
-            #             transparent=False, bbox_inches=None, pad_inches=0.1,
-            #             frameon=None, metadata=None)
-            # plt.close()
-
-            # plt.hist(css_list[0], bins=5)
-            # plt.hist(mapelol[0], bins=7, color='red', label='Actual')
-            # plt.hist(mapelolint[0], bins=7, color='green', label='Counterfactual')
-
-            # Plot data
+            # plot residuals distribution
             fig = plt.figure()
             ax1 = fig.add_subplot(111)
             sns.distplot(mapelol[0], color='red', label='Actual')
@@ -360,11 +269,6 @@ def deepCause(odata, knockoffs, model, params):
             ax1.legend()
             plt.savefig(f"/home/ahmad/PycharmProjects/deepCausality/plots/{columns[i]} ---> {columns[j]}.pdf")
             # plt.show()
-
-            # plt.savefig(fnamehist, dpi=100, facecolor='w', edgecolor='w',
-            #             orientation='portrait', papertype=None, format=None,
-            #             transparent=False, bbox_inches=None, pad_inches=0.1,
-            #             frameon=None, metadata=None)
             # plt.close()
 
             mean_cause.append(causal_decision[0])
