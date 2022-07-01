@@ -69,10 +69,45 @@ def GetFDRTestParams(model):
     
     return params
 
+
 def get_syn_params():
-    params = {}
+    # Parameters for synthetic data
+    params = {
+        'epochs': 150,
+        'pred_len': 28,
+        'train_len': 555,
+        'prior_graph': np.array([[1, 1, 0], [0, 1, 0], [0, 0, 1]]),
+        'freq': '30min',
+        'win_size': 1
+    }
+
     return params
 
+
 def get_real_params():
-    params = {}
+
+    params = {
+        'epochs': 150,
+        'pred_len': 28,
+        'train_len': 555,
+        'prior_graph': np.array([[1, 1, 0], [0, 1, 0], [0, 0, 1]]),
+        'freq': 'D'
+    }
     return params
+
+
+def get_main_params():
+    # Parameters dict
+    params = {
+        'num_samples': 10,
+        'win_size': 1
+    }
+    return params
+
+
+def set_all_params(**kwargs):
+
+    a = 2
+
+
+
