@@ -1,5 +1,4 @@
 import math
-import netCDF
 import pickle
 import random
 import pathlib
@@ -10,7 +9,6 @@ import pandas as pd
 from os import path
 from math import sqrt
 import seaborn as sns
-from netCDF4 import Dataset
 from scipy.fft import irfft
 from itertools import islice
 from datetime import datetime
@@ -21,7 +19,6 @@ from forecast import modelTest
 from sklearn.utils import shuffle
 from gluonts.trainer import Trainer
 from gluonts.evaluation import Evaluator
-from scipy.fftpack import fft, irfft, fftfreq, rfft, rfftfreq
 from sklearn.metrics import mean_squared_error
 from gluonts.dataset.common import ListDataset
 from gluonts.model.deepar import DeepAREstimator
@@ -36,6 +33,8 @@ np.random.seed(1)
 mx.random.seed(2)
 
 
+
+pars = parameters.get_main_params()
 def mutual_information(x, y):
     mi = mutual_info_regression(x, y)
     mi /= np.max(mi)
@@ -57,11 +56,11 @@ def running_avg_effect(y, yint):
 
     rae = 0
     for i in range(len(y)):
-        ace = 1/((params.get("train_len") + 1 + i) - params.get("train_len")) * (rae + (y[i] - yint[i]))
+        ace = 1/((pars.get("train_len") + 1 + i) - pars.get("train_len")) * (rae + (y[i] - yint[i]))
     return rae
 
 
-def deepCause(odata, knockoffs, model, params):
+def deepCause(odata, knockoffs, model):
 
     mutual_info = []
     for a in range(len(odata)):
