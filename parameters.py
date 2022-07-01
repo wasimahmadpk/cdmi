@@ -68,3 +68,11 @@ def GetFDRTestParams(model):
         params["elasticnet_alpha"] = 0.0
     
     return params
+
+def get_syn_params():
+    params = {}
+    return params
+
+def get_real_params():
+    params = {}
+    return params
