@@ -1,31 +1,21 @@
 import math
-# import netCDF
 import pickle
 import random
 import pathlib
 import numpy as np
+import parameters
 import mxnet as mx
 import pandas as pd
 from os import path
 from math import sqrt
-from netCDF4 import Dataset
-from itertools import islice
 from datetime import datetime
 from riverdata import RiverData
-from deepcauses import deepCause
 import matplotlib.pyplot as plt
 from knockoffs import Knockoffs
 from scipy.special import stdtr
-from model_test import modelTest
 from gluonts.trainer import Trainer
 from gluonts.evaluation import Evaluator
 from sklearn.metrics import mean_squared_error
-from gluonts.dataset.common import ListDataset
-from gluonts.model.deepar import DeepAREstimator
-from gluonts.model.deepar._network import DeepARTrainingNetwork
-from gluonts.evaluation.backtest import make_evaluation_predictions
-from scipy.stats import ttest_ind, ttest_ind_from_stats, ttest_1samp
-from gluonts.distribution.multivariate_gaussian import MultivariateGaussianOutput
 
 np.random.seed(1)
 mx.random.seed(2)
@@ -76,10 +66,3 @@ def mean_absolute_percentage_error(y_true, y_pred):
 
     return np.mean(np.abs((y_true - y_pred) / y_true))
 
-
-def running_avg_effect(y, yint):
-
-    rae = 0
-    for i in range(len(y)):
-        ace = 1/((params.get("train_len") + 1 + i) - params.get("train_len")) * (rae + (y[i] - yint[i]))
-    return rae
