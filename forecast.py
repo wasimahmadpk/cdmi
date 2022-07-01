@@ -1,29 +1,20 @@
 import math
-import netCDF
-import pickle
 import pandas as pd
 import numpy as np
 import mxnet as mx
 import pathlib
 from os import path
 from math import sqrt
-from netCDF4 import Dataset
-from datetime import datetime
 import matplotlib.pyplot as plt
 from itertools import islice
 from gluonts.evaluation import Evaluator
 from gluonts.dataset.common import ListDataset
 from sklearn.metrics import mean_absolute_error
-from gluonts.model.deepar import DeepAREstimator
-from gluonts.model.deepar._network import DeepARTrainingNetwork
-from gluonts.trainer import Trainer
 from sklearn.metrics import mean_squared_error, mean_absolute_error
-from gluonts.distribution.multivariate_gaussian import MultivariateGaussianOutput
 from gluonts.evaluation.backtest import make_evaluation_predictions
 import warnings
 # np.random.seed(1)
 # mx.random.seed(2)
-
 
 def running_avg_effect(y, yint):
 
