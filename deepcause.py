@@ -9,7 +9,7 @@ import pandas as pd
 from os import path
 from math import sqrt
 import seaborn as sns
-from scipy.fft import irfft
+import preprocessing as prep
 from itertools import islice
 from datetime import datetime
 import matplotlib.pyplot as plt
@@ -33,31 +33,14 @@ np.random.seed(1)
 mx.random.seed(2)
 
 
-
-pars = parameters.get_main_params()
-def mutual_information(x, y):
-    mi = mutual_info_regression(x, y)
-    mi /= np.max(mi)
-    return mi
-
-
-def get_shuffled_ts(SAMPLE_RATE, DURATION, root):
-    # Number of samples in normalized_tone
-    N = SAMPLE_RATE * DURATION
-    yf = rfft(root)
-    xf = rfftfreq(N, 1 / SAMPLE_RATE)
-    # plt.plot(xf, np.abs(yf))
-    # plt.show()
-    new_ts = irfft(shuffle(yf))
-    return new_ts
-
-
-def running_avg_effect(y, yint):
-
-    rae = 0
-    for i in range(len(y)):
-        ace = 1/((pars.get("train_len") + 1 + i) - pars.get("train_len")) * (rae + (y[i] - yint[i]))
-    return rae
+pars = parameters.get_real_params()
+num_samples = pars.get("num_samples")
+training_length = pars.get("train_len")
+prediction_length = pars.get("pred_len")
+frequency = pars.get("freq")
+# Get prior skeleton
+prior_graph = pars.get('prior_graph')
+true_conf_mat = pars.get("true_graph")
 
 
 def deepCause(odata, knockoffs, model):
@@ -66,7 +49,7 @@ def deepCause(odata, knockoffs, model):
     for a in range(len(odata)):
             x = odata[:].T
             y = odata[a].T
-            mi = mutual_information(x, y)
+            mi = prep.mutual_information(x, y)
             print("MI Value: ", mi)
             mutual_info.append(mi)
 
@@ -83,8 +66,6 @@ def deepCause(odata, knockoffs, model):
     conf_mat_outdist = []
     conf_mat_uniform = []
 
-    # Get prior skeleton
-    prior_graph = params.get('prior_graph')
     print("Length of Original data:", len(odata))
     for i in range(len(odata)):
 
@@ -97,13 +78,8 @@ def deepCause(odata, knockoffs, model):
         outdist_cause = []
         uni_cause = []
 
-        # Break temporal dependency and generate a new time series
-        pars = parameters.get_sig_params()
-        SAMPLE_RATE = pars.get("sample_rate")  # Hertz
-        DURATION = pars.get("duration")  # Seconds
-
         # Generate Knockoffs
-        data_actual = np.array(odata[:, 0: params.get('train_len') + params.get('pred_len')]).transpose()
+        data_actual = np.array(odata[:, 0: training_length + prediction_length]).transpose()
         obj = Knockoffs()
         n = len(odata[:, 0])
         knockoffs = obj.GenKnockoffs(n, params.get("dim"), data_actual)
@@ -121,7 +97,7 @@ def deepCause(odata, knockoffs, model):
             back_door = prior_graph[:, j].nonzero()[0]
             print(f"Front/Backdoor Paths: {np.array(back_door) + 1} ---> {j + 1}")
 
-            columns = params.get('col')
+            columns = params.get('columns')
             pred_var = odata[j]
             pred_var_name = "Z_" + str(j + 1) + ""
 
@@ -154,17 +130,17 @@ def deepCause(odata, knockoffs, model):
                     mapelistint_batch = []
                     for r in range(3):
 
-                        test_data = odata[:, start: start + params.get('train_len') + params.get('pred_len')].copy()
+                        test_data = odata[:, start: start + training_length + prediction_length].copy()
                         test_ds = ListDataset(
                             [
                                 {'start': "01/01/1961 00:00:00",
                                  'target': test_data
                                  }
                             ],
-                            freq=params.get('freq'),
+                            freq=frequency,
                             one_dim_target=False
                         )
-                        int_data = odata[:, start: start + params.get('train_len') + params.get('pred_len')].copy()
+                        int_data = odata[:, start: start + training_length + prediction_length].copy()
                         int_data[i, :] = intervene
                         test_dsint = ListDataset(
                             [
@@ -172,21 +148,20 @@ def deepCause(odata, knockoffs, model):
                                  'target': int_data
                                  }
                             ],
-                            freq=params.get('freq'),
+                            freq=frequency,
                             one_dim_target=False
                         )
 
-                        mse, mape, ypred = modelTest(model, test_ds, params.get('num_samples'), test_data[j], j,
-                                                     params.get('pred_len'), iter, False, 0)
+                        mse, mape, ypred = modelTest(model, test_ds, num_samples, test_data[j], j,
+                                                     prediction_length, iter, False, 0)
 
-                        mseint, mapeint, ypredint = modelTest(model, test_dsint, params.get('num_samples'),
+                        mseint, mapeint, ypredint = modelTest(model, test_dsint, num_samples,
                                                               test_data[j], j,
-                                                              params.get('pred_len'), iter, True, m)
+                                                              prediction_length, iter, True, m)
 
                         if (m == 0):
                             # Generate multiple version Knockoffs
-                            data_actual = np.array(odata[:, start: start + params.get("train_len") + params.get(
-                                "pred_len")]).transpose()
+                            data_actual = np.array(odata[:, start: start + training_length + prediction_length]).transpose()
                             obj = Knockoffs()
                             n = len(odata[:, 0])
                             knockoffs = obj.GenKnockoffs(n, params.get("dim"), data_actual)
@@ -279,7 +254,6 @@ def deepCause(odata, knockoffs, model):
             print("Variances:", var_list)
             print("-------------******--------------*******-------------*******----------------")
 
-
         conf_mat_mean = conf_mat_mean + mean_cause
         conf_mat_indist = conf_mat_indist + indist_cause
         conf_mat_outdist = conf_mat_outdist + outdist_cause
@@ -290,10 +264,7 @@ def deepCause(odata, knockoffs, model):
     conf_mat.append(conf_mat_indist)
     conf_mat.append(conf_mat_outdist)
     conf_mat.append(conf_mat_uniform)
-
     print("Confusion Matrix:", conf_mat)
-    # true_conf_mat = [1, 1, 1, 1, 1,    0, 1, 0, 0, 1,   0, 0, 1, 0, 0,  0, 0, 0, 1, 0,  0, 0, 0, 0, 1]
-    true_conf_mat = [1, 1, 0,   0, 1, 0,   0, 0, 1]
 
     for ss in range(len(conf_mat)):
 
