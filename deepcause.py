@@ -38,19 +38,20 @@ num_samples = pars.get("num_samples")
 training_length = pars.get("train_len")
 prediction_length = pars.get("pred_len")
 frequency = pars.get("freq")
+plot_path = pars.get("plot_path")
 # Get prior skeleton
 prior_graph = pars.get('prior_graph')
 true_conf_mat = pars.get("true_graph")
 
 
-def deepCause(odata, knockoffs, model):
+def deepCause(odata, knockoffs, model, params):
 
     mutual_info = []
     for a in range(len(odata)):
             x = odata[:].T
             y = odata[a].T
             mi = prep.mutual_information(x, y)
-            print("MI Value: ", mi)
+            # print("MI Value: ", mi)
             mutual_info.append(mi)
 
     filename = pathlib.Path(model)
@@ -66,7 +67,6 @@ def deepCause(odata, knockoffs, model):
     conf_mat_outdist = []
     conf_mat_uniform = []
 
-    print("Length of Original data:", len(odata))
     for i in range(len(odata)):
 
         int_var = odata[i]
@@ -97,7 +97,7 @@ def deepCause(odata, knockoffs, model):
             back_door = prior_graph[:, j].nonzero()[0]
             print(f"Front/Backdoor Paths: {np.array(back_door) + 1} ---> {j + 1}")
 
-            columns = params.get('columns')
+            columns = params.get('col')
             pred_var = odata[j]
             pred_var_name = "Z_" + str(j + 1) + ""
 
@@ -200,26 +200,23 @@ def deepCause(odata, knockoffs, model):
 
                 print(f"Time series: {columns[i]} --------------> {columns[j]}")
                 print("-----------------------------------------------------------------------------")
-                fnamehist = f"/home/ahmad/PycharmProjects/deepCausality/plots/{columns[i]}_{columns[j]}:hist"
+                fnamehist = plot_path + "{columns[i]}_{columns[j]}:hist"
             else:
                 print(f"Time series: Z_{i + 1} --------------> Z_{j + 1}")
                 print("-----------------------------------------------------------------------------")
-                fnamehist = f"/home/ahmad/PycharmProjects/deepCausality/plots/{Z_[i + 1]}_{Z_[j + 1]}:hist"
+                fnamehist = plot_path + "{Z_[i + 1]}_{Z_[j + 1]}:hist"
 
             for z in range(len(heuristic_itn_types)):
 
-                print(f"Mean: {np.mean(mapelol[z])}, Mean Intervention: {np.mean(mapelolint[z])}")
-                print(f"Variance: {np.var(mapelol[z])}, Variance Intervention: {np.var(mapelolint[z])}")
+                print(heuristic_itn_types[z])
+                # print(f"Mean: {np.mean(mapelol[z])}, Mean Intervention: {np.mean(mapelolint[z])}")
+                # print(f"Variance: {np.var(mapelol[z])}, Variance Intervention: {np.var(mapelolint[z])}")
                 # t, p = ttest_ind(np.array(mapelolint[z]), np.array(mapelol[z]), equal_var=True)
                 t, p = ks_2samp(np.array(mapelol[z]), np.array(mapelolint[z]))
                 # t, p = kstest(np.array(mapelolint[z]), np.array(mapelol[z]))
-                # t, p = ttest_1samp(css_list[z], popmean=0.0)   # alternative="greater"
-                # t, p = ttest_1samp(np.array(mapelolint[z]), popmean=np.mean(mapelol[z]))
-                # plt.hist(mselolint[z])
-                # plt.hist(mselol[z])
-                # plt.show()
+
                 print(f'Test statistic: {t}, p-value: {p}')
-                if p < 0.10 or mutual_info[i][j] > 0.66:
+                if p < 0.10 or mutual_info[i][j] > 0.90:
                     print("Null hypothesis is rejected")
                     causal_decision.append(1)
                 else:
@@ -241,7 +238,7 @@ def deepCause(odata, knockoffs, model):
 
             plt.gcf()
             ax1.legend()
-            plt.savefig(f"/home/ahmad/PycharmProjects/deepCausality/plots/{columns[i]} ---> {columns[j]}.pdf")
+            plt.savefig(plot_path + "{columns[i]} ---> {columns[j]}.pdf")
             # plt.show()
             # plt.close()
 
