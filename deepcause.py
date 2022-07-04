@@ -95,7 +95,9 @@ def deepCause(odata, knockoffs, model, params):
         for j in range(len(odata)):
             back_door_int = []
             back_door = prior_graph[:, j].nonzero()[0]
+            print("----------*****-----------------------*****-----------------******-----------")
             print(f"Front/Backdoor Paths: {np.array(back_door) + 1} ---> {j + 1}")
+            print("----------*****-----------------------*****-----------------******-----------")
 
             columns = params.get('col')
             pred_var = odata[j]
@@ -198,17 +200,17 @@ def deepCause(odata, knockoffs, model, params):
             # print(f"MSE(Mean): {list(np.mean(mselol, axis=0))}")
             if len(columns) > 0:
 
-                print(f"Time series: {columns[i]} --------------> {columns[j]}")
+                print(f"Causal Link: {columns[i]} --------------> {columns[j]}")
                 print("-----------------------------------------------------------------------------")
                 fnamehist = plot_path + "{columns[i]}_{columns[j]}:hist"
             else:
-                print(f"Time series: Z_{i + 1} --------------> Z_{j + 1}")
+                print(f"Causal Link: Z_{i + 1} --------------> Z_{j + 1}")
                 print("-----------------------------------------------------------------------------")
                 fnamehist = plot_path + "{Z_[i + 1]}_{Z_[j + 1]}:hist"
 
             for z in range(len(heuristic_itn_types)):
 
-                print(heuristic_itn_types[z])
+                print("Intervention: " + heuristic_itn_types[z])
                 # print(f"Mean: {np.mean(mapelol[z])}, Mean Intervention: {np.mean(mapelolint[z])}")
                 # print(f"Variance: {np.var(mapelol[z])}, Variance Intervention: {np.var(mapelolint[z])}")
                 # t, p = ttest_ind(np.array(mapelolint[z]), np.array(mapelol[z]), equal_var=True)
@@ -247,9 +249,6 @@ def deepCause(odata, knockoffs, model, params):
             outdist_cause.append(causal_decision[2])
             uni_cause.append(causal_decision[3])
             causal_decision = []
-            print("-------------******----------------*******-------------*******--------------")
-            print("Variances:", var_list)
-            print("-------------******--------------*******-------------*******----------------")
 
         conf_mat_mean = conf_mat_mean + mean_cause
         conf_mat_indist = conf_mat_indist + indist_cause
