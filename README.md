@@ -23,12 +23,12 @@ We discover full causal graph in a multivariate nonlinear system by testing mode
 2. Then we expose the model to Knockoffs-based interventional environments <img src="https://render.githubusercontent.com/render/math?math=E_k">. 
 3. For each pair variables {<img src="https://render.githubusercontent.com/render/math?math=z_i">}, <img src="https://render.githubusercontent.com/render/math?math=z_j">} in nonlinear system, we test model invariance across environments. <img src="https://render.githubusercontent.com/render/math?math=E_i"> and <img src="https://render.githubusercontent.com/render/math?math=E_j">, use the classifier <img src="https://render.githubusercontent.com/render/math?math=f_i"> to partition <img src="https://render.githubusercontent.com/render/math?math=E_j">: <img src="https://render.githubusercontent.com/render/math?math=E_j = E_j^{i\checkmark} \cup E_j^{i\times}">,
 where <img src="https://render.githubusercontent.com/render/math?math=E_j">: <img src="https://render.githubusercontent.com/render/math?math=E_j^{i\checkmark}"> contains examples that are predicted correctly and <img src="https://render.githubusercontent.com/render/math?math=E_j">: <img src="https://render.githubusercontent.com/render/math?math=E_j^{i\times}"> contains examples that are misclassified by <img src="https://render.githubusercontent.com/render/math?math=E_j">: <img src="https://render.githubusercontent.com/render/math?math=f_i">.
-3. Train the final model by minimizing the worst-case risk over all interpolations of the partitions.
+4. We perform KS test over distribution <img src="https://render.githubusercontent.com/render/math?math=D_i">, <img src="https://render.githubusercontent.com/render/math?math=D_j"> of model residuals in various environments.
 
 
 ## Data
 Datasets should be put under the directory `datasets/`.
-We ran experiments on a total of 4 datasets. MNIST and CelebA can be directly downloaded from the PyTorch API. For beer review and ASK2ME, due to liscense issues, you may contact me ([yujia@csail.mit.edu](yujia@csail.mit.edu)) for the processed data.
+We test our method on synethic as well as real data which can be found under `datasets/` directory. The real data we used is average daily river discharges that can be downloaded online.
 
 ### Quickstart
 `.bin/` contains all the scripts for running the baselines and our algorithm.
