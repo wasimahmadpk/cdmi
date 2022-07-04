@@ -49,7 +49,7 @@ df = prep.load_river_data()
 original_data = []
 dim = len(df.columns)
 columns = df.columns
-print(f"Dimension {dim} and Columns: {df.columns}")
+# print(f"Dimension {dim} and Columns: {df.columns}")
 
 for col in df:
     original_data.append(df[col])
