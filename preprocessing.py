@@ -3,6 +3,7 @@ import pickle
 import random
 import pathlib
 import parameters
+import parameters
 import numpy as np
 from os import path
 import pandas as pd
@@ -11,12 +12,10 @@ from datetime import datetime
 from scipy.special import stdtr
 import matplotlib.pyplot as plt
 from riverdata import RiverData
-
+from sklearn.feature_selection import f_regression, mutual_info_regression
 
 np.random.seed(1)
-mx.random.seed(2)
-
-pars = get_real_params()
+pars = parameters.get_real_params()
 
 win_size = pars.get("win_size")
 training_length = pars.get("train_len")
