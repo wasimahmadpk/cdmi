@@ -76,9 +76,15 @@ def get_syn_params():
         'epochs': 150,
         'pred_len': 28,
         'train_len': 555,
-        'prior_graph': np.array([[1, 1, 0], [0, 1, 0], [0, 0, 1]]),
-        'freq': '30min',
-        'win_size': 1
+        'num_layers': 4,
+        'num_cells': 44,
+        'dropout_rate': 0.1,
+        'win_size': 1,
+        'dim': 3,
+        'batch_size': 32,
+        'prior_graph': np.array([[1, 1, 1, 1, 1], [0, 1, 0, 0, 1], [0, 0, 1, 0, 0], [0, 0, 0, 1, 0], [0, 0, 0, 0, 1]]),
+        'true_grah': [1, 1, 1, 1, 1,  0, 1, 0, 0, 1,  0, 0, 1, 0, 0,  0, 0, 0, 1, 0,  0, 0, 0, 0, 1],
+        'freq': '30min'
     }
 
     return params
@@ -90,17 +96,15 @@ def get_real_params():
         'epochs': 150,
         'pred_len': 28,
         'train_len': 555,
+        'num_layers': 3,
+        'num_cells': 33,
+        'dropout_rate': 0.1,
+        'win_size': 1,
+        'dim': 3,
+        'batch_size': 32,
         'prior_graph': np.array([[1, 1, 0], [0, 1, 0], [0, 0, 1]]),
+        'true_grah': [1, 1, 0,   0, 1, 0,   0, 0, 1],
         'freq': 'D'
-    }
-    return params
-
-
-def get_main_params():
-    # Parameters dict
-    params = {
-        'num_samples': 10,
-        'win_size': 1
     }
     return params
 
