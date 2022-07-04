@@ -91,9 +91,9 @@ def get_syn_params():
         'dim': 3,
         'batch_size': 32,
         'prior_graph': np.array([[1, 1, 1, 1, 1], [0, 1, 0, 0, 1], [0, 0, 1, 0, 0], [0, 0, 0, 1, 0], [0, 0, 0, 0, 1]]),
-        'true_grah': [1, 1, 1, 1, 1,  0, 1, 0, 0, 1,  0, 0, 1, 0, 0,  0, 0, 0, 1, 0,  0, 0, 0, 0, 1],
+        'true_graph': [1, 1, 1, 1, 1,  0, 1, 0, 0, 1,  0, 0, 1, 0, 0,  0, 0, 0, 1, 0,  0, 0, 0, 0, 1],
         'freq': '30min',
-        'plot_path': "/home/ahmad/PycharmProjects/deepCausality/plots/"
+        'plot_path': f"/home/ahmad/PycharmProjects/deepCausality/plots/"
     }
 
     return params
@@ -113,9 +113,9 @@ def get_real_params():
         'dim': 3,
         'batch_size': 32,
         'prior_graph': np.array([[1, 1, 0], [0, 1, 0], [0, 0, 1]]),
-        'true_grah': [1, 1, 0,   0, 1, 0,   0, 0, 1],
+        'true_graph': [1, 1, 0,   0, 1, 0,   0, 0, 1],
         'freq': 'D',
-        'plot_path': "/home/ahmad/PycharmProjects/deepCausality/plots/"
+        'plot_path': f"/home/ahmad/PycharmProjects/deepCausality/plots/"
     }
     return params
 
