@@ -1,8 +1,13 @@
+import numpy as np
+import pandas as pd
+
+
 def get_sig_params():
     pars = dict()
     pars["sample_rate"] = 44100  # Hertz
     pars["duration"] = 5   # seconds
     return pars
+
 
 def GetDistributionParams(model,p):
     """
@@ -25,6 +30,7 @@ def GetDistributionParams(model,p):
     
     return params
         
+
 def GetTrainingHyperParams(model):
     """
     Returns the default hyperparameters for training deep knockoffs
@@ -49,6 +55,7 @@ def GetTrainingHyperParams(model):
         raise Exception('Unknown data distribution: ' + model)
         
     return params
+
 
 def GetFDRTestParams(model):
     """
@@ -78,13 +85,15 @@ def get_syn_params():
         'train_len': 555,
         'num_layers': 4,
         'num_cells': 44,
+        'num_samples': 10,
         'dropout_rate': 0.1,
         'win_size': 1,
         'dim': 3,
         'batch_size': 32,
         'prior_graph': np.array([[1, 1, 1, 1, 1], [0, 1, 0, 0, 1], [0, 0, 1, 0, 0], [0, 0, 0, 1, 0], [0, 0, 0, 0, 1]]),
         'true_grah': [1, 1, 1, 1, 1,  0, 1, 0, 0, 1,  0, 0, 1, 0, 0,  0, 0, 0, 1, 0,  0, 0, 0, 0, 1],
-        'freq': '30min'
+        'freq': '30min',
+        'plot_path': "/home/ahmad/PycharmProjects/deepCausality/plots/"
     }
 
     return params
@@ -97,6 +106,7 @@ def get_real_params():
         'pred_len': 28,
         'train_len': 555,
         'num_layers': 3,
+        'num_samples': 10,
         'num_cells': 33,
         'dropout_rate': 0.1,
         'win_size': 1,
@@ -104,7 +114,8 @@ def get_real_params():
         'batch_size': 32,
         'prior_graph': np.array([[1, 1, 0], [0, 1, 0], [0, 0, 1]]),
         'true_grah': [1, 1, 0,   0, 1, 0,   0, 0, 1],
-        'freq': 'D'
+        'freq': 'D',
+        'plot_path': "/home/ahmad/PycharmProjects/deepCausality/plots/"
     }
     return params
 
@@ -112,6 +123,7 @@ def get_real_params():
 def set_all_params(**kwargs):
 
     a = 2
+    return None
 
 
 
