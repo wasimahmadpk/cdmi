@@ -43,11 +43,8 @@ num_cells = pars.get("num_cells")
 dropout_rate = pars.get("dropout_rate")
 batch_size = pars.get("batch_size")
 
-# data preprocessing
-prep = preprocessing()
-
 # Load river discharges data
-df = load_river_data()
+df = prep.load_river_data()
 
 original_data = []
 dim = len(df.columns)
