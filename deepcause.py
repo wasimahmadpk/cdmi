@@ -260,7 +260,8 @@ def deepCause(odata, knockoffs, model, params):
     conf_mat.append(conf_mat_indist)
     conf_mat.append(conf_mat_outdist)
     conf_mat.append(conf_mat_uniform)
-    print("Confusion Matrix:", conf_mat)
+    print("-----------------------------------------------------------------------------")
+    print("Discovered Causal Graphs: ", conf_mat)
 
     for ss in range(len(conf_mat)):
 
