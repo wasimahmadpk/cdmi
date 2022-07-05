@@ -3,16 +3,9 @@
 The rep contains code for our paper accepted in ICML Workshop 2022 on Spurious correlations, Invariance and Stability (SCIS): Causal Discovery using Model Invariance 
 via Knockoffs by Wasim Ahmad, Maha Shadaydeh and Joachim Denzler.
 
-- If you find this work useful and use it on your own research, please cite our paper.
+- The work can be cited once published.
 
 ```
-@inproceedings{bao2021predict,
-  title={Predict then Interpolate: A Simple Algorithm to Learn Stable Classifiers},
-  author={Bao, Yujia and Chang, Shiyu and Barzilay, Regina},
-  booktitle={International Conference on Machine Learning},
-  year={2021},
-  organization={PMLR}
-}
 ```
 
 
