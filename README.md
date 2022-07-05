@@ -18,7 +18,7 @@ We discover full causal graph in a multivariate nonlinear system by testing mode
 where <img src="https://render.githubusercontent.com/render/math?math=D_i">: <img src="https://render.githubusercontent.com/render/math?math=D_k^{i\checkmark}"> contains examples that are predicted correctly and <img src="https://render.githubusercontent.com/render/math?math=E_j">: <img src="https://render.githubusercontent.com/render/math?math=E_j^{i\times}"> contains examples that are misclassified by <img src="https://render.githubusercontent.com/render/math?math=E_j">: <img src="https://render.githubusercontent.com/render/math?math=f_i">.
 4. We perform KS test over distribution <img src="https://render.githubusercontent.com/render/math?math=D_i">, <img src="https://render.githubusercontent.com/render/math?math=D_j"> of model residuals in various environments. 
 Our NULL hypothesis <img src="https://render.githubusercontent.com/render/math?math=H_o"> is that variable <img src="https://render.githubusercontent.com/render/math?math=z_i"> does not cause <img src="https://render.githubusercontent.com/render/math?math=z_j">, 
-<img src="https://render.githubusercontent.com/render/math?math=D_i"> not equal to <img src="https://render.githubusercontent.com/render/math?math=D_i">
+<img src="https://render.githubusercontent.com/render/math?math=D_i"> `?` <img src="https://render.githubusercontent.com/render/math?math=D_i">, else the alternate hypothesis <img src="https://render.githubusercontent.com/render/math?math=H_1">: <img src="https://render.githubusercontent.com/render/math?math=D_i"> = <img src="https://render.githubusercontent.com/render/math?math=D_i">  is accepted.
 
 
 ## Data
