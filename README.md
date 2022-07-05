@@ -1,6 +1,6 @@
 # DeepCause
 
-The rep contains code for our paper accepted in ICML Workshop 2022 on Spurious correlations, Invariance and Stability (SCIS): Causal Discovery using Model Invariance 
+This repository contains code for our paper accepted in ICML Workshop 2022 on Spurious correlations, Invariance and Stability (SCIS): Causal Discovery using Model Invariance 
 via Knockoffs by Wasim Ahmad, Maha Shadaydeh and Joachim Denzler.
 
 - The work can be cited once published.
@@ -22,20 +22,20 @@ else the alternate hypothesis <img src="https://render.githubusercontent.com/ren
 
 
 ## Data
-Datasets should be put under the directory `datasets/`.
-We test our method on synethic as well as real data which can be found under `datasets/` directory. The real data we used is average daily river discharges that can be downloaded online.
+We test our method on synthetic as well as real data which can be found under `datasets/` directory. The synthetic data is generated using file `synthetic_dataset.py`. 
+The real data we used is average daily discharges of rivers in the upper Danube basin, measurements of which are made available by the Bavarian Environmental Agency at
+https://www.gkd.bayern.de.
 
-### Quickstart
-`.bin/` contains all the scripts for running the baselines and our algorithm.
 
 ## Code
-`src/main.py` is our main file, where non-linear is data is modelled with deep networks.
-- `src/deepcause.py` for actual and counterfactual outcome generation using interventions.
-- `src/preprocessing.py` For data loading and preprocessing.
-- `src/knockoffs.py` generate knockoffs of the original variables.
-- `src/daignostics.py` to determine to goodness of the generated knockoff copies.
-- `src/data/` contains the data pre-processing and loading pipeline for different datasets.
-- `src/model/` contains trained models that we used for different datasets.
+`main.py` is our main file, where we model multivariate non-linear data using deep networks.
+- `deepcause.py` for actual and counterfactual outcome generation using interventions.
+- `preprocessing.py` For data loading and preprocessing.
+- `knockoffs.py` generate knockoffs of the original variables.
+- `daignostics.py` to determine to goodness of the generated knockoff copies.
+- `datasets/` contains the generated synthetic data and real dataset.
+- `model/` contains trained models that we used for different datasets.
+
 
 ## Dependencies
 `requirements.txt` contains all the packages that are related to the project.
@@ -43,6 +43,7 @@ To install them, simply create a new [conda](https://docs.conda.io/en/latest/) e
 ```
 pip install requirements.txt
 ```
+
 
 ## Acknowledgement
 
