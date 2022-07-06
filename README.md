@@ -42,7 +42,7 @@ https://www.gkd.bayern.de.
 `requirements.txt` contains all the packages that are related to the project.
 To install them, simply create a new [conda](https://docs.conda.io/en/latest/) environment and type
 ```
-pip install requirements.txt
+pip install -r requirements.txt
 ```
 
 
