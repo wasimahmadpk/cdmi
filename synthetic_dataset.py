@@ -1,6 +1,7 @@
 import numpy as np
 import random
 import pandas as pd
+import preprocessing as prep
 import matplotlib.pyplot as plt
 from netCDF4 import Dataset
 from riverdata import RiverData
@@ -26,25 +27,6 @@ class SyntheticDataset:
         self.X3 = list(np.zeros(15))
         self.X4 = list(np.zeros(15))
         self.X5 = list(np.zeros(15))
-        self.X6 = list(np.zeros(15))
-        self.X7 = list(np.zeros(15))
-        self.X8 = list(np.zeros(15))
-        self.X9 = list(np.zeros(15))
-        self.X10 = list(np.zeros(15))
-
-    def normalize(self, var):
-        nvar = (np.array(var) - np.mean(var)) / np.std(var)
-        return nvar
-
-    def down_sample(self, data, win_size):
-        agg_data = []
-        monthly_data = []
-        for i in range(len(data)):
-            monthly_data.append(data[i])
-            if (i % win_size) == 0:
-                agg_data.append(sum(monthly_data) / win_size)
-                monthly_data = []
-        return agg_data
 
     def generate_data(self):
 
@@ -56,13 +38,6 @@ class SyntheticDataset:
             self.X4.append(C.get('c3') * self.X1[t - Tao.get('t2')] + er[t])
             self.X5.append(C.get('c5') * self.X2[t - Tao.get('t1')] + ey[t])
         return self.X1, self.X2, self.X3, self.X4, self.X5
-
-    def SNR(self, s, n):
-
-        Ps = np.sqrt(np.mean(np.array(s)**2))
-        Pn = np.sqrt(np.mean(np.array(n)**2))
-        SNR = Ps/Pn
-        return 10*math.log(SNR, 10)        # 10*math.log(((Ps-Pn)/Pn), 10)
 
 
 if __name__ == '__main__':
