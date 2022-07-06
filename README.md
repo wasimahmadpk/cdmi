@@ -22,7 +22,7 @@ else the alternate hypothesis <img src="https://render.githubusercontent.com/ren
 
 
 ## Data
-We test our method on synthetic as well as real data which can be found under `datasets/` directory. The synthetic data is generated using file `synthetic_dataset.py`. 
+We test our method on synthetic as well as real data which can be found under `datasets/` directory. The synthetic data is generated using file `src/synthetic_dataset.py`. 
 The real data we used is average daily discharges of rivers in the upper Danube basin, measurements of which are made available by the Bavarian Environmental Agency at
 https://www.gkd.bayern.de.
 
