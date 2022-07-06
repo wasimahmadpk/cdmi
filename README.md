@@ -33,7 +33,7 @@ https://www.gkd.bayern.de.
 - `src/preprocessing.py` For data loading and preprocessing.
 - `src/knockoffs.py` generate knockoffs of the original variables.
 - `src/daignostics.py` to determine to goodness of the generated knockoff copies.
-- `DeepKnockoffs/` contains the knockoffs generations methods.
+- `DeepKnockoffs/` contains the knockoffs generation methods.
 - `datasets/` contains the generated synthetic data and real dataset.
 - `model/` contains trained models that we used for different datasets.
 
