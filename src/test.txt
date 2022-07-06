@@ -1,0 +1,97 @@
+absl-py==0.9.0
+astunparse==1.6.3
+blinker==1.4
+brotlipy==0.7.0
+cachetools==4.1.0
+certifi==2020.12.5
+cffi==1.14.0
+cftime==1.2.0
+chardet==3.0.4
+click==7.1.2
+colorama==0.4.4
+colorlog==4.4.0
+cryptography==2.9.2
+cvxopt==1.2.5
+cvxpy==1.1.7
+cycler==0.10.0
+dcor==0.5.3
+decorator==4.4.2
+DeepKnockoffs==0.1.0
+dill==0.3.1.1
+easydev==0.10.1
+ecos==2.0.7.post1
+fitter==1.3.0
+future==0.18.2
+gast==0.3.3
+gluonts==0.5.0
+google-auth @ file:///tmp/build/80754af9/google-auth_1594357566944/work
+google-auth-oauthlib==0.4.1
+google-pasta==0.2.0
+graphviz==0.8.4
+grpcio==1.27.2
+h5py @ file:///tmp/build/80754af9/h5py_1593454122442/work
+holidays==0.9.12
+idna @ file:///tmp/build/80754af9/idna_1593446292537/work
+joblib==0.16.0
+Keras @ file:///tmp/build/80754af9/keras_split_1593112142734/work
+Keras-Preprocessing==1.1.0
+kiwisolver==1.3.1
+lingam==1.5.5
+llvmlite==0.36.0
+Markdown==3.1.1
+matplotlib==3.3.0
+mkl-fft==1.1.0
+mkl-random==1.1.1
+mkl-service==2.3.0
+mxnet==1.6.0
+netCDF4==1.5.3
+networkx==2.4
+numba==0.53.1
+numpy==1.18.5
+oauthlib==3.1.0
+opt-einsum==3.1.0
+osqp==0.6.1
+pandas==1.0.5
+patsy==0.5.1
+pexpect==4.8.0
+Pillow==8.0.1
+protobuf==3.12.3
+ptyprocess==0.6.0
+pyasn1==0.4.8
+pyasn1-modules==0.2.7
+pycparser @ file:///tmp/build/80754af9/pycparser_1594388511720/work
+pydantic==1.5.1
+PyJWT==1.7.1
+pyOpenSSL @ file:///tmp/build/80754af9/pyopenssl_1594392929924/work
+pyparsing==2.4.7
+PySocks==1.7.1
+python-dateutil==2.8.1
+pytz==2020.4
+PyYAML==5.3.1
+requests @ file:///tmp/build/80754af9/requests_1592841827918/work
+requests-oauthlib==1.3.0
+rsa==4.0
+scikit-learn==0.23.2
+scipy==1.7.3
+scs==2.1.2
+seaborn==0.11.1
+six==1.15.0
+sklearn==0.0
+statsmodels==0.12.1
+tensorboard==2.2.1
+tensorboard-plugin-wit==1.6.0
+tensorflow==2.2.0
+tensorflow-estimator==2.2.0
+termcolor==1.1.0
+threadpoolctl==2.1.0
+tigramite==4.2.1.4
+torch==1.7.1
+torch-two-sample==0.1
+torchvision==0.8.2
+tqdm==4.47.0
+typing-extensions @ file:///tmp/build/80754af9/typing_extensions_1598376058250/work
+ujson==1.35
+urllib3==1.25.9
+Werkzeug==1.0.1
+wrapt==1.12.1
+xlrd==1.2.0
