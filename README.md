@@ -28,11 +28,11 @@ https://www.gkd.bayern.de.
 
 
 ## Code
-`main.py` is our main file, where we model multivariate non-linear data using deep networks.
-- `deepcause.py` for actual and counterfactual outcome generation using interventions.
-- `preprocessing.py` For data loading and preprocessing.
-- `knockoffs.py` generate knockoffs of the original variables.
-- `daignostics.py` to determine to goodness of the generated knockoff copies.
+`src/main.py` is our main file, where we model multivariate non-linear data using deep networks.
+- `src/deepcause.py` for actual and counterfactual outcome generation using interventions.
+- `src/preprocessing.py` For data loading and preprocessing.
+- `src/knockoffs.py` generate knockoffs of the original variables.
+- `src/daignostics.py` to determine to goodness of the generated knockoff copies.
 - `datasets/` contains the generated synthetic data and real dataset.
 - `model/` contains trained models that we used for different datasets.
 
