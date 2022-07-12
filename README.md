@@ -3,7 +3,7 @@
 This repository contains code for our paper accepted in ICML Workshop 2022 on Spurious correlations, Invariance and Stability (SCIS): Causal Discovery using Model Invariance 
 via Knockoffs by Wasim Ahmad, Maha Shadaydeh and Joachim Denzler.
 
-- The work can be cited once published.
+- The work can be cited using below citation information.
 
 ```
 @article{https://doi.org/10.48550/arxiv.2207.04055,
