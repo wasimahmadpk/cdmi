@@ -6,15 +6,11 @@ via Knockoffs by Wasim Ahmad, Maha Shadaydeh and Joachim Denzler.
 - The work can be cited using below citation information.
 
 ```
-@article{https://doi.org/10.48550/arxiv.2207.04055,
-  doi = {10.48550/ARXIV.2207.04055},
-  url = {https://arxiv.org/abs/2207.04055},
-  author = {Ahmad, Wasim and Shadaydeh, Maha and Denzler, Joachim},
-  keywords = {Machine Learning (cs.LG), Artificial Intelligence (cs.AI), FOS: Computer and information sciences, FOS: Computer and information sciences},
-  title = {Causal Discovery using Model Invariance through Knockoff Interventions},
-  publisher = {arXiv},
-  year = {2022},
-  copyright = {arXiv.org perpetual, non-exclusive license}
+@article{ahmad2022causal,
+  title={Causal Discovery using Model Invariance through Knockoff Interventions},
+  author={Ahmad, Wasim and Shadaydeh, Maha and Denzler, Joachim},
+  journal={arXiv preprint arXiv:2207.04055},
+  year={2022}
 }
 ```
 
