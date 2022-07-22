@@ -6,11 +6,13 @@ via Knockoffs by Wasim Ahmad, Maha Shadaydeh and Joachim Denzler.
 - The work can be cited using below citation information.
 
 ```
-@article{ahmad2022causal,
-  title={Causal Discovery using Model Invariance through Knockoff Interventions},
-  author={Ahmad, Wasim and Shadaydeh, Maha and Denzler, Joachim},
-  journal={arXiv preprint arXiv:2207.04055},
-  year={2022}
+@inproceedings{
+ahmad2022causal,
+title={Causal Discovery using Model Invariance through Knockoff Interventions},
+author={Wasim Ahmad and Maha Shadaydeh and Joachim Denzler},
+booktitle={ICML 2022: Workshop on Spurious Correlations, Invariance and Stability},
+year={2022},
+url={https://openreview.net/forum?id=OcNeMVbIdCF}
 }
 ```
 
