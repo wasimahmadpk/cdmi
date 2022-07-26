@@ -12,6 +12,7 @@ from itertools import islice
 import preprocessing as prep
 from datetime import datetime
 from riverdata import RiverData
+from climatedata import ClimateData
 from deepcause import deepCause
 import matplotlib.pyplot as plt
 from knockoffs import Knockoffs
@@ -30,8 +31,8 @@ from gluonts.distribution.multivariate_gaussian import MultivariateGaussianOutpu
 np.random.seed(1)
 mx.random.seed(2)
 
-# Parameters for River discharge data
-pars = parameters.get_real_params()
+# Parameters
+pars = parameters.get_climate_params()
 freq = pars.get("freq")
 epochs = pars.get("epochs")
 win_size = pars.get("win_size")
@@ -44,7 +45,9 @@ dropout_rate = pars.get("dropout_rate")
 batch_size = pars.get("batch_size")
 
 # Load river discharges data
-df = prep.load_river_data()
+# df = prep.load_river_data()
+df = prep.load_climate_data()
+df = df.dropna().reset_index(drop=True)
 
 original_data = []
 dim = len(df.columns)
@@ -85,8 +88,9 @@ estimator = DeepAREstimator(
 )
 
 # load model if not already trained
-# model_path = "models/trained_model_syn08Jun.sav"
-model_path = "models/trained_model_river16Jun.sav"
+# model_path = "../models/trained_model_syn08Jun.sav"
+# model_path = "../models/trained_model_river16Jun.sav"
+model_path = "../models/trained_model_climate26July3.sav"
 filename = pathlib.Path(model_path)
 if not filename.exists():
     print("Training forecasting model....")
