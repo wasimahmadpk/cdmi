@@ -12,6 +12,7 @@ from datetime import datetime
 from scipy.special import stdtr
 import matplotlib.pyplot as plt
 from riverdata import RiverData
+from climatedata import ClimateData
 from sklearn.feature_selection import f_regression, mutual_info_regression
 
 np.random.seed(1)
@@ -110,6 +111,17 @@ def load_river_data():
     return df
 
 
+def load_climate_data():
+    # Load river discharges data
+    dataobj = ClimateData()
+    data = dataobj.get_data()
+
+    # data = {'Kt': normalize(kempton), 'Dt': normalize(dillingen), 'Lt': normalize(lenggries)}
+    # df = pd.DataFrame(data, columns=['Kt', 'Dt', 'Lt'])
+
+    return data
+
+
 def load_flux_data():
 
     # "Load fluxnet 2015 data for grassland IT-Mbo site"
@@ -143,5 +155,5 @@ def load_flux_data():
 
 def load_syn_data():
     # Load synthetic data *************************
-    df = pd.read_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/ncdata/synthetic_data.csv")
+    df = pd.read_csv("../datasets/ncdata/synthetic_data.csv")
     return df
