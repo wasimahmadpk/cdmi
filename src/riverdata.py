@@ -18,7 +18,7 @@ class RiverData():
 
         for station in stations:
 
-            filename = pathlib.Path("datasets/river_discharge_data/data_" + station + ".csv")
+            filename = pathlib.Path("../datasets/river_discharge_data/data_" + station + ".csv")
             new_frame = pd.read_csv(filename, sep=";", skiprows=range(10))
             new_frame = new_frame[["Datum", "Mittelwert"]]
 
