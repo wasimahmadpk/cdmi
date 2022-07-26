@@ -33,7 +33,7 @@ np.random.seed(1)
 mx.random.seed(2)
 
 
-pars = parameters.get_real_params()
+pars = parameters.get_climate_params()
 num_samples = pars.get("num_samples")
 training_length = pars.get("train_len")
 prediction_length = pars.get("pred_len")
@@ -124,13 +124,13 @@ def deepCause(odata, knockoffs, model, params):
                 diff = []
                 start = 10
 
-                for iter in range(30):  # 30
+                for iter in range(25):  # 30
 
                     mselist_batch = []
                     mselistint_batch = []
                     mapelist_batch = []
                     mapelistint_batch = []
-                    for r in range(3):
+                    for r in range(5):
 
                         test_data = odata[:, start: start + training_length + prediction_length].copy()
                         test_ds = ListDataset(
@@ -178,7 +178,7 @@ def deepCause(odata, knockoffs, model, params):
                         mapelistint_batch.append(mapeint)
                         # start = start + 96
 
-                    start = start + 10  # Step size for sliding window # 10
+                    start = start + 5 # Step size for sliding window # 10
                     mselist.append(np.mean(mselist_batch))  # mselist = mselist_batch
                     mapelist.append(np.mean(mapelist_batch))  # mapelist = mapelist_batch
                     mselistint.append(np.mean(mselistint_batch))  # mselistint = mselistint_batch
@@ -240,8 +240,9 @@ def deepCause(odata, knockoffs, model, params):
 
             plt.gcf()
             ax1.legend()
-            plt.savefig(plot_path + "{columns[i]} ---> {columns[j]}.pdf")
-            # plt.show()
+            filename = pathlib.Path(plot_path + f"{columns[i]} ---> {columns[j]}.pdf")
+            plt.savefig(filename)
+            plt.show()
             # plt.close()
 
             mean_cause.append(causal_decision[0])
