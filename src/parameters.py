@@ -123,7 +123,7 @@ def get_climate_params():
 
     params = {
         'epochs': 250,
-        'pred_len': 15,
+        'pred_len': 21,
         'train_len': 555,
         'num_layers': 4,
         'num_samples': 10,
