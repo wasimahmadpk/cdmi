@@ -114,10 +114,8 @@ def load_river_data():
 def load_climate_data():
     # Load river discharges data
     dataobj = ClimateData()
-    data = dataobj.get_data()
-
-    # data = {'Kt': normalize(kempton), 'Dt': normalize(dillingen), 'Lt': normalize(lenggries)}
-    # df = pd.DataFrame(data, columns=['Kt', 'Dt', 'Lt'])
+    df = dataobj.get_data()
+    data = df.apply(normalize)
 
     return data
 
