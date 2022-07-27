@@ -90,7 +90,7 @@ estimator = DeepAREstimator(
 # load model if not already trained
 # model_path = "../models/trained_model_syn08Jun.sav"
 # model_path = "../models/trained_model_river16Jun.sav"
-model_path = "../models/trained_model_climate26July3.sav"
+model_path = "../models/trained_model_climate27July.sav"
 filename = pathlib.Path(model_path)
 if not filename.exists():
     print("Training forecasting model....")
