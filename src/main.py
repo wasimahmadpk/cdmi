@@ -48,6 +48,8 @@ batch_size = pars.get("batch_size")
 # df = prep.load_river_data()
 df = prep.load_climate_data()
 df = df.dropna().reset_index(drop=True)
+print(len(df))
+
 
 original_data = []
 dim = len(df.columns)
@@ -90,7 +92,7 @@ estimator = DeepAREstimator(
 # load model if not already trained
 # model_path = "../models/trained_model_syn08Jun.sav"
 # model_path = "../models/trained_model_river16Jun.sav"
-model_path = "../models/trained_model_climate27July.sav"
+model_path = "../models/trained_model_climate03Aug.sav"
 filename = pathlib.Path(model_path)
 if not filename.exists():
     print("Training forecasting model....")
