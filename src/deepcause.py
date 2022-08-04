@@ -130,7 +130,7 @@ def deepCause(odata, knockoffs, model, params):
                     mselistint_batch = []
                     mapelist_batch = []
                     mapelistint_batch = []
-                    for r in range(5):
+                    for r in range(4):
 
                         test_data = odata[:, start: start + training_length + prediction_length].copy()
                         test_ds = ListDataset(
@@ -171,14 +171,13 @@ def deepCause(odata, knockoffs, model, params):
                             intervene = knockoff_sample
 
                         np.random.shuffle(intervene)
-
                         mselist_batch.append(mse)
                         mapelist_batch.append(mape)
                         mselistint_batch.append(mseint)
                         mapelistint_batch.append(mapeint)
                         # start = start + 96
 
-                    start = start + 5 # Step size for sliding window # 10
+                    start = start + 7  # Step size for sliding window # 10
                     mselist.append(np.mean(mselist_batch))  # mselist = mselist_batch
                     mapelist.append(np.mean(mapelist_batch))  # mapelist = mapelist_batch
                     mselistint.append(np.mean(mselistint_batch))  # mselistint = mselistint_batch
