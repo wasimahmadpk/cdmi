@@ -3,7 +3,6 @@ import pickle
 import random
 import pathlib
 import parameters
-import parameters
 import numpy as np
 from os import path
 import pandas as pd
