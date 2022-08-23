@@ -48,6 +48,9 @@ batch_size = pars.get("batch_size")
 # df = prep.load_river_data()
 df = prep.load_climate_data()
 df = df.dropna().reset_index(drop=True)
+df.plot.scatter(x='PFD', y='NEP', c = 'red')
+plt.show()
+
 print(len(df))
 
 
