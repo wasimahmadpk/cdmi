@@ -1,6 +1,6 @@
 # DeepCause
 
-This repository contains code for our paper accepted in ICML Workshop 2022 on Spurious correlations, Invariance and Stability (SCIS): Causal Discovery using Model Invariance 
+This repository contains code for our paper accepted in ICML Workshop 2022 on Spurious Correlations, Invariance and Stability (SCIS): Causal Discovery using Model Invariance 
 via Knockoffs by Wasim Ahmad, Maha Shadaydeh and Joachim Denzler.
 
 - The work can be cited using below citation information.
@@ -41,9 +41,9 @@ https://www.gkd.bayern.de.
 ## Code
 `src/main.py` is our main file, where we model multivariate non-linear data using deep networks.
 - `src/deepcause.py` for actual and counterfactual outcome generation using interventions.
-- `src/preprocessing.py` For data loading and preprocessing.
+- `src/preprocessing.py` for data loading and preprocessing.
 - `src/knockoffs.py` generate knockoffs of the original variables.
-- `src/daignostics.py` to determine to goodness of the generated knockoff copies.
+- `src/daignostics.py` to determine the goodness of the generated knockoff copies.
 - `DeepKnockoffs/` contains the knockoffs generation methods.
 - `datasets/` contains the generated synthetic data and real dataset.
 - `model/` contains trained models that we used for different datasets.
