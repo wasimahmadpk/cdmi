@@ -43,12 +43,17 @@ num_layers = pars.get("num_layers")
 num_cells = pars.get("num_cells")
 dropout_rate = pars.get("dropout_rate")
 batch_size = pars.get("batch_size")
+plot_path = pars.get("plot_path")
 
 # Load river discharges data
 # df = prep.load_river_data()
 df = prep.load_climate_data()
 df = df.dropna().reset_index(drop=True)
-df.plot.scatter(x='PFD', y='NEP', c = 'red')
+df.plot.scatter(x='PPFD', y='NEP', c='blue')
+plt.xlabel("PPFD ($\mu$ mol photons $m^{2}s^{-1}$)")
+plt.ylabel("NEP ($\mu$ mol $CO_2$ $m^{2}s^{-1}$)")
+filename = pathlib.Path(plot_path + "PPFD->NEP_Scatter.pdf")
+plt.savefig(filename)
 plt.show()
 
 print(len(df))
