@@ -130,7 +130,7 @@ def deepCause(odata, knockoffs, model, params):
                     mselistint_batch = []
                     mapelist_batch = []
                     mapelistint_batch = []
-                    for r in range(4):
+                    for r in range(3):
 
                         test_data = odata[:, start: start + training_length + prediction_length].copy()
                         test_ds = ListDataset(
@@ -154,10 +154,10 @@ def deepCause(odata, knockoffs, model, params):
                             one_dim_target=False
                         )
 
-                        mse, mape, ypred = modelTest(model, test_ds, num_samples, test_data[j], j,
+                        mse, mape, ypred = modelTest(model, test_ds, test_dsint, num_samples, test_data[j], j,
                                                      prediction_length, iter, False, 0)
 
-                        mseint, mapeint, ypredint = modelTest(model, test_dsint, num_samples,
+                        mseint, mapeint, ypredint = modelTest(model, test_ds, test_dsint, num_samples,
                                                               test_data[j], j,
                                                               prediction_length, iter, True, m)
 
@@ -241,7 +241,7 @@ def deepCause(odata, knockoffs, model, params):
             ax1.legend()
             filename = pathlib.Path(plot_path + f"{columns[i]} ---> {columns[j]}.pdf")
             plt.savefig(filename)
-            plt.show()
+            # plt.show()
             # plt.close()
 
             mean_cause.append(causal_decision[0])
