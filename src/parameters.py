@@ -134,8 +134,8 @@ def get_real_params():
 def get_climate_params():
 
     params = {
-        'epochs': 300,
-        'pred_len': 50,
+        'epochs': 100,
+        'pred_len': 48,
         'train_len': 375,
         'num_layers': 3,
         'num_samples': 10,
@@ -148,7 +148,7 @@ def get_climate_params():
                                  [1, 1]]),
         'true_graph': [1, 0,
                        1, 1],
-        'freq': 'D',
+        'freq': 'H',
         'plot_path': "/home/ahmad/PycharmProjects/deepCausality/plots/"
     }
     return params
