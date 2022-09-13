@@ -135,7 +135,7 @@ def get_climate_params():
 
     params = {
         'epochs': 300,
-        'pred_len': 14,
+        'pred_len': 50,
         'train_len': 375,
         'num_layers': 3,
         'num_samples': 10,
@@ -153,6 +153,36 @@ def get_climate_params():
     }
     return params
 
+
+def get_hack_params():
+
+    params = {
+        'epochs': 100,
+        'pred_len': 24,
+        'train_len': 21*24,
+        'num_layers': 6,
+        'num_samples': 10,
+        'num_cells': 50,
+        'dropout_rate': 0.1,
+        'win_size': 1,
+        'dim': 6,
+        'batch_size': 32,
+        'prior_graph': np.array([[1, 0, 1, 0, 1, 1],
+                                 [1, 0, 1, 0, 0, 1],
+                                 [1, 1, 0, 1, 1, 0],
+                                 [1, 0, 1, 0, 1, 1],
+                                 [1, 0, 1, 0, 1, 1],
+                                 [1, 0, 1, 0, 1, 1]]),
+        'true_graph': [1, 0, 1, 0, 1, 1,
+                       1, 0, 1, 0, 1, 1,
+                       1, 1, 0, 1, 1, 0,
+                       1, 0, 1, 0, 1, 0,
+                       1, 0, 1, 0, 1, 1,
+                       1, 0, 1, 0, 1, 1],
+        'freq': 'D',
+        'plot_path': "/home/ahmad/PycharmProjects/deepCausality/plots/"
+    }
+    return params
 
 def set_all_params(**kwargs):
 
