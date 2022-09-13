@@ -72,7 +72,7 @@ original_data = np.array(original_data)
 # training set
 train_ds = ListDataset(
     [
-        {'start': "01/01/1961 00:00:00",
+        {'start': "01/04/2001 00:00:00",
          'target': original_data[:, 0: training_length].tolist()
          }
     ],
@@ -100,7 +100,7 @@ estimator = DeepAREstimator(
 # load model if not already trained
 # model_path = "../models/trained_model_syn08Jun.sav"
 # model_path = "../models/trained_model_river16Jun.sav"
-model_path = "../models/trained_model_climate01Sep.sav"  # 03Aug
+model_path = "../models/trained_model_climate09Sep.sav"  # 03Aug
 # model_path = "../models/trained_model_hack08Sep.sav"  # 03Aug
 filename = pathlib.Path(model_path)
 if not filename.exists():
