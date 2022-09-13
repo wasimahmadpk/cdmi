@@ -115,7 +115,7 @@ def load_climate_data():
     # Load river discharges data
     dataobj = ClimateData()
     df = dataobj.get_data()
-    # df = df.apply(normalize)
+    df = df.apply(normalize)
 
     return df
 
