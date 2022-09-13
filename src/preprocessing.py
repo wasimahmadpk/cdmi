@@ -12,6 +12,7 @@ from scipy.special import stdtr
 import matplotlib.pyplot as plt
 from riverdata import RiverData
 from climatedata import ClimateData
+from hackdata import HackathonData
 from sklearn.feature_selection import f_regression, mutual_info_regression
 
 np.random.seed(1)
@@ -115,6 +116,14 @@ def load_climate_data():
     dataobj = ClimateData()
     df = dataobj.get_data()
     # df = df.apply(normalize)
+
+    return df
+
+
+def load_hackathon_data():
+    # Load river discharges data
+    dataobj = HackathonData()
+    df = dataobj.get_data()
 
     return df
 
