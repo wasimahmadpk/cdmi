@@ -12,7 +12,7 @@ import parameters
 class Knockoffs:
 
     def __init__(self):
-        self.n = 123
+        self.n = 32
 
     def GenKnockoffs(self, n, dim, datax):
 
