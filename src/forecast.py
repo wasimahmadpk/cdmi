@@ -50,18 +50,29 @@ def modelTest(model_path, test_ds, test_dsint, num_samples, data, idx, predictio
         num_samples=num_samples,  # number of sample paths we want for evaluation
     )
 
-    def plot_forecasts(tss, forecasts, past_length, num_plots):
+    def plot_forecasts(tss, forecasts, forecastint, past_length, num_plots):
 
         for target, forecast in islice(zip(tss, forecasts), num_plots):
 
             ax = target[-past_length:][idx].plot(figsize=(14, 10), linewidth=2)
             forecast.copy_dim(idx).plot(color='g')
             plt.grid(which='both')
+            # plt.legend(["observations", "median prediction", "90% confidence interval", "50% confidence interval"])
+            plt.title(f"Forecasting time series {int_title}")
+            plt.xlabel("Timestamp")
+            plt.ylabel('NEP')
+
+        for target, forecast in islice(zip(tss, forecastint), num_plots):
+            # ax = target[-past_length:][idx].plot(figsize=(14, 10), linewidth=2)
+            forecast.copy_dim(idx).plot(color='r')
+            plt.grid(which='both')
             plt.legend(["observations", "median prediction", "90% confidence interval", "50% confidence interval"])
             plt.title(f"Forecasting time series {int_title}")
             plt.xlabel("Timestamp")
-            plt.ylabel('Target Time-series')
+            plt.ylabel('NEP')
             plt.show()
+
+
 
     forecasts = list(forecast_it)
     tss = list(ts_it)
@@ -82,11 +93,15 @@ def modelTest(model_path, test_ds, test_dsint, num_samples, data, idx, predictio
     mae = mean_absolute_error(y_true, np.mean(y_pred, axis=0))
 
     # meanerror = np.mean(np.mean(y_pred, axis=0))
+
     counter = 1
+    print(f"TSS when intervention is : {intervention}-> {tss}")
 
     if count < counter:
 
-        plot_forecasts(tss, forecasts, past_length=75, num_plots=1)
+        plot_forecasts(tss, forecasts, forecasts_int, past_length=150, num_plots=1)
+        # if intervention == True:
+        #     plot_forecasts(tss, forecasts_int, past_length=250, num_plots=1)
         evaluator = Evaluator(quantiles=[0.1, 0.5, 0.9])
         agg_metrics, item_metrics = evaluator(iter([pd.DataFrame((tss[0][:][idx]))]),
                                                   iter([forecasts[0].copy_dim(idx)]), num_series=len(test_ds))
