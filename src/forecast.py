@@ -17,14 +17,6 @@ import warnings
 # np.random.seed(1)
 # mx.random.seed(2)
 
-def running_avg_effect(y, yint):
-
-    rae = 0
-    rae_list = []
-    for i in range(len(y)):
-        rae = 1/(1 + i) * (rae + (abs(y[i] - yint[i])))
-        rae_list.append()
-    return np.mean(rae_list)
 
 def mean_absolute_percentage_error(y_true, y_pred):
 
@@ -33,10 +25,18 @@ def mean_absolute_percentage_error(y_true, y_pred):
     return mape
 
 
-def modelTest(model_path, test_ds, num_samples, data, idx, prediction_length, count, intervention, in_type):
+def modelTest(model_path, test_ds, test_dsint, num_samples, data, idx, prediction_length, count, intervention, in_type):
     filename = pathlib.Path(model_path)
     # load the model from disk
     predictor = pickle.load(open(filename, 'rb'))
+
+    if intervention == True:
+        heuristic_itn_types = ['In-dist', 'Out-dist', 'Mean', 'Uniform']
+        int_title = 'After ' + heuristic_itn_types[in_type] + ' Intervention'
+        test_data = test_dsint
+    else:
+        int_title = ''
+        test_data = test_ds
 
     forecast_it, ts_it = make_evaluation_predictions(
         dataset=test_ds,  # test dataset
@@ -44,11 +44,11 @@ def modelTest(model_path, test_ds, num_samples, data, idx, prediction_length, co
         num_samples=num_samples,  # number of sample paths we want for evaluation
     )
 
-    if intervention == True:
-        heuristic_itn_types = ['In-dist', 'Out-dist', 'Mean', 'Uniform']
-        int_title = 'After ' + heuristic_itn_types[in_type] + ' Intervention'
-    else:
-        int_title = ''
+    forecast_itint, ts_itint = make_evaluation_predictions(
+        dataset=test_dsint,  # test dataset
+        predictor=predictor,  # predictor
+        num_samples=num_samples,  # number of sample paths we want for evaluation
+    )
 
     def plot_forecasts(tss, forecasts, past_length, num_plots):
 
@@ -65,6 +65,9 @@ def modelTest(model_path, test_ds, num_samples, data, idx, prediction_length, co
 
     forecasts = list(forecast_it)
     tss = list(ts_it)
+
+    forecasts_int = list(forecast_itint)
+    tss_int = list(ts_itint)
     y_pred = []
 
     for i in range(num_samples):
@@ -72,22 +75,23 @@ def modelTest(model_path, test_ds, num_samples, data, idx, prediction_length, co
 
     y_pred = np.array(y_pred)
     y_true = data[-prediction_length:]
-
+    
     # mape = mean_absolute_percentage_error(y_true, np.mean(y_pred, axis=0))
     mape = mean_absolute_error(y_true, np.mean(y_pred, axis=0))
     mse = mean_squared_error(y_true, np.mean(y_pred, axis=0))
     mae = mean_absolute_error(y_true, np.mean(y_pred, axis=0))
 
     # meanerror = np.mean(np.mean(y_pred, axis=0))
+    counter = 1
 
-    counter = -1
     if count < counter:
 
-        plot_forecasts(tss, forecasts, past_length=100, num_plots=1)
+        plot_forecasts(tss, forecasts, past_length=75, num_plots=1)
         evaluator = Evaluator(quantiles=[0.1, 0.5, 0.9])
         agg_metrics, item_metrics = evaluator(iter([pd.DataFrame((tss[0][:][idx]))]),
-                                              iter([forecasts[0].copy_dim(idx)]), num_series=len(test_ds))
+                                                  iter([forecasts[0].copy_dim(idx)]), num_series=len(test_ds))
         print("Performance metrics", agg_metrics)
 
     # return agg_metrics['MSE'], agg_metrics['MAPE'], list(np.mean(y_pred, axis=0))
+
     return mse, mape, list(np.mean(y_pred, axis=0))
