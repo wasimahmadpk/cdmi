@@ -124,18 +124,18 @@ def deepCause(odata, knockoffs, model, params):
                 diff = []
                 start = 10
 
-                for iter in range(20):  # 30
+                for iter in range(3):  # 30
 
                     mselist_batch = []
                     mselistint_batch = []
                     mapelist_batch = []
                     mapelistint_batch = []
-                    for r in range(3):
+                    for r in range(1):
 
                         test_data = odata[:, start: start + training_length + prediction_length].copy()
                         test_ds = ListDataset(
                             [
-                                {'start': "01/01/1961 00:00:00",
+                                {'start': "01/04/2001 00:00:00",
                                  'target': test_data
                                  }
                             ],
@@ -146,7 +146,7 @@ def deepCause(odata, knockoffs, model, params):
                         int_data[i, :] = intervene
                         test_dsint = ListDataset(
                             [
-                                {'start': "01/01/1961 00:00:00",
+                                {'start': "01/04/2001 00:00:00",
                                  'target': int_data
                                  }
                             ],
