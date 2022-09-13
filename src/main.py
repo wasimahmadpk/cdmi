@@ -47,17 +47,17 @@ plot_path = pars.get("plot_path")
 
 # Load river discharges data
 # df = prep.load_river_data()
+# df = prep.load_climate_data()
 df = prep.load_climate_data()
 df = df.dropna().reset_index(drop=True)
-df.plot.scatter(x='PPFD', y='NEP', c='blue')
-plt.xlabel("PPFD ($\mu$ mol photons $m^{2}s^{-1}$)")
-plt.ylabel("NEP ($\mu$ mol $CO_2$ $m^{2}s^{-1}$)")
-filename = pathlib.Path(plot_path + "PPFD->NEP_Scatter.pdf")
-plt.savefig(filename)
-plt.show()
-
-print(len(df))
-
+# ---------------------------------------------
+print(df.describe())
+# df.plot.scatter(x='BO', y='Awake', c='blue')
+# plt.xlabel("PPFD ($\mu$ mol photons $m^{2}s^{-1}$)")
+# plt.ylabel("NEP ($\mu$ mol $CO_2$ $m^{2}s^{-1}$)")
+# filename = pathlib.Path(plot_path + "PPFD->NEP_Scatter.pdf")
+# plt.savefig(filename)
+# plt.show()
 
 original_data = []
 dim = len(df.columns)
@@ -92,7 +92,7 @@ estimator = DeepAREstimator(
         ctx="cpu",
         epochs=epochs,
         hybridize=False,
-        batch_size=batch_size
+        batch_size=32    #batch_size
     ),
     distr_output=MultivariateGaussianOutput(dim=dim)
 )
@@ -100,7 +100,8 @@ estimator = DeepAREstimator(
 # load model if not already trained
 # model_path = "../models/trained_model_syn08Jun.sav"
 # model_path = "../models/trained_model_river16Jun.sav"
-model_path = "../models/trained_model_climate03Aug.sav"
+model_path = "../models/trained_model_climate01Sep.sav"  # 03Aug
+# model_path = "../models/trained_model_hack08Sep.sav"  # 03Aug
 filename = pathlib.Path(model_path)
 if not filename.exists():
     print("Training forecasting model....")
