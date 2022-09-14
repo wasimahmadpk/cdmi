@@ -4,6 +4,8 @@ import pathlib
 import numpy as np
 import mxnet as mx
 from os import path
+import parameters
+import pathlib
 import pandas as pd
 from math import sqrt
 from itertools import islice
@@ -17,6 +19,10 @@ import warnings
 # np.random.seed(1)
 # mx.random.seed(2)
 
+
+# Parameters
+pars = parameters.get_climate_params()
+plot_path = pars.get("plot_path")
 
 def mean_absolute_percentage_error(y_true, y_pred):
 
@@ -61,7 +67,11 @@ def modelTest(model_path, test_ds, test_dsint, num_samples, data, idx, predictio
             # plt.title(f"Forecasting time series {int_title}")
             plt.xlabel("Timestamp (Hourly)")
             plt.ylabel('NEP')
-            plt.show()
+            filename = pathlib.Path(plot_path + "nepforecast.pdf")
+            plt.savefig(filename)
+            # plt.show()
+            plt.clf()
+
 
         for target, forecast in islice(zip(tss, forecastint), num_plots):
             ax = target[-past_length:][idx].plot(figsize=(14, 10), linewidth=2)
@@ -69,9 +79,12 @@ def modelTest(model_path, test_ds, test_dsint, num_samples, data, idx, predictio
             plt.grid(which='both')
             plt.legend(["observations", "median prediction", "90% confidence interval", "50% confidence interval"])
             # plt.title(f"Forecasting time series {int_title}")
-            plt.xlabel("Timestamp (Hourly)")
-            plt.ylabel('NEP')
+            plt.xlabel("Timestamp (Hourly)",  weight='bold', fontsize=10)
+            plt.ylabel('NEP', weight='bold', fontsize=10)
+            filename = pathlib.Path(plot_path + "nepforecastint.pdf")
+            plt.savefig(filename)
             plt.show()
+
 
 
 
