@@ -91,7 +91,7 @@ def ScatterCovariance(X, Xk):
     PlotScatterHelper(XX, XXk, ax=axarr[1])
     axarr[1].set_xlabel(r'$\hat{G}_{\mathbf{X}\mathbf{X}}(i,j)$')
     axarr[1].set_ylabel(r'$\hat{G}_{\mathbf{X}\tilde{\mathbf{X}}}(i,j)$')
-
+    
     return fig
 
 
