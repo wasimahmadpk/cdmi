@@ -77,7 +77,7 @@ if __name__ == '__main__':
 
     data = {'Z1': X1[150:], 'Z2': X2[150:], 'Z3': X3[150:], 'Z4': X4[150:], 'Z5': X5[150:]}
     df = pd.DataFrame(data, columns=['Z1', 'Z2', 'Z3', 'Z4', 'Z5'])
-    df.to_csv(r'/home/ahmad/PycharmProjects/deepCausality/datasets/synthetic_datasets/synthetic_data.csv', index_label=False, header=True)
+    df.to_csv(r'/home/ahmad/PycharmProjects/deepCausality/datasets/synthetic_datasets/synthetic_data1.csv', index_label=False, header=True)
     print(df.head(100))
     print("Correlation Matrix")
     print(df.corr())
