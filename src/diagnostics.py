@@ -65,19 +65,23 @@ def ScatterCovariance(X, Xk):
     # print("Shape Xk:", np.shape(Xk))
     # print("Cov XkXk:", XkXk)
 
-    # Plot data
-    fig = plt.figure()
-    ax1 = fig.add_subplot(111)
-    sns.distplot(X[:, 0], color='red', label='Actual')
-    sns.distplot(Xk[:, 0], color='green', label='Knockoffs')
-    ax1.set_ylabel('')
-    ax1.legend()
-    plt.savefig('Distribution.pdf')
-    plt.show()
+    # # Plot data
+    # fig = plt.figure()
+    # ax1 = fig.add_subplot(111)
+    # sns.distplot(X[:, 0], color='red', label='Actual')
+    # sns.distplot(Xk[:, 0], color='green', label='Knockoffs')
+    # ax1.set_ylabel('')
+    # ax1.legend()
+    # plt.savefig('Distribution.pdf')
+    # plt.show()
+    # plt.clf()
 
     PlotScatterHelper(XX, XkXk, ax=axarr[0])
-    axarr[0].set_xlabel(r'$\hat{G}_{\mathbf{X}\mathbf{X}}(i,j)$')
-    axarr[0].set_ylabel(r'$\hat{G}_{\tilde{\mathbf{X}}\tilde{\mathbf{X}}}(i,j)$')
+    # axarr[0].set_xlabel(r'$\hat{G}_{\mathbf{Z}\mathbf{Z}}(i,j)$', fontsize=18,  weight='bold')
+    # axarr[0].set_ylabel(r'$\hat{G}_{\tilde{\mathbf{Z}}\tilde{\mathbf{Z}}}(i,j)$', fontsize=18, weight='bold')
+
+    axarr[0].set_xlabel(r'$\Sigma_{\mathbf{Z}\mathbf{Z}}(i,j)$', fontsize=18, weight='bold')
+    axarr[0].set_ylabel(r'$\Sigma_{\tilde{\mathbf{Z}}\tilde{\mathbf{Z}}}(i,j)$', fontsize=18, weight='bold')
 
     # Exchangeability
     p = X.shape[1]
@@ -89,9 +93,13 @@ def ScatterCovariance(X, Xk):
     print("Cov XXk:", XXk)
 
     PlotScatterHelper(XX, XXk, ax=axarr[1])
-    axarr[1].set_xlabel(r'$\hat{G}_{\mathbf{X}\mathbf{X}}(i,j)$')
-    axarr[1].set_ylabel(r'$\hat{G}_{\mathbf{X}\tilde{\mathbf{X}}}(i,j)$')
-    
+    # axarr[1].set_xlabel(r'$\hat{G}_{\mathbf{Z}\mathbf{Z}}(i,j)$', fontsize=18, weight='bold')
+    # axarr[1].set_ylabel(r'$\hat{G}_{\mathbf{Z}\tilde{\mathbf{Z}}}(i,j)$', fontsize=18, weight='bold')
+
+    axarr[1].set_xlabel(r'$\Sigma_{\mathbf{Z}\mathbf{Z}}(i,j)$', fontsize=18, weight='bold')
+    axarr[1].set_ylabel(r'$\Sigma_{\mathbf{Z}\tilde{\mathbf{Z}}}(i,j)$', fontsize=18, weight='bold')
+    plt.savefig('cov.pdf')
+    # plt.show()
     return fig
 
 
