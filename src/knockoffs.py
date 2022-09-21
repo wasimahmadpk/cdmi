@@ -131,7 +131,7 @@ class Knockoffs:
         # diagnostics.ScatterCovariance(X_test, Xk_test_m)
 
         # Plot diagnostics for second-order knockoffs
-        diagnostics.ScatterCovariance(X_test, Xk_test_g)
+        # diagnostics.ScatterCovariance(X_test, Xk_test_g)
 
         # Plot diagnostics for oracle knockoffs
         # diagnostics.ScatterCovariance(X_test, Xk_test_o)
@@ -159,7 +159,7 @@ class Knockoffs:
         # fig, ax = plt.subplots(figsize=(12, 6))
         # sns.boxplot(x="Swap", y="Value", hue="Method", data=data)
         # plt.title("K-Nearest Neighbors goodness-of-fit")
-        plt.show()
+        # plt.show()
         return Xk_test_g
 
 
