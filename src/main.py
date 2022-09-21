@@ -32,7 +32,7 @@ np.random.seed(1)
 mx.random.seed(2)
 
 # Parameters
-pars = parameters.get_climate_params()
+pars = parameters.get_syn_params()
 freq = pars.get("freq")
 epochs = pars.get("epochs")
 win_size = pars.get("win_size")
@@ -48,7 +48,8 @@ plot_path = pars.get("plot_path")
 # Load river discharges data
 # df = prep.load_river_data()
 # df = prep.load_climate_data()
-df = prep.load_climate_data()
+# df = prep.load_climate_data()
+df = prep.load_syn_data()
 df = df.dropna().reset_index(drop=True)
 # ---------------------------------------------
 print(df.describe())
@@ -98,9 +99,9 @@ estimator = DeepAREstimator(
 )
 
 # load model if not already trained
-# model_path = "../models/trained_model_syn08Jun.sav"
+model_path = "../models/trained_model_syn21Sep.sav"
 # model_path = "../models/trained_model_river16Jun.sav"
-model_path = "../models/trained_model_climate10Sep.sav"  # 03Aug
+# model_path = "../models/trained_model_climate10Sep.sav"  # 03Aug
 # model_path = "../models/trained_model_hack08Sep.sav"  # 03Aug
 filename = pathlib.Path(model_path)
 if not filename.exists():
