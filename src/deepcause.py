@@ -33,7 +33,7 @@ np.random.seed(1)
 mx.random.seed(2)
 
 
-pars = parameters.get_climate_params()
+pars = parameters.get_syn_params()
 num_samples = pars.get("num_samples")
 training_length = pars.get("train_len")
 prediction_length = pars.get("pred_len")
@@ -124,13 +124,13 @@ def deepCause(odata, knockoffs, model, params):
                 diff = []
                 start = 10
 
-                for iter in range(1):  # 30
+                for iter in range(20):  # 30
 
                     mselist_batch = []
                     mselistint_batch = []
                     mapelist_batch = []
                     mapelistint_batch = []
-                    for r in range(1):
+                    for r in range(3):
 
                         test_data = odata[:, start: start + training_length + prediction_length].copy()
                         test_ds = ListDataset(
