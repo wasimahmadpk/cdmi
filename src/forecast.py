@@ -21,7 +21,7 @@ import warnings
 
 
 # Parameters
-pars = parameters.get_climate_params()
+pars = parameters.get_syn_params()
 plot_path = pars.get("plot_path")
 
 def mean_absolute_percentage_error(y_true, y_pred):
@@ -74,7 +74,7 @@ def modelTest(model_path, test_ds, test_dsint, num_samples, data, idx, predictio
 
 
         for target, forecast in islice(zip(tss, forecastint), num_plots):
-            ax = target[-past_length:][idx].plot(figsize=(14, 10), linewidth=2)
+            # ax = target[-past_length:][idx].plot(figsize=(14, 10), linewidth=2)
             forecast.copy_dim(idx).plot(color='r')
             plt.grid(which='both')
             plt.legend(["observations", "median prediction", "90% confidence interval", "50% confidence interval"])
@@ -82,8 +82,8 @@ def modelTest(model_path, test_ds, test_dsint, num_samples, data, idx, predictio
             plt.xlabel("Timestamp (Hourly)",  weight='bold', fontsize=10)
             plt.ylabel('NEP', weight='bold', fontsize=10)
             filename = pathlib.Path(plot_path + "nepforecastint.pdf")
-            plt.savefig(filename)
-            plt.show()
+            # plt.savefig(filename)
+            # plt.show()
 
 
 
@@ -108,8 +108,8 @@ def modelTest(model_path, test_ds, test_dsint, num_samples, data, idx, predictio
 
     # meanerror = np.mean(np.mean(y_pred, axis=0))
 
-    counter = 1
-    print(f"TSS when intervention is : {intervention}-> {tss}")
+    counter = -1
+    # print(f"TSS when intervention is : {intervention}-> {tss}")
 
     if count < counter:
 
