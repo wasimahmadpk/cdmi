@@ -31,7 +31,7 @@ def mean_absolute_percentage_error(y_true, y_pred):
     return mape
 
 
-def modelTest(model_path, test_ds, test_dsint, num_samples, data, idx, prediction_length, count, intervention, in_type):
+def modelTest(model_path, test_ds, num_samples, data, idx, prediction_length, count, intervention, in_type):
     filename = pathlib.Path(model_path)
     # load the model from disk
     predictor = pickle.load(open(filename, 'rb'))
@@ -39,10 +39,9 @@ def modelTest(model_path, test_ds, test_dsint, num_samples, data, idx, predictio
     if intervention == True:
         heuristic_itn_types = ['In-dist', 'Out-dist', 'Mean', 'Uniform']
         int_title = 'After ' + heuristic_itn_types[in_type] + ' Intervention'
-        test_data = test_dsint
     else:
         int_title = ''
-        test_data = test_ds
+
 
     forecast_it, ts_it = make_evaluation_predictions(
         dataset=test_ds,  # test dataset
@@ -50,13 +49,13 @@ def modelTest(model_path, test_ds, test_dsint, num_samples, data, idx, predictio
         num_samples=num_samples,  # number of sample paths we want for evaluation
     )
 
-    forecast_itint, ts_itint = make_evaluation_predictions(
-        dataset=test_dsint,  # test dataset
-        predictor=predictor,  # predictor
-        num_samples=num_samples,  # number of sample paths we want for evaluation
-    )
+    # forecast_itint, ts_itint = make_evaluation_predictions(
+    #     dataset=test_dsint,  # test dataset
+    #     predictor=predictor,  # predictor
+    #     num_samples=num_samples,  # number of sample paths we want for evaluation
+    # )
 
-    def plot_forecasts(tss, forecasts, forecastint, past_length, num_plots):
+    def plot_forecasts(tss, forecasts, past_length, num_plots):
 
         for target, forecast in islice(zip(tss, forecasts), num_plots):
 
@@ -68,31 +67,29 @@ def modelTest(model_path, test_ds, test_dsint, num_samples, data, idx, predictio
             plt.xlabel("Timestamp (Hourly)")
             plt.ylabel('NEP')
             filename = pathlib.Path(plot_path + "nepforecast.pdf")
-            plt.savefig(filename)
-            # plt.show()
-            plt.clf()
-
-
-        for target, forecast in islice(zip(tss, forecastint), num_plots):
-            # ax = target[-past_length:][idx].plot(figsize=(14, 10), linewidth=2)
-            forecast.copy_dim(idx).plot(color='r')
-            plt.grid(which='both')
-            plt.legend(["observations", "median prediction", "90% confidence interval", "50% confidence interval"])
-            # plt.title(f"Forecasting time series {int_title}")
-            plt.xlabel("Timestamp (Hourly)",  weight='bold', fontsize=10)
-            plt.ylabel('NEP', weight='bold', fontsize=10)
-            filename = pathlib.Path(plot_path + "nepforecastint.pdf")
             # plt.savefig(filename)
             # plt.show()
+            # plt.clf()
 
 
+        # for target, forecast in islice(zip(tss, forecastint), num_plots):
+        #     # ax = target[-past_length:][idx].plot(figsize=(14, 10), linewidth=2)
+        #     forecast.copy_dim(idx).plot(color='r')
+        #     plt.grid(which='both')
+        #     plt.legend(["observations", "median prediction", "90% confidence interval", "50% confidence interval"])
+        #     # plt.title(f"Forecasting time series {int_title}")
+        #     plt.xlabel("Timestamp (Hourly)",  weight='bold', fontsize=10)
+        #     plt.ylabel('NEP', weight='bold', fontsize=10)
+        #     filename = pathlib.Path(plot_path + "nepforecastint.pdf")
+        #     # plt.savefig(filename)
+        #     # plt.show()
 
 
     forecasts = list(forecast_it)
     tss = list(ts_it)
 
-    forecasts_int = list(forecast_itint)
-    tss_int = list(ts_itint)
+    # forecasts_int = list(forecast_itint)
+    # tss_int = list(ts_itint)
     y_pred = []
 
     for i in range(num_samples):
@@ -113,7 +110,7 @@ def modelTest(model_path, test_ds, test_dsint, num_samples, data, idx, predictio
 
     if count < counter:
 
-        plot_forecasts(tss, forecasts, forecasts_int, past_length=150, num_plots=1)
+        plot_forecasts(tss, forecasts, past_length=150, num_plots=1)
         # if intervention == True:
         #     plot_forecasts(tss, forecasts_int, past_length=250, num_plots=1)
         evaluator = Evaluator(quantiles=[0.1, 0.5, 0.9])
