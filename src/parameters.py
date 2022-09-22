@@ -80,15 +80,15 @@ def GetFDRTestParams(model):
 def get_syn_params():
     # Parameters for synthetic data
     params = {
-        'epochs': 100,
-        'pred_len': 20,
+        'epochs': 150,
+        'pred_len': 25,
         'train_len': 555,
         'num_layers': 4,
         'num_cells': 45,
         'num_samples': 10,
         'dropout_rate': 0.1,
         'win_size': 1,
-        'dim': 3,
+        'dim': 5,
         'batch_size': 32,
         'prior_graph': np.array([[1, 1, 1, 1, 1],
                                  [0, 1, 0, 0, 1],
