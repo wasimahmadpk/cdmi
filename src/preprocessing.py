@@ -161,5 +161,6 @@ def load_flux_data():
 
 def load_syn_data():
     # Load synthetic data *************************
-    df = pd.read_csv("../datasets/synthetic_datasets/synthetic_data.csv")
+    data = pd.read_csv("../datasets/synthetic_datasets/synthetic_data.csv")
+    df = data.apply(normalize)
     return df
