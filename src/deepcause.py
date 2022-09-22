@@ -154,10 +154,10 @@ def deepCause(odata, knockoffs, model, params):
                             one_dim_target=False
                         )
 
-                        mse, mape, ypred = modelTest(model, test_ds, test_dsint, num_samples, test_data[j], j,
+                        mse, mape, ypred = modelTest(model, test_ds, num_samples, test_data[j], j,
                                                      prediction_length, iter, False, 0)
 
-                        mseint, mapeint, ypredint = modelTest(model, test_ds, test_dsint, num_samples,
+                        mseint, mapeint, ypredint = modelTest(model, test_dsint, num_samples,
                                                               test_data[j], j,
                                                               prediction_length, iter, True, m)
 
@@ -177,7 +177,7 @@ def deepCause(odata, knockoffs, model, params):
                         mapelistint_batch.append(mapeint)
                         # start = start + 96
 
-                    start = start + 7  # Step size for sliding window # 10
+                    start = start + 10  # Step size for sliding window # 10
                     mselist.append(np.mean(mselist_batch))  # mselist = mselist_batch
                     mapelist.append(np.mean(mapelist_batch))  # mapelist = mapelist_batch
                     mselistint.append(np.mean(mselistint_batch))  # mselistint = mselistint_batch
