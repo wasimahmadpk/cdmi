@@ -32,8 +32,8 @@ class SyntheticDataset:
 
         for t in range(10, self.time_steps):
             self.X1.append(self.root[t])
-            self.X2.append(C.get('c2') * self.X1[t - Tao.get('t2')] + ey[t])
-            self.X3.append(C.get('c3') * self.X1[t - Tao.get('t3')] + ez[t])                              # C.get('c1') ** ((self.X1[t - Tao.get('t3')]) / 2 + ez[t])
+            self.X2.append(C.get('c1') * self.X1[t - Tao.get('t1')] + ey[t])
+            self.X3.append(C.get('c2') ** ((self.X1[t - Tao.get('t2')]) / 2) + ez[t])
             # self.X4.append(C.get('c3') * self.X1[t - Tao.get('t3')] + er[t])
             # self.X5.append(C.get('c5') * self.X2[t - Tao.get('t1')] + ey[t])
         return self.X1, self.X2, self.X3
@@ -64,12 +64,12 @@ if __name__ == '__main__':
 
     root = np.random.normal(0, 1.0, 2000)
     time_steps, Tref = round(len(root)), 15
-    ey = np.random.normal(0, 0.0, time_steps)
-    ez = np.random.normal(0, 0.05, time_steps)
-    er = np.random.normal(0, 0.0, time_steps)
+    ey = np.random.normal(0, 0.10, time_steps)
+    ez = np.random.normal(0, 0.11, time_steps)
+    er = np.random.normal(0, 0.15, time_steps)
 
-    C = {'c1': 0.90, 'c2': 3.10, 'c3': 1.200, 'c4': 1.00, 'c5': 0.99}           # c2:1.75, c5:1.85
-    Tao = {'t1': 0, 't2': 0, 't3': 0, 't4': 0, 't5': 5, 't6': 6}
+    C = {'c1': 0.95, 'c2': 1.10, 'c3': 1.200, 'c4': 1.00, 'c5': 0.99}           # c2:1.75, c5:1.85
+    Tao = {'t1': 2, 't2': 1, 't3': 0, 't4': 0, 't5': 5, 't6': 6}
     data_obj = SyntheticDataset(root, time_steps, Tref, C, Tao, ey, ez, er)
     X1, X2, X3 = data_obj.generate_data()
 
@@ -102,5 +102,4 @@ if __name__ == '__main__':
     # ax5 = fig.add_subplot(515)
     # ax5.plot(X5[150:1500])
     # ax5.set_ylabel("X5")
-
     plt.show()
