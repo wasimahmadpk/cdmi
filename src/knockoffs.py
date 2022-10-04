@@ -28,7 +28,7 @@ class Knockoffs:
         # - gmm      : Gaussian mixture model
         # - mstudent : Multivariate Student's-t distribution
         # - sparse   : Multivariate sparse Gaussian distribution
-        model = "gaussian"
+        model = "gmm"
         distribution_params = parameters.GetDistributionParams(model, p)
         # Initialize the data generator
         DataSampler = data.DataSampler(distribution_params)
@@ -131,7 +131,7 @@ class Knockoffs:
         # diagnostics.ScatterCovariance(X_test, Xk_test_m)
 
         # Plot diagnostics for second-order knockoffs
-        # diagnostics.ScatterCovariance(X_test, Xk_test_g)
+        diagnostics.ScatterCovariance(X_test, Xk_test_g)
 
         # Plot diagnostics for oracle knockoffs
         # diagnostics.ScatterCovariance(X_test, Xk_test_o)
