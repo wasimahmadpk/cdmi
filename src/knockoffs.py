@@ -131,7 +131,7 @@ class Knockoffs:
         # diagnostics.ScatterCovariance(X_test, Xk_test_m)
 
         # Plot diagnostics for second-order knockoffs
-        diagnostics.ScatterCovariance(X_test, Xk_test_g)
+        # diagnostics.ScatterCovariance(X_test, Xk_test_g)
 
         # Plot diagnostics for oracle knockoffs
         # diagnostics.ScatterCovariance(X_test, Xk_test_o)
