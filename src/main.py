@@ -48,7 +48,6 @@ plot_path = pars.get("plot_path")
 # Load river discharges data
 # df = prep.load_river_data()
 # df = prep.load_climate_data()
-# df = prep.load_climate_data()
 df = prep.load_syn_data()
 df = df.dropna().reset_index(drop=True)
 # ---------------------------------------------
@@ -101,7 +100,7 @@ estimator = DeepAREstimator(
 # load model if not already trained
 model_path = "../models/trained_model_syn22Sep.sav"
 # model_path = "../models/trained_model_river16Jun.sav"
-# model_path = "../models/trained_model_climate10Sep.sav"  # 03Aug
+# model_path = "../models/trained_model_climate07Oct.sav"  # 03Aug
 # model_path = "../models/trained_model_hack08Sep.sav"  # 03Aug
 filename = pathlib.Path(model_path)
 if not filename.exists():
