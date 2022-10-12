@@ -1,13 +1,16 @@
-import numpy as np
-import random
-import pandas as pd
-import preprocessing as prep
-import matplotlib.pyplot as plt
-from netCDF4 import Dataset
-from riverdata import RiverData
-import parameters
 # import netCDF
 import math
+import random
+import parameters
+import numpy as np
+import pandas as pd
+from netCDF4 import Dataset
+import preprocessing as prep
+import matplotlib.pyplot as plt
+from riverdata import RiverData
+
+
+np.random.seed(3)
 
 
 class SyntheticDataset:
@@ -30,10 +33,10 @@ class SyntheticDataset:
 
     def generate_data(self):
 
-        for t in range(10, self.time_steps):
+        for t in range(15, self.time_steps):
             self.X1.append(self.root[t])
             self.X2.append(C.get('c1') * self.X1[t - Tao.get('t1')] + ey[t])
-            self.X3.append(C.get('c2') ** ((self.X1[t - Tao.get('t2')]) / 2) + ez[t])
+            self.X3.append(C.get('c2') * self.X1[t - Tao.get('t2')] + ez[t])                                                                  # self.X3.append(C.get('c2') ** ((self.X1[t - Tao.get('t2')]) / 2) + ez[t])
             # self.X4.append(C.get('c3') * self.X1[t - Tao.get('t3')] + er[t])
             # self.X5.append(C.get('c5') * self.X2[t - Tao.get('t1')] + ey[t])
         return self.X1, self.X2, self.X3
@@ -64,12 +67,12 @@ if __name__ == '__main__':
 
     root = np.random.normal(0, 1.0, 2000)
     time_steps, Tref = round(len(root)), 15
-    ey = np.random.normal(0, 0.10, time_steps)
-    ez = np.random.normal(0, 0.11, time_steps)
-    er = np.random.normal(0, 0.15, time_steps)
+    ey = np.random.normal(0, 0.01, time_steps)
+    ez = np.random.normal(0, 0.01, time_steps)
+    er = np.random.normal(0, 0.01, time_steps)
 
-    C = {'c1': 0.95, 'c2': 1.10, 'c3': 1.200, 'c4': 1.00, 'c5': 0.99}           # c2:1.75, c5:1.85
-    Tao = {'t1': 2, 't2': 1, 't3': 0, 't4': 0, 't5': 5, 't6': 6}
+    C = {'c1': 0.90, 'c2': 1.10, 'c3': 1.85, 'c4': 1.00, 'c5': 0.99}           # c2:1.75, c5:1.85
+    Tao = {'t1': 1, 't2': 1, 't3': 2, 't4': 2, 't5': 5, 't6': 6}
     data_obj = SyntheticDataset(root, time_steps, Tref, C, Tao, ey, ez, er)
     X1, X2, X3 = data_obj.generate_data()
 
@@ -77,10 +80,10 @@ if __name__ == '__main__':
 
     data = {'Z1': X1[150:], 'Z2': X2[150:], 'Z3': X3[150:]}
     df = pd.DataFrame(data, columns=['Z1', 'Z2', 'Z3'])
-    df.to_csv(r'/home/ahmad/PycharmProjects/deepCausality/datasets/synthetic_datasets/synthetic_data1.csv', index_label=False, header=True)
+    df.to_csv(r'/home/ahmad/PycharmProjects/deepCausality/datasets/synthetic_datasets/synthetic_data2.csv', index_label=False, header=True)
     print(df.head(100))
     print("Correlation Matrix")
-    print(df.corr())
+    print(df.corr(method='pearson'))
 
     fig = plt.figure()
     ax1 = fig.add_subplot(511)
