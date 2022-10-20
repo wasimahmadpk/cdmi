@@ -47,9 +47,11 @@ plot_path = pars.get("plot_path")
 # df = prep.load_river_data()
 # df = prep.load_climate_data()
 df = prep.load_geo_data()
+df.fillna(df.mean())
 df = df.dropna().reset_index(drop=True)
 # ---------------------------------------------
 print(df.describe())
+print(df.shape)
 # df.plot.scatter(x='BO', y='Awake', c='blue')
 # plt.xlabel("PPFD ($\mu$ mol photons $m^{2}s^{-1}$)")
 # plt.ylabel("NEP ($\mu$ mol $CO_2$ $m^{2}s^{-1}$)")
@@ -90,7 +92,7 @@ estimator = DeepAREstimator(
         ctx="cpu",
         epochs=epochs,
         hybridize=False,
-        batch_size=32    #batch_size
+        batch_size=32
     ),
     distr_output=MultivariateGaussianOutput(dim=dim)
 )
