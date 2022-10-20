@@ -11,8 +11,6 @@ from math import sqrt
 from itertools import islice
 import preprocessing as prep
 from datetime import datetime
-from riverdata import RiverData
-from climatedata import ClimateData
 from deepcause import deepCause
 import matplotlib.pyplot as plt
 from knockoffs import Knockoffs
@@ -32,7 +30,7 @@ np.random.seed(1)
 mx.random.seed(2)
 
 # Parameters
-pars = parameters.get_syn_params()
+pars = parameters.get_geo_params()
 freq = pars.get("freq")
 epochs = pars.get("epochs")
 win_size = pars.get("win_size")
@@ -48,7 +46,7 @@ plot_path = pars.get("plot_path")
 # Load river discharges data
 # df = prep.load_river_data()
 # df = prep.load_climate_data()
-df = prep.load_syn_data()
+df = prep.load_geo_data()
 df = df.dropna().reset_index(drop=True)
 # ---------------------------------------------
 print(df.describe())
@@ -98,7 +96,8 @@ estimator = DeepAREstimator(
 )
 
 # load model if not already trained
-model_path = "../models/trained_model_syn22Sep.sav"
+model_path = "../models/trained_model_geo2Oct.sav"
+# model_path = "../models/trained_model_syn22Sep.sav"
 # model_path = "../models/trained_model_river16Jun.sav"
 # model_path = "../models/trained_model_climate07Oct.sav"  # 03Aug
 # model_path = "../models/trained_model_hack08Sep.sav"  # 03Aug
