@@ -11,9 +11,6 @@ from math import sqrt
 from datetime import datetime
 from scipy.special import stdtr
 import matplotlib.pyplot as plt
-from riverdata import RiverData
-from climatedata import ClimateData
-from hackdata import HackathonData
 from sklearn.feature_selection import f_regression, mutual_info_regression
 
 np.random.seed(1)
@@ -124,8 +121,9 @@ def load_river_data():
     kempton = average_discharges.iloc[:, 2].tolist()
     lenggries = average_discharges.iloc[:, 3].tolist()
 
-    data = {'Kt': normalize(kempton), 'Dt': normalize(dillingen), 'Lt': normalize(lenggries)}
+    data = {'Kt': kempton, 'Dt': dillingen, 'Lt': lenggries}
     df = pd.DataFrame(data, columns=['Kt', 'Dt', 'Lt'])
+    df = df.apply(normalize)
 
     return df
 
@@ -142,9 +140,9 @@ def load_climate_data():
 
 def load_geo_data():
     # Load river discharges data
-    path = r'data/DeepAR_moxa_data.h5'
-    df = pd.read_hdf(path) 
-    df = df.apply(normalize)
+    path = '/home/ahmad/PycharmProjects/deepCausality/datasets/geo_dataset/moxa_data.h5'
+    data = pd.read_hdf(path) 
+    data = data.apply(normalize)
     vars = ['rain', 'strain_ns', 'tides_ns', 'temperature_outside', 'pressure_outside', 'gw_west']
     df = pd.DataFrame(data[vars].values[:1500], columns=list(vars))
 
