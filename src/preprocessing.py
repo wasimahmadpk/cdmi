@@ -1,4 +1,5 @@
 import math
+import h5py
 import pickle
 import random
 import pathlib
@@ -99,11 +100,29 @@ def mutual_information(x, y):
 
 def load_river_data():
     # Load river discharges data
-    dataobj = RiverData()
-    data = dataobj.get_data()
-    dillingen = data.iloc[:, 1].tolist()
-    kempton = data.iloc[:, 2].tolist()
-    lenggries = data.iloc[:, 3].tolist()
+    stations = ["dillingen", "kempten", "lenggries"]
+        # Read the average daily discharges at each of these stations and combine them into a single pandas dataframe
+    average_discharges = None
+
+    for station in stations:
+
+        filename = pathlib.Path("../datasets/river_discharge_data/data_" + station + ".csv")
+        new_frame = pd.read_csv(filename, sep=";", skiprows=range(10))
+        new_frame = new_frame[["Datum", "Mittelwert"]]
+
+        new_frame = new_frame.rename(columns={"Mittelwert": station.capitalize(), "Datum": "Date"})
+        new_frame.replace({",": "."}, regex=True, inplace=True)
+
+        new_frame[station.capitalize()] = new_frame[station.capitalize()].astype(float)
+
+        if average_discharges is None:
+            average_discharges = new_frame
+        else:
+            average_discharges = average_discharges.merge(new_frame, on="Date")
+    
+    dillingen = average_discharges.iloc[:, 1].tolist()
+    kempton = average_discharges.iloc[:, 2].tolist()
+    lenggries = average_discharges.iloc[:, 3].tolist()
 
     data = {'Kt': normalize(kempton), 'Dt': normalize(dillingen), 'Lt': normalize(lenggries)}
     df = pd.DataFrame(data, columns=['Kt', 'Dt', 'Lt'])
@@ -113,17 +132,49 @@ def load_river_data():
 
 def load_climate_data():
     # Load river discharges data
-    dataobj = ClimateData()
-    df = dataobj.get_data()
+    
+    df = pd.read_csv('/home/ahmad/PycharmProjects/deepCausality/datasets/environment_dataset/light.txt', sep=" ", header=None)
+    df.columns = ["NEP", "PPFD"]
     df = df.apply(normalize)
 
     return df
 
 
+def load_geo_data():
+    # Load river discharges data
+    path = r'data/DeepAR_moxa_data.h5'
+    df = pd.read_hdf(path) 
+    df = df.apply(normalize)
+    vars = ['rain', 'strain_ns', 'tides_ns', 'temperature_outside', 'pressure_outside', 'gw_west']
+    df = pd.DataFrame(data[vars].values[:1500], columns=list(vars))
+
+    return df
+
+
+
 def load_hackathon_data():
     # Load river discharges data
-    dataobj = HackathonData()
-    df = dataobj.get_data()
+    bot, bov = simple_load_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/hackathon_data/blood-oxygenation_interpolated_3600_pt_avg_14.csv")
+    wt, wv = simple_load_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/hackathon_data/weight_interpolated_3600_pt_avg_6.csv")
+    hrt, hrv = simple_load_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/hackathon_data/resting-heart-rate_interpolated_3600_iv_avg_4.csv")
+    st, sv = simple_load_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/hackathon_data/step-amount_interpolated_3600_iv_ct_15.csv")
+    it, iv = simple_load_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/hackathon_data/in-bed_interpolated_3600_iv_sp_19.csv")
+    at, av = simple_load_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/hackathon_data/awake_interpolated_3600_iv_sp_18.csv")
+
+        # plt.plot(bov)
+        # plt.plot(wv)
+        # plt.plot(hrv)
+        # plt.show()
+
+        # v15 = np.nan_to_num(aggregate_avg(ts_15, v_15, 60 * 60))
+        # v3 = np.nan_to_num(aggregate_avg(ts_3, v_3, 60 * 60))
+        # v2 = np.nan_to_num(aggregate_avg(ts_2, v_2, 60 * 60))
+        # v1 = np.nan_to_num(aggregate_avg(ts_1, v_1, 60 * 60))
+
+    data = {'BO': bov[7500:10000], 'WV': wv[7500:10000], 'HR': hrv[7500:10000], 'Step': sv[7500:10000], 'IB': iv[7500:10000], 'Awake': av[7500:10000]}
+    df = pd.DataFrame(data, columns=['BO', 'WV', 'HR', 'Step', 'IB', 'Awake'])
+
+    return df
 
     return df
 
