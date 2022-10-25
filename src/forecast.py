@@ -20,7 +20,7 @@ import warnings
 
 
 # Parameters
-pars = parameters.get_syn_params()
+pars = parameters.get_geo_params()
 plot_path = pars.get("plot_path")
 
 def mean_absolute_percentage_error(y_true, y_pred):
