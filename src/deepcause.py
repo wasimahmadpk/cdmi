@@ -24,16 +24,16 @@ from gluonts.dataset.common import ListDataset
 from gluonts.model.deepar import DeepAREstimator
 from gluonts.model.deepar._network import DeepARTrainingNetwork
 from gluonts.evaluation.backtest import make_evaluation_predictions
-from scipy.stats import ttest_ind, ttest_ind_from_stats, ttest_1samp, ks_2samp, kstest
 from sklearn.feature_selection import f_regression, mutual_info_regression
 from gluonts.distribution.multivariate_gaussian import MultivariateGaussianOutput
+from scipy.stats import ttest_ind, ttest_ind_from_stats, ttest_1samp, ks_2samp, kstest
 from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score, accuracy_score
 
 np.random.seed(1)
 mx.random.seed(2)
 
 
-pars = parameters.get_syn_params()
+pars = parameters.get_geo_params()
 num_samples = pars.get("num_samples")
 training_length = pars.get("train_len")
 prediction_length = pars.get("pred_len")
@@ -124,7 +124,7 @@ def deepCause(odata, knockoffs, model, params):
                 diff = []
                 start = 10
 
-                for iter in range(20):  # 30
+                for iter in range(25):  # 30
 
                     mselist_batch = []
                     mselistint_batch = []
@@ -177,7 +177,7 @@ def deepCause(odata, knockoffs, model, params):
                         mapelistint_batch.append(mapeint)
                         # start = start + 96
 
-                    start = start + 5 # Step size for sliding window # 10
+                    start = start + 24  # Step size for sliding window # 10
                     mselist.append(np.mean(mselist_batch))  # mselist = mselist_batch
                     mapelist.append(np.mean(mapelist_batch))  # mapelist = mapelist_batch
                     mselistint.append(np.mean(mselistint_batch))  # mselistint = mselistint_batch
@@ -265,6 +265,7 @@ def deepCause(odata, knockoffs, model, params):
 
     for ss in range(len(conf_mat)):
 
+        true_conf_mat = conf_mat[ss]
         fscore = round(f1_score(true_conf_mat, conf_mat[ss], average='binary'), 2)
         acc = accuracy_score(true_conf_mat, conf_mat[ss])
         tn, fp, fn, tp = confusion_matrix(true_conf_mat, conf_mat[ss], labels=[0, 1]).ravel()
