@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 from sklearn.feature_selection import f_regression, mutual_info_regression
 
 np.random.seed(1)
-pars = parameters.get_real_params()
+pars = parameters.get_geo_params()
 
 win_size = pars.get("win_size")
 training_length = pars.get("train_len")
@@ -140,11 +140,19 @@ def load_climate_data():
 
 def load_geo_data():
     # Load river discharges data
-    path = '/home/ahmad/PycharmProjects/deepCausality/datasets/geo_dataset/moxa_data.h5'
-    data = pd.read_hdf(path) 
-    data = data.apply(normalize)
-    vars = ['rain', 'strain_ns', 'tides_ns', 'temperature_outside', 'pressure_outside', 'gw_west']
-    df = pd.DataFrame(data[vars].values[:1500], columns=list(vars))
+    path = '/home/ahmad/PycharmProjects/deepCausality/datasets/geo_dataset/moxa_data.csv'
+    # vars = ['rain', 'strain_ns', 'tides_ns', 'temperature_outside', 'pressure_outside', 'gw_west']
+    vars = ['DateTime', 'tides_ew', 'tides_ns', 'rain', 'temperature_outside', 'pressure_outside', 'gw_mb', 'gw_sr', 'gw_west',
+            'snow_load', 'wind_x', 'wind_y', 'humidity', 'glob_radiaton', 'strain_ew_corrected', 'strain_ns_corrected']
+    data = pd.read_csv(path, usecols=vars)
+
+    # Read spring and summer season geo-climatic data
+    mask = (data['DateTime'] > '2015-03-01') & (data['DateTime'] <= '2015-09-30')
+    df = data.loc[mask]
+    df = df.set_index('DateTime')
+    df = df.apply(normalize)
+
+    # df = pd.DataFrame(data[vars].values[:1500], columns=list(vars))
 
     return df
 
