@@ -182,8 +182,6 @@ def load_hackathon_data():
 
     return df
 
-    return df
-
 
 def load_flux_data():
 
