@@ -93,11 +93,11 @@ def deepCause(odata, knockoffs, model, params):
         heuristic_itn_types = ['In-dist', 'Out-dist', 'Mean', 'Uniform']
 
         for j in range(len(odata)):
-            back_door_int = []
-            back_door = prior_graph[:, j].nonzero()[0]
-            print("----------*****-----------------------*****-----------------******-----------")
-            print(f"Front/Backdoor Paths: {np.array(back_door) + 1} ---> {j + 1}")
-            print("----------*****-----------------------*****-----------------******-----------")
+            # back_door_int = []
+            # back_door = prior_graph[:, j].nonzero()[0]
+            # print("----------*****-----------------------*****-----------------******-----------")
+            # print(f"Front/Backdoor Paths: {np.array(back_door) + 1} ---> {j + 1}")
+            # print("----------*****-----------------------*****-----------------******-----------")
 
             columns = params.get('col')
             pred_var = odata[j]
