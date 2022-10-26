@@ -196,7 +196,6 @@ def load_flux_data():
     # nee = fluxnet['NEE_VUT_50']
     ogpp = fluxnet['GPP_NT_VUT_50']
     oreco = fluxnet['RECO_NT_VUT_50']
-    #
     # ************* LOad FLUXNET2015 data ************************
 
     rg = normalize(down_sample(org, win_size))
