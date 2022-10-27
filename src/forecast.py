@@ -67,7 +67,7 @@ def modelTest(model_path, test_ds, num_samples, data, idx, prediction_length, co
             plt.ylabel('NEP')
             filename = pathlib.Path(plot_path + "nepforecast.pdf")
             # plt.savefig(filename)
-            # plt.show()
+            plt.show()
             # plt.clf()
 
 
