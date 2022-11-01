@@ -9,7 +9,7 @@ def get_sig_params():
     return pars
 
 
-def GetDistributionParams(model,p):
+def GetDistributionParams(model, p):
     """
     Returns parameters for generating different data distributions
     """
@@ -131,6 +131,7 @@ def get_real_params():
     }
     return params
 
+
 def get_climate_params():
 
     params = {
@@ -159,10 +160,10 @@ def get_geo_params():
     params = {
         'epochs': 150,
         'pred_len': 24,
-        'train_len': 1000,
+        'train_len': 500,
         'num_layers': 5,
         'num_samples': 10,
-        'num_cells': 50,
+        'num_cells': 55,
         'dropout_rate': 0.1,
         'win_size': 1,
         'dim': 5,
