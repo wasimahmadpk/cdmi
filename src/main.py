@@ -89,7 +89,7 @@ estimator = DeepAREstimator(
     num_cells=num_cells,  # 33
     dropout_rate=dropout_rate,
     trainer=Trainer(
-        ctx="gpu",
+        ctx="cpu",
         epochs=epochs,
         hybridize=False,
         batch_size=32
@@ -98,7 +98,7 @@ estimator = DeepAREstimator(
 )
 
 # load model if not already trained
-model_path = "../models/trained_model_geo28ct.sav"
+model_path = "../models/trained_model_geo01Nov.sav"
 # model_path = "../models/trained_model_syn22Sep.sav"
 # model_path = "../models/trained_model_river16Jun.sav"
 # model_path = "../models/trained_model_climate07Oct.sav"  # 03Aug
