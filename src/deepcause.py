@@ -66,6 +66,9 @@ def deepCause(odata, knockoffs, model, params):
     conf_mat_indist = []
     conf_mat_outdist = []
     conf_mat_uniform = []
+    
+    pvalues = []
+    pval_indist, pval_outdist, pval_mean, pval_uniform = [], [], [], []
 
     for i in range(len(odata)):
 
@@ -77,6 +80,14 @@ def deepCause(odata, knockoffs, model, params):
         indist_cause = []
         outdist_cause = []
         uni_cause = []
+
+
+        # p-values
+        pval_i, pvi = [], []
+        pval_m, pvm = [], []
+        pval_o, pvo = [], []
+        pval_u, pvu = [], []
+
 
         # Generate Knockoffs
         data_actual = np.array(odata[:, 0: training_length + prediction_length]).transpose()
@@ -97,7 +108,7 @@ def deepCause(odata, knockoffs, model, params):
             # back_door = prior_graph[:, j].nonzero()[0]
             # print("----------*****-----------------------*****-----------------******-----------")
             # print(f"Front/Backdoor Paths: {np.array(back_door) + 1} ---> {j + 1}")
-            # print("----------*****-----------------------*****-----------------******-----------")
+            print("----------*****-----------------------*****-----------------******-----------")
 
             columns = params.get('col')
             pred_var = odata[j]
@@ -124,13 +135,13 @@ def deepCause(odata, knockoffs, model, params):
                 diff = []
                 start = 10
 
-                for iter in range(15):  # 30
+                for iter in range(2):  # 30
 
                     mselist_batch = []
                     mselistint_batch = []
                     mapelist_batch = []
                     mapelistint_batch = []
-                    for r in range(3):
+                    for r in range(1):
 
                         test_data = odata[:, start: start + training_length + prediction_length].copy()
                         test_ds = ListDataset(
@@ -206,7 +217,7 @@ def deepCause(odata, knockoffs, model, params):
                 print(f"Causal Link: Z_{i + 1} --------------> Z_{j + 1}")
                 print("-----------------------------------------------------------------------------")
                 fnamehist = plot_path + "{Z_[i + 1]}_{Z_[j + 1]}:hist"
-
+            pvals = []
             for z in range(len(heuristic_itn_types)):
 
                 print("Intervention: " + heuristic_itn_types[z])
@@ -215,7 +226,7 @@ def deepCause(odata, knockoffs, model, params):
                 # t, p = ttest_ind(np.array(mapelolint[z]), np.array(mapelol[z]), equal_var=True)
                 t, p = ks_2samp(np.array(mapelol[z]), np.array(mapelolint[z]))
                 # t, p = kstest(np.array(mapelolint[z]), np.array(mapelol[z]))
-
+                pvals.append(1-p)
                 print(f'Test statistic: {t}, p-value: {p}')
                 if p < 0.10 or mutual_info[i][j] > 0.90:
                     print("Null hypothesis is rejected")
@@ -223,6 +234,11 @@ def deepCause(odata, knockoffs, model, params):
                 else:
                     print("Fail to reject null hypothesis")
                     causal_decision.append(0)
+
+            pvi.append(pvals[0])
+            pvo.append(pvals[1])
+            pvm.append(pvals[2])
+            pvu.append(pvals[3])
 
             # plot residuals distribution
             fig = plt.figure()
@@ -250,11 +266,28 @@ def deepCause(odata, knockoffs, model, params):
             uni_cause.append(causal_decision[3])
             causal_decision = []
 
+        # pval_i.append(pvi)
+        # pval_o.append(pvo)
+        # pval_m.append(pvm)
+        # pval_u.append(pvu)
+
+        pval_indist.append(pvi)
+        pval_outdist.append(pvo)
+        pval_mean.append(pvm)
+        pval_uniform.append(pvu)
+
         conf_mat_mean = conf_mat_mean + mean_cause
         conf_mat_indist = conf_mat_indist + indist_cause
         conf_mat_outdist = conf_mat_outdist + outdist_cause
         conf_mat_uniform = conf_mat_uniform + uni_cause
         mean_cause, indist_cause, outdist_cause, uni_cause = [], [], [], []
+
+    pvalues.append(pval_indist)
+    pvalues.append(pval_outdist)
+    pvalues.append(pval_mean)
+    pvalues.append(pval_uniform)
+
+    print("P-Values: ", pvalues)
 
     conf_mat.append(conf_mat_mean)
     conf_mat.append(conf_mat_indist)
