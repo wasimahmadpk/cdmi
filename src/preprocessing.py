@@ -143,12 +143,13 @@ def load_geo_data():
     path = '/home/ahmad/PycharmProjects/deepCausality/datasets/geo_dataset/moxa_data.csv'
     # vars = ['rain', 'strain_ns', 'tides_ns', 'temperature_outside', 'pressure_outside', 'gw_west']
     # vars = ['tides_ew', 'tides_ns', 'rain', 'temperature_outside', 'pressure_outside', 'gw_mb', 'gw_sr', 'gw_west', 'snow_load', 'wind_x', 'wind_y', 'humidity', 'glob_radiaton', 'strain_ew_corrected', 'strain_ns_corrected']
-    vars = ['DateTime', 'strain_ew', 'strain_ns', 'tides_ns', 'temperature_outside', 'pressure_outside', 'gw_mb', 'gw_west', 
-            'snow_load', 'wind_x', 'humidity', 'glob_radiaton']
+    # vars = ['DateTime', 'strain_ew', 'strain_ns', 'tides_ns', 'temperature_outside', 'pressure_outside', 'gw_mb', 'gw_west',
+    #         'snow_load', 'wind_x', 'humidity', 'glob_radiaton']
+    vars = ['DateTime', 'strain_ew', 'strain_ns', 'tides_ns', 'temperature_outside', 'pressure_outside', 'gw_mb']
     data = pd.read_csv(path, usecols=vars)
 
     # Read spring and summer season geo-climatic data
-    mask = (data['DateTime'] > '2014-11-01') & (data['DateTime'] <= '2014-12-30')
+    mask = (data['DateTime'] > '2016-07-01') & (data['DateTime'] <= '2016-09-30')
     df = data.loc[mask]
     df = df.set_index('DateTime')
     df = df.apply(normalize)
