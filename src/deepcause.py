@@ -83,10 +83,8 @@ def deepCause(odata, knockoffs, model, params):
 
 
         # p-values
-        pval_i, pvi = [], []
-        pval_m, pvm = [], []
-        pval_o, pvo = [], []
-        pval_u, pvu = [], []
+        pvi, pvo, pvm, pvu = [], [], [], []
+        
 
 
         # Generate Knockoffs
@@ -135,13 +133,13 @@ def deepCause(odata, knockoffs, model, params):
                 diff = []
                 start = 10
 
-                for iter in range(2):  # 30
+                for iter in range(15):  # 30
 
                     mselist_batch = []
                     mselistint_batch = []
                     mapelist_batch = []
                     mapelistint_batch = []
-                    for r in range(1):
+                    for r in range(3):
 
                         test_data = odata[:, start: start + training_length + prediction_length].copy()
                         test_ds = ListDataset(
@@ -188,7 +186,7 @@ def deepCause(odata, knockoffs, model, params):
                         mapelistint_batch.append(mapeint)
                         # start = start + 96
 
-                    start = start + 10  # Step size for sliding window # 10
+                    start = start + 16  # Step size for sliding window # 10
                     mselist.append(np.mean(mselist_batch))  # mselist = mselist_batch
                     mapelist.append(np.mean(mapelist_batch))  # mapelist = mapelist_batch
                     mselistint.append(np.mean(mselistint_batch))  # mselistint = mselistint_batch
@@ -211,11 +209,11 @@ def deepCause(odata, knockoffs, model, params):
             if len(columns) > 0:
 
                 print(f"Causal Link: {columns[i]} --------------> {columns[j]}")
-                print("-----------------------------------------------------------------------------")
+                print("----------*****-----------------------*****-----------------******-----------")
                 fnamehist = plot_path + "{columns[i]}_{columns[j]}:hist"
             else:
                 print(f"Causal Link: Z_{i + 1} --------------> Z_{j + 1}")
-                print("-----------------------------------------------------------------------------")
+                print("----------*****-----------------------*****-----------------******-----------")
                 fnamehist = plot_path + "{Z_[i + 1]}_{Z_[j + 1]}:hist"
             pvals = []
             for z in range(len(heuristic_itn_types)):
@@ -226,7 +224,10 @@ def deepCause(odata, knockoffs, model, params):
                 # t, p = ttest_ind(np.array(mapelolint[z]), np.array(mapelol[z]), equal_var=True)
                 t, p = ks_2samp(np.array(mapelol[z]), np.array(mapelolint[z]))
                 # t, p = kstest(np.array(mapelolint[z]), np.array(mapelol[z]))
-                pvals.append(1-p)
+                if i==j:
+                    pvals.append(1)
+                else:
+                    pvals.append(1-p)
                 print(f'Test statistic: {t}, p-value: {p}')
                 if p < 0.10 or mutual_info[i][j] > 0.90:
                     print("Null hypothesis is rejected")
@@ -266,11 +267,6 @@ def deepCause(odata, knockoffs, model, params):
             uni_cause.append(causal_decision[3])
             causal_decision = []
 
-        # pval_i.append(pvi)
-        # pval_o.append(pvo)
-        # pval_m.append(pvm)
-        # pval_u.append(pvu)
-
         pval_indist.append(pvi)
         pval_outdist.append(pvo)
         pval_mean.append(pvm)
@@ -286,7 +282,6 @@ def deepCause(odata, knockoffs, model, params):
     pvalues.append(pval_outdist)
     pvalues.append(pval_mean)
     pvalues.append(pval_uniform)
-
     print("P-Values: ", pvalues)
 
     conf_mat.append(conf_mat_mean)
