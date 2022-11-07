@@ -149,7 +149,7 @@ def load_geo_data():
     data = pd.read_csv(path, usecols=vars)
 
     # Read spring and summer season geo-climatic data
-    mask = (data['DateTime'] > '2016-07-01') & (data['DateTime'] <= '2016-09-30')
+    mask = (data['DateTime'] > '2016-09-01') & (data['DateTime'] <= '2017-02-29')
     df = data.loc[mask]
     df = df.set_index('DateTime')
     df = df.apply(normalize)
