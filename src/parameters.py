@@ -160,8 +160,8 @@ def get_geo_params():
     params = {
         'epochs': 150,
         'pred_len': 24,
-        'train_len': 500,
-        'num_layers': 4,
+        'train_len': 1000,
+        'num_layers': 5,
         'num_samples': 10,
         'num_cells': 50,
         'dropout_rate': 0.1,
