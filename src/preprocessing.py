@@ -52,10 +52,9 @@ def deseasonalize(var, interval):
 #     return rae
 
 
-def normalize(var):
-    # nvar = (np.array(var) - np.mean(var)) / np.std(var)
-    nvar = (np.array(var) - np.min(var) / (np.max(var) - np.min(var)))
-    return nvar
+# Normalization (MixMax/ Standard)
+def normalize(data):
+    return (np.array(data) - np.min(data))/(np.max(data) - np.min(data))
 
 
 def down_sample(data, win_size, partition=None):
@@ -146,16 +145,16 @@ def load_geo_data():
     # vars = ['DateTime', 'strain_ew', 'strain_ns', 'tides_ns', 'temperature_outside', 'pressure_outside', 'gw_mb', 'gw_west',
     #         'snow_load', 'wind_x', 'humidity', 'glob_radiaton']
     # vars = ['DateTime', 'strain_ew', 'strain_ns', 'gw_west', 'wind_x', 'wind_y', 'humidity']
-    vars = ['DateTime', 'temperature_outside', 'pressure_outside', 'gw_south', 'wind_x', 'strain_ns_corrected']
+    vars = ['DateTime', 'temperature_outside', 'pressure_outside', 'wind_x', 'strain_ns_corrected']
     data = pd.read_csv(path, usecols=vars)
 
     # Read spring and summer season geo-climatic data
     mask = (data['DateTime'] > '2015-06-01') & (data['DateTime'] <= '2015-09-28')
-    df = data.loc[mask]
-    df = df.set_index('DateTime')
-    df = df.apply(normalize)
+    data = data.loc[mask]
+    data = data.set_index('DateTime')
+    data = data.apply(normalize)
 
-    return df
+    return data
 
 
 def load_hackathon_data():
