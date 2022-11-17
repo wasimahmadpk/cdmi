@@ -58,13 +58,13 @@ def modelTest(model_path, test_ds, num_samples, data, idx, prediction_length, co
 
         for target, forecast in islice(zip(tss, forecasts), num_plots):
 
-            ax = target[-past_length:][4].plot(figsize=(14, 10), linewidth=2)
-            forecast.copy_dim(4).plot(color='g')
+            ax = target[-past_length:][idx].plot(figsize=(14, 10), linewidth=2)
+            forecast.copy_dim(idx).plot(color='g')
             plt.grid(which='both')
             plt.legend(["observations", "median prediction", "90% confidence interval", "50% confidence interval"])
             # plt.title(f"Forecasting time series {int_title}")
             plt.xlabel("Timestamp (Hourly)")
-            plt.ylabel('NEP')
+            plt.ylabel('Amplitude')
             filename = pathlib.Path(plot_path + "nepforecast.pdf")
             # plt.savefig(filename)
             plt.show()
