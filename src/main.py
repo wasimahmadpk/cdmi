@@ -52,6 +52,7 @@ df = df.dropna().reset_index(drop=True)
 # ---------------------------------------------
 print(df.describe())
 print(df.shape)
+print(df.head(5))
 # df.plot.scatter(x='BO', y='Awake', c='blue')
 # plt.xlabel("PPFD ($\mu$ mol photons $m^{2}s^{-1}$)")
 # plt.ylabel("NEP ($\mu$ mol $CO_2$ $m^{2}s^{-1}$)")
@@ -62,7 +63,7 @@ print(df.shape)
 original_data = []
 dim = len(df.columns)
 columns = df.columns
-# print(f"Dimension {dim} and Columns: {df.columns}")
+print(f"Dimension {dim} and Columns: {df.columns}")
 
 for col in df:
     original_data.append(df[col])
@@ -98,7 +99,7 @@ estimator = DeepAREstimator(
 )
 
 # load model if not already trained
-model_path = "../models/trained_model_geo11Nov.sav"
+model_path = "../models/trained_model_geo173Nov.sav"
 # model_path = "../models/trained_model_syn22Sep.sav"
 # model_path = "../models/trained_model_river16Jun.sav"
 # model_path = "../models/trained_model_climate07Oct.sav"  # 03Aug
