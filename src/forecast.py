@@ -11,7 +11,6 @@ from itertools import islice
 import matplotlib.pyplot as plt
 from gluonts.evaluation import Evaluator
 from gluonts.dataset.common import ListDataset
-from sklearn.metrics import mean_absolute_error
 from sklearn.metrics import mean_squared_error, mean_absolute_error
 from gluonts.evaluation.backtest import make_evaluation_predictions
 import warnings
@@ -58,8 +57,8 @@ def modelTest(model_path, test_ds, num_samples, data, idx, prediction_length, co
 
         for target, forecast in islice(zip(tss, forecasts), num_plots):
 
-            ax = target[-past_length:][7].plot(figsize=(14, 10), linewidth=2)
-            forecast.copy_dim(7).plot(color='g')
+            ax = target[-past_length:][idx].plot(figsize=(14, 10), linewidth=2)
+            forecast.copy_dim(idx).plot(color='g')
             plt.grid(which='both')
             plt.legend(["observations", "median prediction", "90% confidence interval", "50% confidence interval"])
             # plt.title(f"Forecasting time series {int_title}")
