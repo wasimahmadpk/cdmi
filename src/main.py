@@ -47,8 +47,6 @@ plot_path = pars.get("plot_path")
 # df = prep.load_river_data()
 # df = prep.load_climate_data()
 df = prep.load_geo_data()
-df.fillna(df.mean())
-df = df.dropna().reset_index(drop=True)
 # ---------------------------------------------
 print(df.describe())
 print(df.shape)
@@ -99,7 +97,7 @@ estimator = DeepAREstimator(
 )
 
 # load model if not already trained
-model_path = "../models/trained_model_geo231Nov.sav"
+model_path = "../models/trained_model_geo29Nov.sav"
 # model_path = "../models/trained_model_syn22Sep.sav"
 # model_path = "../models/trained_model_river16Jun.sav"
 # model_path = "../models/trained_model_climate07Oct.sav"  # 03Aug
