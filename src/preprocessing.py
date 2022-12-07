@@ -140,17 +140,19 @@ def load_climate_data():
 
 def load_geo_data():
     # Load river discharges data
-    path = '/home/ahmad/PycharmProjects/deepCausality/datasets/geo_dataset/moxa_data_D.csv'
-    # vars = ['tides_ew', 'tides_ns', 'rain', 'temperature_outside', 'pressure_outside', 'gw_mb', 'gw_sr', 'gw_west', 'snow_load', 'wind_x', 'wind_y', 'humidity', 'glob_radiaton', 'strain_ew_corrected', 'strain_ns_corrected']
-    # vars = ['DateTime', 'strain_ew', 'strain_ns', 'tides_ns', 'temperature_outside', 'pressure_outside', 'gw_mb', 'gw_west',
-    #         'snow_load', 'wind_x', 'humidity', 'glob_radiaton']
-    # vars = ['DateTime', 'strain_ew', 'strain_ns', 'gw_west', 'wind_x', 'wind_y', 'humidity']
-    vars = ['DateTime', 'temperature_outside', 'pressure_outside', 'gw_mb', 'gw_west', 'wind_x', 'strain_ns_uncorrected']
+    path = '/home/ahmad/PycharmProjects/deepCausality/datasets/geo_dataset/moxa_data_H.csv'
+    # vars = ['DateTime', 'rain', 'temperature_outside', 'pressure_outside', 'gw_mb',
+    #    'gw_sr', 'gw_sg', 'gw_west', 'gw_knee', 'gw_south', 'wind_x', 'winx_y',
+    #    'snow_load', 'humidity', 'glob_radiaton', 'strain_ew_uncorrected',
+    #    'strain_ns_uncorrected', 'strain_ew_corrected', 'strain_ns_corrected',
+    #    'tides_ew', 'tides_ns']
+    vars = ['DateTime', 'temperature_outside', 'pressure_outside', 'gw_mb', 'gw_sr', 'strain_ns_uncorrected']
     data = pd.read_csv(path, usecols=vars)
-
+    
     # Read spring and summer season geo-climatic data
-    # mask = (data['DateTime'] > '2015-06-01') & (data['DateTime'] <= '2015-09-28')
-    # data = data.loc[mask]
+    mask = (data['DateTime'] > '2015-03-01') & (data['DateTime'] <= '2015-07-29')
+    data = data.loc[mask]
+    data = data.fillna(method='pad')
     data = data.set_index('DateTime')
     data = data.apply(normalize)
 
