@@ -228,6 +228,7 @@ def deepCause(odata, knockoffs, model, params):
                     pvals.append(1)
                 else:
                     pvals.append(1-p)
+                
                 print(f'Test statistic: {t}, p-value: {p}')
                 if p < 0.10 or mutual_info[i][j] > 0.90:
                     print("Null hypothesis is rejected")
