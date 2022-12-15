@@ -12,6 +12,7 @@ from statsmodels.tsa.stattools import adfuller
 plt.rcParams['figure.dpi'] = 200
 import seaborn as sns
 
+
 def get_regimes(data, wsize):
     
     winsize = wsize
@@ -101,5 +102,26 @@ def get_regimes(data, wsize):
                 plt.axvline(val+v, color="white", alpha=0.01)
     plt.savefig("regimes.png")
     plt.show()
+
+    clusters_extended = []
+
+    for i in range(len(clusters)):
+
+        val = clusters[i]
+        for j in range(slidingwin_size):
+            clusters_extended.append(val)
     
-    return clusters, cluster_idx
+    newdf = data.iloc[:len(clusters_extended), :].copy()
+    newdf['Clusters'] = clusters_extended
+
+    return newdf, clusters, cluster_idx
+
+
+def get_reduced_set(df):
+    
+    corr = data.corr()
+    cls = corr.iloc[0][:].values.tolist()
+    selected_idx = np.where(cls>0.50)[0].tolist()
+
+    reduced_df = df.iloc[:, selected_idx].copy()
+    return reduced_df
