@@ -16,6 +16,7 @@ import matplotlib.pyplot as plt
 from knockoffs import Knockoffs
 from scipy.special import stdtr
 from forecast import modelTest
+from regimes import get_regimes
 from gluonts.trainer import Trainer
 from gluonts.evaluation import Evaluator
 from sklearn.metrics import mean_squared_error
@@ -26,14 +27,17 @@ from gluonts.evaluation.backtest import make_evaluation_predictions
 from scipy.stats import ttest_ind, ttest_ind_from_stats, ttest_1samp
 from gluonts.distribution.multivariate_gaussian import MultivariateGaussianOutput
 
+
 np.random.seed(1)
 mx.random.seed(2)
+
 
 # Parameters
 pars = parameters.get_geo_params()
 freq = pars.get("freq")
 epochs = pars.get("epochs")
 win_size = pars.get("win_size")
+slidingwin_size = pars.get("slidingwin_size")
 training_length = pars.get("train_len")
 prediction_length = pars.get("pred_len")
 num_samples = pars.get("num_samples")
@@ -47,7 +51,11 @@ plot_path = pars.get("plot_path")
 # df = prep.load_river_data()
 # df = prep.load_climate_data()
 df = prep.load_geo_data()
-# ---------------------------------------------
+
+
+# -------------Identify Regimes in Time series-------------
+regimes, regimes_idx = get_regimes(df, slidingwin_size)
+# ---------------------------------------------------------
 print(df.describe())
 print(df.shape)
 print(df.head(5))
@@ -100,7 +108,7 @@ estimator = DeepAREstimator(
 model_path = "../models/trained_model_geo08Dec.sav"
 # model_path = "../models/trained_model_syn22Sep.sav"
 # model_path = "../models/trained_model_river16Jun.sav"
-# model_path = "../models/trained_model_climate07Oct.sav"  # 03Aug
+# model_path = "../models/trained_model_climate07Oct.sav"  
 filename = pathlib.Path(model_path)
 if not filename.exists():
     print("Training forecasting model....")
