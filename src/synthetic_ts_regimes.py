@@ -30,7 +30,7 @@ class SyntheticDataset:
 
     def generate_data(self):
 
-        for t in range(10, self.time_steps):
+        for t in range(11, self.time_steps):
 
             if t < 1000:
                 self.X1.append(self.roots[0][t])
@@ -38,13 +38,13 @@ class SyntheticDataset:
                 self.X3.append(C.get('c2') ** ((self.X1[t - Tao.get('t2')]) / 2) + ez[t])
                 self.X4.append(C.get('c3') * self.X1[t - Tao.get('t3')] + er[t])
                 self.X5.append(C.get('c5') * self.X2[t - Tao.get('t4')] + C.get('c3') * self.X3[t - Tao.get('t4')] + C.get('c5') * self.X4[t - Tao.get('t4')]  + ey[t])
-            elif t > 1000 and t < 2000:
+            elif t >= 1000 and t < 2000:
                 self.X1.append(self.roots[1][t])
                 self.X2.append(C.get('c1') * self.X1[t - Tao.get('t1')] + ey[t])
                 self.X3.append(C.get('c2') ** ((self.X1[t - Tao.get('t2')]) / 2) + ez[t])
                 self.X4.append(C.get('c3') * self.X2[t - Tao.get('t3')] + er[t])
                 self.X5.append(C.get('c5') * self.X2[t - Tao.get('t4')] + C.get('c5') * self.X3[t - Tao.get('t4')] + ey[t])
-            elif t > 2000:
+            elif t >= 2000:
                 self.X1.append(self.roots[2][t])
                 self.X2.append(C.get('c1') * self.X1[t - Tao.get('t1')] + ey[t])
                 self.X3.append(C.get('c2') ** ((self.X1[t - Tao.get('t2')]) / 2) + ez[t])
@@ -84,7 +84,7 @@ if __name__ == '__main__':
         roots.append(root)
 
     # root = np.random.normal(0, 1.0, 2000)
-    time_steps, Tref = 3100, 15
+    time_steps, Tref = 3110, 15
     # np.random.seed(1)
     ey = np.random.normal(0, 0.35, time_steps)
     # np.random.seed(2)
@@ -99,7 +99,7 @@ if __name__ == '__main__':
 
     # print("SNR (Temperature)", data_obj.SNR(Yts, ez))
 
-    data = {'Z1': X1[100:], 'Z2': X2[100:], 'Z3': X3[100:], 'Z4': X4[100:], 'Z5': X5[100:]}
+    data = {'Z1': X1[101:], 'Z2': X2[101:], 'Z3': X3[101:], 'Z4': X4[101:], 'Z5': X5[101:]}
     df = pd.DataFrame(data, columns=['Z1', 'Z2', 'Z3', 'Z4', 'Z5'])
     df.to_csv(r'/home/ahmad/PycharmProjects/deepCausality/datasets/synthetic_datasets/synthetic_data_regimes.csv', index_label=False, header=True)
     print(df.head(100))
