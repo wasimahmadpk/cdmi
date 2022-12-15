@@ -166,6 +166,7 @@ def get_geo_params():
         'num_cells': 40,
         'dropout_rate': 0.1,
         'win_size': 1,
+        'slidingwin_size': 100,
         'dim': 5,
         'batch_size': 32,
         'prior_graph': np.array([[1, 1, 0, 1, 0, 1],
