@@ -53,8 +53,13 @@ def deseasonalize(var, interval):
 
 
 # Normalization (MixMax/ Standard)
-def normalize(data):
-    return (np.array(data) - np.min(data))/(np.max(data) - np.min(data))
+def normalize(data, type='minmax'):
+
+    if type == 'std':
+        return (np.array(data) - np.mean(data))/np.std(data)
+
+    elif type == 'minmax':
+        return (np.array(data) - np.min(data))/(np.max(data) - np.min(data))
 
 
 def down_sample(data, win_size, partition=None):
@@ -216,6 +221,6 @@ def load_flux_data():
 
 def load_syn_data():
     # Load synthetic data *************************
-    data = pd.read_csv("../datasets/synthetic_datasets/synthetic_data.csv")
+    data = pd.read_csv("../datasets/synthetic_datasets/synthetic_data_regimes.csv")
     df = data.apply(normalize)
     return df
