@@ -33,7 +33,7 @@ np.random.seed(1)
 mx.random.seed(2)
 
 
-pars = parameters.get_geo_params()
+pars = parameters.get_syn_params()
 num_samples = pars.get("num_samples")
 training_length = pars.get("train_len")
 prediction_length = pars.get("pred_len")
@@ -84,8 +84,6 @@ def deepCause(odata, knockoffs, model, params):
 
         # p-values
         pvi, pvo, pvm, pvu = [], [], [], []
-        
-
 
         # Generate Knockoffs
         data_actual = np.array(odata[:, 0: training_length + prediction_length]).transpose()
@@ -133,7 +131,7 @@ def deepCause(odata, knockoffs, model, params):
                 diff = []
                 start = 10
 
-                for iter in range(15):  # 30
+                for iter in range(20):  # 30
 
                     mselist_batch = []
                     mselistint_batch = []
@@ -186,7 +184,7 @@ def deepCause(odata, knockoffs, model, params):
                         mapelistint_batch.append(mapeint)
                         # start = start + 96
 
-                    start = start + 16  # Step size for sliding window # 10
+                    start = start + 10  # Step size for sliding window # 10
                     mselist.append(np.mean(mselist_batch))  # mselist = mselist_batch
                     mapelist.append(np.mean(mapelist_batch))  # mapelist = mapelist_batch
                     mselistint.append(np.mean(mselistint_batch))  # mselistint = mselistint_batch
@@ -294,7 +292,7 @@ def deepCause(odata, knockoffs, model, params):
 
     for ss in range(len(conf_mat)):
 
-        true_conf_mat = conf_mat[ss]
+        # true_conf_mat = conf_mat[ss]
         fscore = round(f1_score(true_conf_mat, conf_mat[ss], average='binary'), 2)
         acc = accuracy_score(true_conf_mat, conf_mat[ss])
         tn, fp, fn, tp = confusion_matrix(true_conf_mat, conf_mat[ss], labels=[0, 1]).ravel()
