@@ -33,7 +33,7 @@ mx.random.seed(2)
 
 
 # Parameters
-pars = parameters.get_geo_params()
+pars = parameters.get_syn_params()
 freq = pars.get("freq")
 epochs = pars.get("epochs")
 win_size = pars.get("win_size")
@@ -50,15 +50,21 @@ plot_path = pars.get("plot_path")
 # Load river discharges data
 # df = prep.load_river_data()
 # df = prep.load_climate_data()
-df = prep.load_geo_data()
+# df = prep.load_geo_data()
+data = prep.load_syn_data()
 
+# # --------Identify Regimes in Time series--------
+# regimes, _, _, newdf = get_regimes(df, slidingwin_size)
+# # -----------------------------------------------
 
-# -------------Identify Regimes in Time series-------------
-regimes, regimes_idx = get_regimes(df, slidingwin_size)
-# ---------------------------------------------------------
+# for i in range(len(regimes)):
+#     print(regimes[i].head(5))
+
+df = data.loc[0:900].copy()
 print(df.describe())
 print(df.shape)
 print(df.head(5))
+# df = regimes[1].drop('Clusters', axis=1)
 # df.plot.scatter(x='BO', y='Awake', c='blue')
 # plt.xlabel("PPFD ($\mu$ mol photons $m^{2}s^{-1}$)")
 # plt.ylabel("NEP ($\mu$ mol $CO_2$ $m^{2}s^{-1}$)")
@@ -75,7 +81,6 @@ for col in df:
     original_data.append(df[col])
 
 original_data = np.array(original_data)
-
 # training set
 train_ds = ListDataset(
     [
@@ -105,7 +110,7 @@ estimator = DeepAREstimator(
 )
 
 # load model if not already trained
-model_path = "../models/trained_model_geo08Dec.sav"
+model_path = "../models/trained_model_syn19Dec1.sav"
 # model_path = "../models/trained_model_syn22Sep.sav"
 # model_path = "../models/trained_model_river16Jun.sav"
 # model_path = "../models/trained_model_climate07Oct.sav"  
