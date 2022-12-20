@@ -1,16 +1,24 @@
-import numpy as np
-import helper
 import mutualinfo
+import parameters
+import numpy as np
 import pandas as pd
+import seaborn as sns
 from scipy import stats
-# import statsmodels.api as sm
+import preprocessing as prep
 # from sklearn import metrics
+# import statsmodels.api as sm
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
 # from sklearn.feature_selection import mutual_info_regression
 from statsmodels.tsa.stattools import adfuller
 plt.rcParams['figure.dpi'] = 200
-import seaborn as sns
+
+
+# Parameters
+pars = parameters.get_syn_params()
+win_size = pars.get("win_size")
+slidingwin_size = pars.get("slidingwin_size")
+plot_path = pars.get("plot_path")
 
 
 def get_regimes(data, wsize):
@@ -19,10 +27,10 @@ def get_regimes(data, wsize):
     start = 0
     covmat = []
     columns = data.columns
-    dim = len(columns) - 1
+    dim = len(columns)
     cluster_idx = []
  
-    while start+winsize < len(data)-1:
+    while start+winsize < len(data):
         cluster_idx.append(start)
 #         print(f"Data shape: {data.shape}")
         data_batch = data[start: start + winsize]
@@ -48,8 +56,8 @@ def get_regimes(data, wsize):
         skewness = feat.skewness.tolist()
         kurtosis = feat.kurtosis.tolist()
         
-        plt.plot(helper.normalize(newupp, 'std'))
-        plt.show()
+        # plt.plot(prep.normalize(newupp, 'std'))
+        # plt.show()
         mix_feat = newupp + mean_val
 #         print(f"Length of features pool: {len(mix_feat)}")
         covmat.append(mix_feat)
@@ -61,47 +69,47 @@ def get_regimes(data, wsize):
 #     print(f"Clusters indecis: {cluster_idx}")
     
     
-    # Plot regimes
-
-    # toplot = [ 'rain','strain_ns_corrected', 'tides_ns', 'temperature_outside', 'pressure_outside', 'gw_west']
-    # toplot = ['temperature_outside', 'pressure_outside', 'strain_ew_corrected']
-    toplot = ['Z1', 'Z2', 'Z3']
-    # toplot = ['Hs', 'P', 'W' ]
-    colors = ['r', 'g', 'b']
-
-    t = np.arange(0, cluster_idx[-1]+winsize)
-    start = 0
-
-    for c in range(len(clusters)):
-    
-        if clusters[c] == 0:
-                marker = '-'
-        elif clusters[c] == 1:
-                marker = '-'
-        elif clusters[c] == 2:
-                marker = '-'
-        for i in range(len(toplot)):
-        
-        
-            plt.plot(t[start: start+winsize], data[toplot[i]].values[start: start + winsize], colors[i]+marker)
-#           plt.plot(t[start: start + winsize], data[toplot[i+1]].values[start: start + winsize], color)
-#           plt.plot(t[start: start + winsize], data[toplot[i+2]].values[start: start + winsize], color)
-        
-        start = start + winsize
-    plt.legend(toplot)
-    for c in range(len(cluster_idx)):
-        val = cluster_idx[c]
-        if clusters[c] == 0:
-            for v in range(winsize):
-                plt.axvline(val+v, color="red", alpha=0.01)
-        if clusters[c] == 1:
-            for v in range(winsize):
-                plt.axvline(val+v, color="green", alpha=0.01)
-        if clusters[c] == 2:
-            for v in range(winsize):
-                plt.axvline(val+v, color="white", alpha=0.01)
-    plt.savefig("regimes.png")
-    plt.show()
+#     # Plot regimes
+#
+#     # toplot = [ 'rain','strain_ns_corrected', 'tides_ns', 'temperature_outside', 'pressure_outside', 'gw_west']
+#     # toplot = ['temperature_outside', 'pressure_outside', 'strain_ew_corrected']
+#     toplot = ['Z1', 'Z2', 'Z3']
+#     # toplot = ['Hs', 'P', 'W' ]
+#     colors = ['r', 'g', 'b']
+#
+#     t = np.arange(0, cluster_idx[-1]+winsize)
+#     start = 0
+#
+#     for c in range(len(clusters)):
+#
+#         if clusters[c] == 0:
+#                 marker = '-'
+#         elif clusters[c] == 1:
+#                 marker = '-'
+#         elif clusters[c] == 2:
+#                 marker = '-'
+#         for i in range(len(toplot)):
+#
+#
+#             plt.plot(t[start: start+winsize], data[toplot[i]].values[start: start + winsize], colors[i]+marker)
+# #           plt.plot(t[start: start + winsize], data[toplot[i+1]].values[start: start + winsize], color)
+# #           plt.plot(t[start: start + winsize], data[toplot[i+2]].values[start: start + winsize], color)
+#
+#         start = start + winsize
+#     plt.legend(toplot)
+#     for c in range(len(cluster_idx)):
+#         val = cluster_idx[c]
+#         if clusters[c] == 0:
+#             for v in range(winsize):
+#                 plt.axvline(val+v, color="red", alpha=0.01)
+#         if clusters[c] == 1:
+#             for v in range(winsize):
+#                 plt.axvline(val+v, color="green", alpha=0.01)
+#         if clusters[c] == 2:
+#             for v in range(winsize):
+#                 plt.axvline(val+v, color="white", alpha=0.01)
+#     plt.savefig("regimes.png")
+#     plt.show()
 
     clusters_extended = []
 
@@ -114,7 +122,11 @@ def get_regimes(data, wsize):
     newdf = data.iloc[:len(clusters_extended), :].copy()
     newdf['Clusters'] = clusters_extended
 
-    return newdf, clusters, cluster_idx
+    dfs = []
+    for c in range(len(list(set(clusters)))):
+        dfs.append(newdf.loc[newdf['Clusters'] == list(set(clusters))[c]])
+
+    return dfs, clusters, cluster_idx, newdf
 
 
 def get_reduced_set(df):
