@@ -80,26 +80,27 @@ def GetFDRTestParams(model):
 def get_syn_params():
     # Parameters for synthetic data
     params = {
-        'epochs': 150,
-        'pred_len': 15,
-        'train_len': 555,
+        'epochs': 100,
+        'pred_len': 14,
+        'train_len': 666,
         'num_layers': 4,
-        'num_cells': 45,
+        'num_cells': 44,
         'num_samples': 10,
         'dropout_rate': 0.1,
         'win_size': 1,
         'slidingwin_size': 100,
+        'step_size': 10,
         'dim': 5,
         'batch_size': 32,
-        'prior_graph': np.array([[1, 1, 1, 1, 1],
+        'prior_graph': np.array([[1, 1, 1, 0, 1],
                                  [0, 1, 0, 0, 0],
-                                 [0, 0, 1, 0, 1],
-                                 [0, 0, 0, 1, 0],
+                                 [0, 0, 1, 1, 0],
+                                 [0, 0, 0, 1, 1],
                                  [0, 0, 0, 0, 1]]),
-        'true_graph': [1, 1, 1, 1, 1,
+        'true_graph': [1, 1, 1, 0, 1,
                        0, 1, 0, 0, 0,
-                       0, 0, 1, 0, 1,
-                       0, 0, 0, 1, 0,
+                       0, 0, 1, 1, 0,
+                       0, 0, 0, 1, 1,
                        0, 0, 0, 0, 1],
         'freq': '30min',
         'plot_path': "/home/ahmad/PycharmProjects/deepCausality/plots/"
@@ -217,11 +218,6 @@ def get_hack_params():
         'plot_path': "/home/ahmad/PycharmProjects/deepCausality/plots/"
     }
     return params
-
-def set_all_params(**kwargs):
-
-    a = 2
-    return None
 
 
 
