@@ -27,10 +27,8 @@ from gluonts.evaluation.backtest import make_evaluation_predictions
 from scipy.stats import ttest_ind, ttest_ind_from_stats, ttest_1samp
 from gluonts.distribution.multivariate_gaussian import MultivariateGaussianOutput
 
-
 np.random.seed(1)
 mx.random.seed(2)
-
 
 # Parameters
 pars = parameters.get_syn_params()
@@ -51,16 +49,17 @@ plot_path = pars.get("plot_path")
 # df = prep.load_river_data()
 # df = prep.load_climate_data()
 # df = prep.load_geo_data()
-data = prep.load_syn_data()
+# df = prep.load_multiregime_data()
+df = prep.load_syn_data()
 
 # # --------Identify Regimes in Time series--------
-# regimes, _, _, newdf = get_regimes(df, slidingwin_size)
+# regimes, _, _, newdf = get_regimes(data, slidingwin_size)
 # # -----------------------------------------------
 
 # for i in range(len(regimes)):
 #     print(regimes[i].head(5))
 
-df = data.loc[0:900].copy()
+# df = data.loc[:1000].copy()
 print(df.describe())
 print(df.shape)
 print(df.head(5))
@@ -110,7 +109,7 @@ estimator = DeepAREstimator(
 )
 
 # load model if not already trained
-model_path = "../models/trained_model_syn19Dec1.sav"
+model_path = "../models/trained_model_syn3Jan.sav"
 # model_path = "../models/trained_model_syn22Sep.sav"
 # model_path = "../models/trained_model_river16Jun.sav"
 # model_path = "../models/trained_model_climate07Oct.sav"  
