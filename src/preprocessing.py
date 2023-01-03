@@ -221,6 +221,13 @@ def load_flux_data():
 
 def load_syn_data():
     # Load synthetic data *************************
-    data = pd.read_csv("../datasets/synthetic_datasets/synthetic_data_regimes.csv")
+    data = pd.read_csv("../datasets/synthetic_datasets/synthetic_data.csv")
     df = data.apply(normalize)
+    return df
+
+
+def load_multiregime_data():
+    # Load synthetic data *************************
+    df = pd.read_csv("../datasets/synthetic_datasets/synthetic_data_regimes.csv")
+    # df = df.apply(normalize)
     return df
