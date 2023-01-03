@@ -35,6 +35,7 @@ mx.random.seed(2)
 
 pars = parameters.get_syn_params()
 num_samples = pars.get("num_samples")
+step = pars.get("step_size")
 training_length = pars.get("train_len")
 prediction_length = pars.get("pred_len")
 frequency = pars.get("freq")
@@ -137,7 +138,7 @@ def deepCause(odata, knockoffs, model, params):
                     mselistint_batch = []
                     mapelist_batch = []
                     mapelistint_batch = []
-                    for r in range(3):
+                    for r in range(1):
 
                         test_data = odata[:, start: start + training_length + prediction_length].copy()
                         test_ds = ListDataset(
@@ -182,13 +183,12 @@ def deepCause(odata, knockoffs, model, params):
                         mapelist_batch.append(mape)
                         mselistint_batch.append(mseint)
                         mapelistint_batch.append(mapeint)
-                        # start = start + 96
 
-                    start = start + 10  # Step size for sliding window # 10
-                    mselist.append(np.mean(mselist_batch))  # mselist = mselist_batch
-                    mapelist.append(np.mean(mapelist_batch))  # mapelist = mapelist_batch
-                    mselistint.append(np.mean(mselistint_batch))  # mselistint = mselistint_batch
-                    mapelistint.append(np.mean(mapelistint_batch))  # mapelistint = mapelistint_batch
+                    start = start + 20                                      # Step size for sliding window # 10
+                    mselist.append(np.mean(mselist_batch))                  # mselist = mselist_batch
+                    mapelist.append(np.mean(mapelist_batch))                # mapelist = mapelist_batch
+                    mselistint.append(np.mean(mselistint_batch))            # mselistint = mselistint_batch
+                    mapelistint.append(np.mean(mapelistint_batch))          # mapelistint = mapelistint_batch
 
                 # mselist = np.mean(mselist, axis=0)
                 # mapelist = np.mean(mapelist, axis=0)
