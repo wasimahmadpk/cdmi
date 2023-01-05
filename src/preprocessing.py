@@ -100,6 +100,10 @@ def mutual_information(x, y):
     return mi
 
 
+def kl_divergence(p, q):
+    return np.sum(np.where(p != 0, p * np.log(p / q), 0))
+
+
 def load_river_data():
     # Load river discharges data
     stations = ["dillingen", "kempten", "lenggries"]
