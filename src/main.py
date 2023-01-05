@@ -31,7 +31,7 @@ np.random.seed(1)
 mx.random.seed(2)
 
 # Parameters
-pars = parameters.get_syn_params()
+pars = parameters.get_geo_params()
 freq = pars.get("freq")
 epochs = pars.get("epochs")
 win_size = pars.get("win_size")
@@ -109,7 +109,7 @@ estimator = DeepAREstimator(
 )
 
 # load model if not already trained
-model_path = "../models/trained_model_syn4JanGeo2.sav"
+model_path = "../models/trained_model_syn5JanGeo2.sav"
 # model_path = "../models/trained_model_syn22Sep.sav"
 # model_path = "../models/trained_model_river16Jun.sav"
 # model_path = "../models/trained_model_climate07Oct.sav"  
