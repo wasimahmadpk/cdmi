@@ -33,7 +33,7 @@ np.random.seed(1)
 mx.random.seed(2)
 
 
-pars = parameters.get_syn_params()
+pars = parameters.get_geo_params()
 num_samples = pars.get("num_samples")
 step = pars.get("step_size")
 training_length = pars.get("train_len")
@@ -71,6 +71,9 @@ def deepCause(odata, knockoffs, model, params):
     pvalues = []
     pval_indist, pval_outdist, pval_mean, pval_uniform = [], [], [], []
 
+    kvalues = []
+    kval_indist, kval_outdist, kval_mean, kval_uniform = [], [], [], []
+
     for i in range(len(odata)):
 
         int_var = odata[i]
@@ -83,8 +86,11 @@ def deepCause(odata, knockoffs, model, params):
         uni_cause = []
 
 
-        # p-values
+        # P-Values
         pvi, pvo, pvm, pvu = [], [], [], []
+
+        # KL-Divergence
+        kvi, kvo, kvm, kvu = [], [], [], []
 
         # Generate Knockoffs
         data_actual = np.array(odata[:, 0: training_length + prediction_length]).transpose()
@@ -132,13 +138,13 @@ def deepCause(odata, knockoffs, model, params):
                 diff = []
                 start = 10
 
-                for iter in range(15):  # 30
+                for iter in range(25):  # 30
 
                     mselist_batch = []
                     mselistint_batch = []
                     mapelist_batch = []
                     mapelistint_batch = []
-                    for r in range(2):
+                    for r in range(3):
 
                         test_data = odata[:, start: start + training_length + prediction_length].copy()
                         test_ds = ListDataset(
@@ -213,7 +219,10 @@ def deepCause(odata, knockoffs, model, params):
                 print(f"Causal Link: Z_{i + 1} --------------> Z_{j + 1}")
                 print("----------*****-----------------------*****-----------------******-----------")
                 fnamehist = plot_path + "{Z_[i + 1]}_{Z_[j + 1]}:hist"
+            
             pvals = []
+            kvals = []
+            
             for z in range(len(heuristic_itn_types)):
 
                 print("Intervention: " + heuristic_itn_types[z])
@@ -222,12 +231,16 @@ def deepCause(odata, knockoffs, model, params):
                 # t, p = ttest_ind(np.array(mapelolint[z]), np.array(mapelol[z]), equal_var=True)
                 t, p = ks_2samp(np.array(mapelol[z]), np.array(mapelolint[z]))
                 # t, p = kstest(np.array(mapelolint[z]), np.array(mapelol[z]))
+                kld = prep.kl_divergence(np.array(mapelol[z]), np.array(mapelolint[z]))
+                
+                kvals.append(kld)
+                
                 if i==j:
                     pvals.append(1)
                 else:
                     pvals.append(1-p)
                 
-                print(f'Test statistic: {t}, p-value: {p}')
+                print(f'Test statistic: {t}, p-value: {p}, KLD: {kld}')
                 if p < 0.10 or mutual_info[i][j] > 0.90:
                     print("Null hypothesis is rejected")
                     causal_decision.append(1)
@@ -239,6 +252,11 @@ def deepCause(odata, knockoffs, model, params):
             pvo.append(pvals[1])
             pvm.append(pvals[2])
             pvu.append(pvals[3])
+
+            kvi.append(kvals[0])
+            kvo.append(kvals[1])
+            kvm.append(kvals[2])
+            kvu.append(kvals[3])
 
             # plot residuals distribution
             fig = plt.figure()
@@ -271,6 +289,12 @@ def deepCause(odata, knockoffs, model, params):
         pval_mean.append(pvm)
         pval_uniform.append(pvu)
 
+        kval_indist.append(kvi)
+        kval_outdist.append(kvo)
+        kval_mean.append(kvm)
+        kval_uniform.append(kvu)
+
+
         conf_mat_mean = conf_mat_mean + mean_cause
         conf_mat_indist = conf_mat_indist + indist_cause
         conf_mat_outdist = conf_mat_outdist + outdist_cause
@@ -282,6 +306,12 @@ def deepCause(odata, knockoffs, model, params):
     pvalues.append(pval_mean)
     pvalues.append(pval_uniform)
     print("P-Values: ", pvalues)
+
+    kvalues.append(kval_indist)
+    kvalues.append(kval_outdist)
+    kvalues.append(kval_mean)
+    kvalues.append(kval_uniform)
+    print("KL-Divergence: ", kvalues)
 
     conf_mat.append(conf_mat_mean)
     conf_mat.append(conf_mat_indist)
