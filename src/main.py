@@ -48,9 +48,9 @@ plot_path = pars.get("plot_path")
 # Load river discharges data
 # df = prep.load_river_data()
 # df = prep.load_climate_data()
-df = prep.load_geo_data()
+# df = prep.load_geo_data()
 # df = prep.load_multiregime_data()
-# df = prep.load_syn_data()
+df = prep.load_geo_data()
 
 # # --------Identify Regimes in Time series--------
 # regimes, _, _, newdf = get_regimes(data, slidingwin_size)
@@ -109,10 +109,10 @@ estimator = DeepAREstimator(
 )
 
 # load model if not already trained
-model_path = "../models/trained_model_syn5JanGeo2.sav"
+model_path = "../models/trained_model_geo9JR2G1model2.sav"
 # model_path = "../models/trained_model_syn22Sep.sav"
 # model_path = "../models/trained_model_river16Jun.sav"
-# model_path = "../models/trained_model_climate07Oct.sav"  
+
 filename = pathlib.Path(model_path)
 if not filename.exists():
     print("Training forecasting model....")
