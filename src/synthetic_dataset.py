@@ -51,8 +51,8 @@ class SyntheticDataset:
             self.X1.append(self.root[t] + ex[t])
             self.X2.append(C.get('c1') * self.X1[t - Tao.get('t1')] + ey[t])
             self.X3.append(C.get('c2') ** ((self.X1[t - Tao.get('t2')])/2) + ez[t])
-            self.X4.append(C.get('c3') * self.X3[t - Tao.get('t2')] + ex[t])
-            self.X5.append(C.get('c1') * self.X1[t - Tao.get('t3')] * C.get('c4') * self.X4[t - Tao.get('t1')] + ey[t])
+            self.X4.append(C.get('c3') ** (self.X3[t - Tao.get('t2')]/2) + ex[t])
+            self.X5.append(C.get('c1') * self.X1[t - Tao.get('t3')] + C.get('c4') * self.X4[t - Tao.get('t1')] + ey[t])
         
         return self.X1, self.X2, self.X3, self.X4, self.X5
 
