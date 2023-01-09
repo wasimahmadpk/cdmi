@@ -156,10 +156,12 @@ def load_geo_data():
     #    'strain_ns_uncorrected', 'strain_ew_corrected', 'strain_ns_corrected',
     #    'tides_ew', 'tides_ns']
     vars = ['DateTime', 'gw_mb', 'gw_sg', 'gw_west', 'gw_south', 'strain_ns_corrected']
+    vars = ['DateTime', 'temperature_outside', 'pressure_outside', 'wind_x', 'snow_load', 'strain_ns_corrected']
     data = pd.read_csv(path, usecols=vars)
     
     # Read spring and summer season geo-climatic data
-    mask = (data['DateTime'] > '2014-11-01') & (data['DateTime'] <= '2015-06-30')
+    # mask = (data['DateTime'] > '2014-11-01') & (data['DateTime'] <= '2015-06-30')
+    mask = (data['DateTime'] > '2015-07-01') & (data['DateTime'] <= '2015-12-30')
     data = data.loc[mask]
     data = data.fillna(method='pad')
     data = data.set_index('DateTime')
