@@ -82,7 +82,7 @@ def get_syn_params():
     params = {
         'epochs': 100,
         'pred_len': 14,
-        'train_len': 666,
+        'train_len': 555,
         'num_layers': 4,
         'num_cells': 44,
         'num_samples': 10,
@@ -160,12 +160,12 @@ def get_climate_params():
 def get_geo_params():
 
     params = {
-        'epochs': 125,
-        'pred_len': 15,
-        'train_len': 1500,
-        'num_layers': 5,
+        'epochs': 125,    # 125
+        'pred_len': 25,    # 15
+        'train_len': 1500,  # 1500
+        'num_layers': 6,    # 5
         'num_samples': 10,
-        'num_cells': 50,
+        'num_cells': 60,     # 50
         'dropout_rate': 0.1,
         'win_size': 1,
         'slidingwin_size': 100,
