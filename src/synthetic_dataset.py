@@ -85,9 +85,9 @@ if __name__ == '__main__':
 
     ex, ey, ez = [], [], []
     for i in range(3):
-        ex.append(np.random.normal(i, 0.20, time_steps))
-        ey.append(np.random.normal(i, 0.10, time_steps))
-        ez.append(np.random.normal(i, 0.15, time_steps))
+        ex.append(np.random.normal(i + i*0.1, 0.30, time_steps))
+        ey.append(np.random.normal(i + i*0.1, 0.20, time_steps))
+        ez.append(np.random.normal(i + i*0.1, 0.25, time_steps))
 
     C = {'c1': 0.70, 'c2': 1.50, 'c3': 0.75, 'c4': 1.25, 'c5': 0.90}           # c2:1.75, c5:1.85
     Tao = {'t1': 2, 't2': 3, 't3': 4, 't4': 1, 't5': 6, 't6': 5}
@@ -96,7 +96,7 @@ if __name__ == '__main__':
 
     data = {'Z1': X1[50:], 'Z2': X2[50:], 'Z3': X3[50:], 'Z4': X4[50:], 'Z5': X5[50:]}
     df = pd.DataFrame(data, columns=['Z1', 'Z2', 'Z3', 'Z4', 'Z5'])
-    df.to_csv(r'/home/ahmad/PycharmProjects/deepCausality/datasets/synthetic_datasets/synthetic_data.csv', index_label=False, header=True)
+    df.to_csv(r'/home/ahmad/PycharmProjects/deepCausality/datasets/synthetic_datasets/synthetic_datac.csv', index_label=False, header=True)
     print(df.head(10))
     print("Correlation Matrix")
     print(df.corr(method='pearson'))
