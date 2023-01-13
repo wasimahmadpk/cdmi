@@ -156,7 +156,7 @@ def load_geo_data():
     #    'strain_ns_uncorrected', 'strain_ew_corrected', 'strain_ns_corrected',
     #    'tides_ew', 'tides_ns']
     vars = ['DateTime', 'gw_mb', 'gw_sg', 'gw_west', 'gw_south', 'strain_ns_corrected']
-    vars = ['DateTime', 'temperature_outside', 'pressure_outside', 'wind_x', 'snow_load', 'strain_ns_corrected']
+    # vars = ['DateTime', 'temperature_outside', 'pressure_outside', 'wind_x', 'snow_load', 'strain_ns_corrected']
     data = pd.read_csv(path, usecols=vars)
     
     # Read spring and summer season geo-climatic data
