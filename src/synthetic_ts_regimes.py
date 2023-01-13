@@ -80,8 +80,8 @@ if __name__ == '__main__':
         _, nice_wave = generate_sine_wave(400, SAMPLE_RATE, DURATION)
         _, noise_wave = generate_sine_wave(4000, SAMPLE_RATE, DURATION)
         noise_wave = noise_wave * 0.30
-        noise = np.random.normal(r, (r+1)*1.0, len(nice_wave))
-        root = nice_wave + noise_wave + noise
+        noise = np.random.normal(0, 0.25 + r*0.25, len(nice_wave))
+        root = noise_wave + noise
         roots.append(root)
 
     # root = np.random.normal(0, 1.0, 2000)
@@ -99,7 +99,7 @@ if __name__ == '__main__':
     data = {'Z1': X1[10:], 'Z2': X2[10:], 'Z3': X3[10:], 'Z4': X4[10:], 'Z5': X5[10:]}
     df = pd.DataFrame(data, columns=['Z1', 'Z2', 'Z3', 'Z4', 'Z5'])
     df = df.apply(prep.normalize)
-    df.to_csv(r'/home/ahmad/PycharmProjects/deepCausality/datasets/synthetic_datasets/synthetic_data_regimes.csv', index_label=False, header=True)
+    df.to_csv(r'/home/ahmad/PycharmProjects/deepCausality/datasets/synthetic_datasets/synthetic_datac.csv', index_label=False, header=True)
     print(df.shape)
     print(df.head(10))
     print("Correlation Matrix")
