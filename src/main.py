@@ -96,8 +96,8 @@ estimator = DeepAREstimator(
     prediction_length=prediction_length,
     context_length=prediction_length,
     freq=freq,
-    num_layers=num_layers,  # 3
-    num_cells=num_cells,  # 33
+    num_layers=num_layers,
+    num_cells=num_cells,
     dropout_rate=dropout_rate,
     trainer=Trainer(
         ctx="cpu",
@@ -109,7 +109,7 @@ estimator = DeepAREstimator(
 )
 
 # load model if not already trained
-model_path = "../models/trained_model_geo13JR2G1model.sav"
+model_path = "../models/trained_model_geo30JR1GWmodel4.sav"
 # model_path = "../models/trained_model_syn22Sep.sav"
 # model_path = "../models/trained_model_river16Jun.sav"
 
