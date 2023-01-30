@@ -190,7 +190,7 @@ def deepCause(odata, knockoffs, model, params):
                         mselistint_batch.append(mseint)
                         mapelistint_batch.append(mapeint)
 
-                    start = start + 5                                   # Step size for sliding window # 10
+                    start = start + 6                                      # Step size for sliding window # 10
                     mselist.append(np.mean(mselist_batch))                  # mselist = mselist_batch
                     mapelist.append(np.mean(mapelist_batch))                # mapelist = mapelist_batch
                     mselistint.append(np.mean(mselistint_batch))            # mselistint = mselistint_batch
