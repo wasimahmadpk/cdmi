@@ -138,7 +138,7 @@ def deepCause(odata, knockoffs, model, params):
                 diff = []
                 start = 10
 
-                for iter in range(20):  # 30
+                for iter in range(10):  # 30
 
                     mselist_batch = []
                     mselistint_batch = []
