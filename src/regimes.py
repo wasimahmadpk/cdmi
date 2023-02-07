@@ -102,51 +102,8 @@ def get_regimes(data, wsize):
 #     print(f"Clusters indecis: {cluster_idx}")
     
     clusters2 = pyriemann_clusters(cov, k=2)
-    
-#     # Plot regimes
-#
-#     # toplot = [ 'rain','strain_ns_corrected', 'tides_ns', 'temperature_outside', 'pressure_outside', 'gw_west']
-#     # toplot = ['temperature_outside', 'pressure_outside', 'strain_ew_corrected']
-#     toplot = ['Z1', 'Z2', 'Z3']
-#     # toplot = ['Hs', 'P', 'W' ]
-#     colors = ['r', 'g', 'b']
-#
-#     t = np.arange(0, cluster_idx[-1]+winsize)
-#     start = 0
-#
-#     for c in range(len(clusters)):
-#
-#         if clusters[c] == 0:
-#                 marker = '-'
-#         elif clusters[c] == 1:
-#                 marker = '-'
-#         elif clusters[c] == 2:
-#                 marker = '-'
-#         for i in range(len(toplot)):
-#
-#
-#             plt.plot(t[start: start+winsize], data[toplot[i]].values[start: start + winsize], colors[i]+marker)
-# #           plt.plot(t[start: start + winsize], data[toplot[i+1]].values[start: start + winsize], color)
-# #           plt.plot(t[start: start + winsize], data[toplot[i+2]].values[start: start + winsize], color)
-#
-#         start = start + winsize
-#     plt.legend(toplot)
-#     for c in range(len(cluster_idx)):
-#         val = cluster_idx[c]
-#         if clusters[c] == 0:
-#             for v in range(winsize):
-#                 plt.axvline(val+v, color="red", alpha=0.01)
-#         if clusters[c] == 1:
-#             for v in range(winsize):
-#                 plt.axvline(val+v, color="green", alpha=0.01)
-#         if clusters[c] == 2:
-#             for v in range(winsize):
-#                 plt.axvline(val+v, color="white", alpha=0.01)
-#     plt.savefig("regimes.png")
-#     plt.show()
 
     clusters_extended = []
-
     for i in range(len(clusters)):
 
         val = clusters[i]
@@ -171,3 +128,48 @@ def get_reduced_set(df):
 
     reduced_df = df.iloc[:, selected_idx].copy()
     return reduced_df
+
+
+def plot_regimes(data, clusters, cluster_idx, winsize, toplot):
+
+    # Plot regimes
+
+    # toplot = [ 'rain','strain_ns_corrected', 'tides_ns', 'temperature_outside', 'pressure_outside', 'gw_west']
+    # toplot = ['temperature_outside', 'pressure_outside', 'strain_ew_corrected']
+    toplot = ['Z1', 'Z2', 'Z3']
+    # toplot = ['Hs', 'P', 'W' ]
+    colors = ['r', 'g', 'b']
+
+    t = np.arange(0, cluster_idx[-1]+winsize)
+    start = 0
+
+    for c in range(len(clusters)):
+
+        if clusters[c] == 0:
+                marker = '-'
+        elif clusters[c] == 1:
+                marker = '-'
+        elif clusters[c] == 2:
+                marker = '-'
+        for i in range(len(toplot)):
+
+
+            plt.plot(t[start: start+winsize], data[toplot[i]].values[start: start + winsize], colors[i]+marker)
+#           plt.plot(t[start: start + winsize], data[toplot[i+1]].values[start: start + winsize], color)
+#           plt.plot(t[start: start + winsize], data[toplot[i+2]].values[start: start + winsize], color)
+
+        start = start + winsize
+    plt.legend(toplot)
+    for c in range(len(cluster_idx)):
+        val = cluster_idx[c]
+        if clusters[c] == 0:
+            for v in range(winsize):
+                plt.axvline(val+v, color="red", alpha=0.01)
+        if clusters[c] == 1:
+            for v in range(winsize):
+                plt.axvline(val+v, color="green", alpha=0.01)
+        if clusters[c] == 2:
+            for v in range(winsize):
+                plt.axvline(val+v, color="white", alpha=0.01)
+    plt.savefig("regimes.png")
+    plt.show()
