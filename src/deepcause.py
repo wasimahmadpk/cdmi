@@ -129,16 +129,16 @@ def deepCause(odata, knockoffs, model, params):
 
                 intervene = interventionlist[m]
 
-                mselist = []  # list of MSE values for multiple realization without intervention
-                mselistint = []  # list of MSE values for multiple realization with intervention
+                mselist = []      # list of MSE values for multiple realization without intervention
+                mselistint = []   # list of MSE values for multiple realization with intervention
                 acelist = []
-                mapelist = []  # list of MAPE values for multiple realization without intervention
+                mapelist = []     # list of MAPE values for multiple realization without intervention
                 mapelistint = []  # list of MAPE values for multiple realization with intervention
-                css_score = []  # list of causal scores for multiple realization
+                css_score = []    # list of causal scores for multiple realization
                 diff = []
                 start = 10
 
-                for iter in range(20):  # 30
+                for iter in range(25):  # 30
 
                     mselist_batch = []
                     mselistint_batch = []
@@ -190,7 +190,7 @@ def deepCause(odata, knockoffs, model, params):
                         mselistint_batch.append(mseint)
                         mapelistint_batch.append(mapeint)
 
-                    start = start + 10                                       # Step size for sliding window # 10
+                    start = start + 9                                       # Step size for sliding window # 10
                     mselist.append(np.mean(mselist_batch))                  # mselist = mselist_batch
                     mapelist.append(np.mean(mapelist_batch))                # mapelist = mapelist_batch
                     mselistint.append(np.mean(mselistint_batch))            # mselistint = mselistint_batch
@@ -226,13 +226,15 @@ def deepCause(odata, knockoffs, model, params):
             for z in range(len(heuristic_itn_types)):
 
                 print("Intervention: " + heuristic_itn_types[z])
+                
                 # print(f"Mean: {np.mean(mapelol[z])}, Mean Intervention: {np.mean(mapelolint[z])}")
                 # print(f"Variance: {np.var(mapelol[z])}, Variance Intervention: {np.var(mapelolint[z])}")
                 # t, p = ttest_ind(np.array(mapelolint[z]), np.array(mapelol[z]), equal_var=True)
+                
                 t, p = ks_2samp(np.array(mapelol[z]), np.array(mapelolint[z]))
                 # t, p = kstest(np.array(mapelolint[z]), np.array(mapelol[z]))
-                kld = prep.kl_divergence(np.array(mapelol[z]), np.array(mapelolint[z]))
                 
+                kld = prep.kl_divergence(np.array(mapelol[z]), np.array(mapelolint[z]))
                 kvals.append(kld)
                 
                 if i==j:
