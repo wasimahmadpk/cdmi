@@ -160,12 +160,12 @@ def get_climate_params():
 def get_geo_params():
 
     params = {
-        'epochs': 120,    # 125
+        'epochs': 500,    # 125
         'pred_len': 14,    # 15
         'train_len': 1500,  # 1500
-        'num_layers': 9,    # 5
+        'num_layers': 5,    # 5
         'num_samples': 10,
-        'num_cells': 75,     # 50
+        'num_cells': 50,     # 50
         'dropout_rate': 0.1,
         'win_size': 1,
         'slidingwin_size': 100,

@@ -109,7 +109,7 @@ estimator = DeepAREstimator(
 )
 
 # load model if not already trained
-model_path = "../models/trained_model_geo02FR4Climatemodel4.sav"
+model_path = "../models/trained_model_geo07FR5GWLmodel2.sav"
 # model_path = "../models/trained_model_syn22Sep.sav"
 # model_path = "../models/trained_model_river16Jun.sav"
 
