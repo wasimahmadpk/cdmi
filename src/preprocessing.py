@@ -40,16 +40,16 @@ def deseasonalize(var, interval):
     return deseasonalize_data
 
 
-# def running_avg_effect(y, yint):
+def running_avg_effect(y, yint):
 
 #  Break temporal dependency and generate a new time series
-#     pars = parameters.get_sig_params()
-#     SAMPLE_RATE = pars.get("sample_rate")  # Hertz
-#     DURATION = pars.get("duration")  # Seconds
-#     rae = 0
-#     for i in range(len(y)):
-#         ace = 1/((training_length + 1 + i) - training_length) * (rae + (y[i] - yint[i]))
-#     return rae
+    pars = parameters.get_sig_params()
+    SAMPLE_RATE = pars.get("sample_rate")  # Hertz
+    DURATION = pars.get("duration")  # Seconds
+    rae = 0
+    for i in range(len(y)):
+        ace = 1/((training_length + 1 + i) - training_length) * (rae + (y[i] - yint[i]))
+    return rae
 
 
 # Normalization (MixMax/ Standard)
@@ -155,13 +155,13 @@ def load_geo_data():
     #    'snow_load', 'humidity', 'glob_radiaton', 'strain_ew_uncorrected',
     #    'strain_ns_uncorrected', 'strain_ew_corrected', 'strain_ns_corrected',
     #    'tides_ew', 'tides_ns']
-    # vars = ['DateTime', 'gw_mb', 'gw_sr', 'gw_west', 'gw_south', 'strain_ew_corrected', 'strain_ns_corrected']
-    vars = ['DateTime', 'temperature_outside', 'pressure_outside', 'wind_x', 'winx_y', 'snow_load', 'strain_ew_corrected', 'strain_ns_corrected']
+    vars = ['DateTime', 'gw_mb', 'gw_sr', 'gw_west', 'gw_south', 'strain_ew_corrected', 'strain_ns_corrected']
+    # vars = ['DateTime', 'temperature_outside', 'pressure_outside', 'wind_x', 'snow_load', 'strain_ew_corrected', 'strain_ns_corrected']
     data = pd.read_csv(path, usecols=vars)
     
     # Read spring and summer season geo-climatic data
-    start_date = '2016-06-15'
-    end_date = '2016-12-30'
+    start_date = '2016-12-01'
+    end_date = '2017-05-15'
     # mask = (data['DateTime'] > '2014-11-01') & (data['DateTime'] <= '2015-05-28')  # '2015-06-30') Regime 1
     # mask = (data['DateTime'] > '2015-05-01') & (data['DateTime'] <= '2015-10-30')  # Regime 2
     # data = data.loc[mask]
