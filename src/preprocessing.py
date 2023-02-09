@@ -155,19 +155,19 @@ def load_geo_data():
     #    'snow_load', 'humidity', 'glob_radiaton', 'strain_ew_uncorrected',
     #    'strain_ns_uncorrected', 'strain_ew_corrected', 'strain_ns_corrected',
     #    'tides_ew', 'tides_ns']
-    vars = ['DateTime', 'gw_mb', 'gw_sr', 'gw_west', 'gw_south', 'strain_ew_corrected', 'strain_ns_corrected']
+    vars = ['DateTime', 'gw_mb', 'gw_sg', 'gw_knee', 'gw_south', 'strain_ew_corrected', 'strain_ns_corrected']
     # vars = ['DateTime', 'temperature_outside', 'pressure_outside', 'wind_x', 'snow_load', 'strain_ew_corrected', 'strain_ns_corrected']
     data = pd.read_csv(path, usecols=vars)
     
     # Read spring and summer season geo-climatic data
-    start_date = '2016-12-01'
+    start_date = '2016-05-15'
     end_date = '2017-05-15'
     # mask = (data['DateTime'] > '2014-11-01') & (data['DateTime'] <= '2015-05-28')  # '2015-06-30') Regime 1
     # mask = (data['DateTime'] > '2015-05-01') & (data['DateTime'] <= '2015-10-30')  # Regime 2
     # data = data.loc[mask]
     data = data.fillna(method='pad')
     data = data.set_index('DateTime')
-    data = data[start_date: end_date]
+    data = data[start_date: ]
     data = data.apply(normalize)
 
     return data
