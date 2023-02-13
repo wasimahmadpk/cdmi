@@ -149,7 +149,7 @@ def load_climate_data():
 
 def load_geo_data():
     # Load river discharges data
-    path = '/home/ahmad/PycharmProjects/deepCausality/datasets/geo_dataset/moxa_data_H.csv'
+    path = '/home/ahmad/PycharmProjects/deepCausality/datasets/geo_dataset/moxa_data_D.csv'
     # vars = ['DateTime', 'rain', 'temperature_outside', 'pressure_outside', 'gw_mb',
     #    'gw_sr', 'gw_sg', 'gw_west', 'gw_knee', 'gw_south', 'wind_x', 'winx_y',
     #    'snow_load', 'humidity', 'glob_radiaton', 'strain_ew_uncorrected',
@@ -167,7 +167,7 @@ def load_geo_data():
     # data = data.loc[mask]
     data = data.fillna(method='pad')
     data = data.set_index('DateTime')
-    data = data[start_date: ]
+    # data = data[start_date: ]
     data = data.apply(normalize)
 
     return data
