@@ -47,7 +47,7 @@ https://www.gkd.bayern.de.
 - `DeepKnockoffs/` contains the knockoffs generation methods.
 - `datasets/` contains the generated synthetic data and real dataset.
 - `model/` contains trained models that we used for different datasets.
-
+We also extend CDMI to discover causal graph in non-stationary time series. To do that, first we segment multivariate non-stationary time series based on their dynamics using [Regime Identification](https://github.com/wasimahmadpk/RegimeIdentification) method and perform regime-oriented causal discovery.
 
 ## Dependencies
 `requirements.txt` contains all the packages that are related to the project.
