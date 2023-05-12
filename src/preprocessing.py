@@ -140,7 +140,7 @@ def load_river_data():
 def load_climate_data():
     # Load river discharges data
     
-    df = pd.read_csv('/home/ahmad/PycharmProjects/deepCausality/datasets/environment_dataset/light.txt', sep=" ", header=None)
+    df = pd.read_csv('/home/ahmad/Projects/deepCausality/datasets/environment_dataset/light.txt', sep=" ", header=None)
     df.columns = ["NEP", "PPFD"]
     df = df.apply(normalize)
 
@@ -149,7 +149,7 @@ def load_climate_data():
 
 def load_geo_data():
     # Load river discharges data
-    path = '/home/ahmad/PycharmProjects/deepCausality/datasets/geo_dataset/moxa_data_D.csv'
+    path = '/home/ahmad/Projects/deepCausality/datasets/geo_dataset/moxa_data_D.csv'
     # vars = ['DateTime', 'rain', 'temperature_outside', 'pressure_outside', 'gw_mb',
     #    'gw_sr', 'gw_sg', 'gw_west', 'gw_knee', 'gw_south', 'wind_x', 'winx_y',
     #    'snow_load', 'humidity', 'glob_radiaton', 'strain_ew_uncorrected',
@@ -175,12 +175,12 @@ def load_geo_data():
 
 def load_hackathon_data():
     # Load river discharges data
-    bot, bov = simple_load_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/hackathon_data/blood-oxygenation_interpolated_3600_pt_avg_14.csv")
-    wt, wv = simple_load_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/hackathon_data/weight_interpolated_3600_pt_avg_6.csv")
-    hrt, hrv = simple_load_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/hackathon_data/resting-heart-rate_interpolated_3600_iv_avg_4.csv")
-    st, sv = simple_load_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/hackathon_data/step-amount_interpolated_3600_iv_ct_15.csv")
-    it, iv = simple_load_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/hackathon_data/in-bed_interpolated_3600_iv_sp_19.csv")
-    at, av = simple_load_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/hackathon_data/awake_interpolated_3600_iv_sp_18.csv")
+    bot, bov = simple_load_csv("/home/ahmad/Projects/deepCausality/datasets/hackathon_data/blood-oxygenation_interpolated_3600_pt_avg_14.csv")
+    wt, wv = simple_load_csv("/home/ahmad/Projects/deepCausality/datasets/hackathon_data/weight_interpolated_3600_pt_avg_6.csv")
+    hrt, hrv = simple_load_csv("/home/ahmad/Projects/deepCausality/datasets/hackathon_data/resting-heart-rate_interpolated_3600_iv_avg_4.csv")
+    st, sv = simple_load_csv("/home/ahmad/Projects/deepCausality/datasets/hackathon_data/step-amount_interpolated_3600_iv_ct_15.csv")
+    it, iv = simple_load_csv("/home/ahmad/Projects/deepCausality/datasets/hackathon_data/in-bed_interpolated_3600_iv_sp_19.csv")
+    at, av = simple_load_csv("/home/ahmad/Projects/deepCausality/datasets/hackathon_data/awake_interpolated_3600_iv_sp_18.csv")
 
         # plt.plot(bov)
         # plt.plot(wv)
@@ -201,7 +201,7 @@ def load_hackathon_data():
 def load_flux_data():
 
     # "Load fluxnet 2015 data for grassland IT-Mbo site"
-    fluxnet = pd.read_csv("/home/ahmad/PycharmProjects/deepCausality/datasets/fluxnet2015/FLX_IT-MBo_FLUXNET2015_SUBSET_2003-2013_1-4/FLX_IT-MBo_FLUXNET2015_SUBSET_HH_2003-2013_1-4.csv")
+    fluxnet = pd.read_csv("/home/ahmad/Projects/deepCausality/datasets/fluxnet2015/FLX_IT-MBo_FLUXNET2015_SUBSET_2003-2013_1-4/FLX_IT-MBo_FLUXNET2015_SUBSET_HH_2003-2013_1-4.csv")
     org = fluxnet['SW_IN_F']
     otemp = fluxnet['TA_F']
     ovpd = fluxnet['VPD_F']
