@@ -192,7 +192,7 @@ if __name__ == '__main__':
 
     win_size = 1
     # Load synthetic data
-    syndata = pd.read_csv("/home/ahmad/PycharmProjects/deepCause/datasets/ncdata/artificial_data_seasonal.csv")
+    syndata = pd.read_csv("/home/ahmad/Projects/deepCause/datasets/ncdata/artificial_data_seasonal.csv")
     rg = normalize(down_sample(syndata['Rg'], win_size))
     temp = normalize(down_sample(syndata['T'], win_size))
     gpp = normalize(down_sample(syndata['GPP'], win_size))
