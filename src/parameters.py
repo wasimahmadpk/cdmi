@@ -103,7 +103,7 @@ def get_syn_params():
                        0, 0, 0, 1, 1,
                        0, 0, 0, 0, 1],
         'freq': '30min',
-        'plot_path': "/home/ahmad/PycharmProjects/deepCausality/plots/"
+        'plot_path': "/home/ahmad/Projects/deepCausality/plots/"
     }
 
     return params
@@ -129,7 +129,7 @@ def get_real_params():
                        0, 1, 0,
                        0, 0, 1],
         'freq': 'D',
-        'plot_path': "/home/ahmad/PycharmProjects/deepCausality/plots/"
+        'plot_path': "/home/ahmad/Projects/deepCausality/plots/"
     }
     return params
 
@@ -152,7 +152,7 @@ def get_climate_params():
         'true_graph': [1, 0,
                        1, 1],
         'freq': 'H',
-        'plot_path': "/home/ahmad/PycharmProjects/deepCausality/plots/"
+        'plot_path': "/home/ahmad/Projects/deepCausality/plots/"
     }
     return params
 
@@ -182,7 +182,7 @@ def get_geo_params():
                        0, 0, 0, 1, 1,
                        0, 0, 0, 0, 1],
         'freq': 'H',
-        'plot_path': "/home/ahmad/PycharmProjects/deepCausality/plots/"
+        'plot_path': "/home/ahmad/Projects/deepCausality/plots/"
     }
     return params
 
@@ -213,7 +213,7 @@ def get_hack_params():
                        1, 0, 1, 0, 1, 1,
                        1, 0, 1, 0, 1, 1],
         'freq': 'D',
-        'plot_path': "/home/ahmad/PycharmProjects/deepCausality/plots/"
+        'plot_path': "/home/ahmad/Projects/deepCausality/plots/"
     }
     return params
 
