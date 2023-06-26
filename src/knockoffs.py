@@ -122,7 +122,7 @@ class Knockoffs:
         Xk_test_g = second_order.generate(X_test)
         # print("Size of the second-order knockoff test dataset: %d x %d." % (Xk_test_g.shape))
 
-        # Generate oracle knockoffs
+        # # Generate oracle knockoffs
         # oracle = GaussianKnockoffs(DataSampler.Sigma, method="sdp", mu=DataSampler.mu)
         # Xk_test_o = oracle.generate(X_test)
         # print("Size of the oracle knockoff test dataset: %d x %d." % (Xk_test_o.shape))
