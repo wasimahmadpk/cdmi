@@ -24,7 +24,7 @@ def PlotScatterHelper(A, B, ax=None):
     ax.set_ylim([-0.2, 1.1])
 
     for i in range(0,A.shape[0]-1):
-        ax.scatter(A.diagonal(i),B.diagonal(i), alpha=0.2)
+        ax.scatter(A.diagonal(i),B.diagonal(i), alpha=0.75)
 
     lims = [
         np.min([ax.get_xlim(), ax.get_ylim()]),  # min of both axes
@@ -32,17 +32,22 @@ def PlotScatterHelper(A, B, ax=None):
     ]
 
     for i in range(0,A.shape[0]-1):
+        print("Matrix shape: ", A.shape[0])
+        print('Diag Vaues: ', A.diagonal(i))
         meanValA = np.mean(A.diagonal(i))
         meanValB = np.mean(B.diagonal(i))
-        ax.plot([meanValA, meanValA],lims, 'g-', alpha=0.2, zorder=0)
+        print('MeanValA: ', [meanValA, meanValB])
+        print('Limit: ', lims)
+        ax.plot([meanValA, meanValA],lims, 'g-', alpha=0.25, zorder=0)
+        
         if i==0:
             color = 'r-'
             alpha = 1
         else:
             color = 'g-'
-            alpha = 0.2
+            alpha = 0.25
         ax.plot(lims, [meanValB, meanValB], color, alpha=alpha, zorder=0)
-
+        
     # Plot both limits against each other
     ax.plot(lims, lims, 'g-', dashes=[2,2], alpha=0.75, zorder=0)
     ax.set_aspect('equal')
@@ -59,22 +64,22 @@ def ScatterCovariance(X, Xk):
 
     # Originality
     XX = np.corrcoef(X.T)
-    # print("Shape X:", np.shape(X))
-    print("Cov X:", XX)
+    print("Shape X:", np.shape(X))
+    print("Cov XX:", XX)
     XkXk = np.corrcoef(Xk.T)
-    # print("Shape Xk:", np.shape(Xk))
-    # print("Cov XkXk:", XkXk)
+    print("Shape Xk:", np.shape(Xk))
+    print("Cov XkXk:", XkXk)
 
-    # Plot data
-    fig = plt.figure()
-    ax1 = fig.add_subplot(111)
-    sns.distplot(X[:, 0], color='red', label='Actual')
-    sns.distplot(Xk[:, 0], color='green', label='Knockoffs')
-    ax1.set_ylabel('')
-    ax1.legend()
-    plt.savefig('Distribution.pdf')
-    plt.show()
-    plt.clf()
+    # # Plot data
+    # fig = plt.figure()
+    # ax1 = fig.add_subplot(111)
+    # sns.distplot(X[:, 0], color='red', label='Actual')
+    # sns.distplot(Xk[:, 0], color='green', label='Knockoffs')
+    # ax1.set_ylabel('')
+    # ax1.legend()
+    # plt.savefig('Distribution.pdf')
+    # plt.show()
+    # plt.clf()
 
     PlotScatterHelper(XX, XkXk, ax=axarr[0])
     # axarr[0].set_xlabel(r'$\hat{G}_{\mathbf{Z}\mathbf{Z}}(i,j)$', fontsize=18,  weight='bold')
@@ -86,6 +91,7 @@ def ScatterCovariance(X, Xk):
     # Exchangeability
     p = X.shape[1]
     G = np.corrcoef(X.T, Xk.T)
+    print('G: ', G)
     XX  = G[:p,:p]
     print("Exchangeability")
     print("Cov XX:", XX)
@@ -98,9 +104,9 @@ def ScatterCovariance(X, Xk):
 
     axarr[1].set_xlabel(r'$\Sigma_{\mathbf{Z}\mathbf{Z}}(i,j)$', fontsize=18, weight='bold')
     axarr[1].set_ylabel(r'$\Sigma_{\mathbf{Z}\tilde{\mathbf{Z}}}(i,j)$', fontsize=18, weight='bold')
-    plt.savefig('cov.pdf')
+    plt.savefig('cov.png')
     plt.show()
-    return fig
+    # return fig
 
 
 def COV(Z1,Z2,alphas=None):
