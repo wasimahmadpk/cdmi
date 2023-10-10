@@ -80,6 +80,7 @@ def GetFDRTestParams(model):
 def get_syn_params():
     # Parameters for synthetic data
     params = {
+
         'epochs': 100,
         'pred_len': 14,
         'train_len': 555,
