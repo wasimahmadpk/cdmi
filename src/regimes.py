@@ -1,4 +1,3 @@
-import mutualinfo
 import parameters
 import numpy as np
 import pandas as pd
