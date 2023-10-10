@@ -32,7 +32,6 @@ from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_
 np.random.seed(1)
 mx.random.seed(2)
 
-
 pars = parameters.get_geo_params()
 num_samples = pars.get("num_samples")
 step = pars.get("step_size")
