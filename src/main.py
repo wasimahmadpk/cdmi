@@ -31,8 +31,7 @@ np.random.seed(1)
 mx.random.seed(2)
 
 # Parameters
-# pars = parameters.get_geo_params()
-pars = parameters.get_syn_params()
+pars = parameters.get_geo_params()
 freq = pars.get("freq")
 epochs = pars.get("epochs")
 win_size = pars.get("win_size")
@@ -49,10 +48,10 @@ plot_path = pars.get("plot_path")
 # Load river discharges data
 # df = prep.load_river_data()
 # df = prep.load_climate_data()
-# df = prep.load_geo_data()
+df = prep.load_geo_data()
 # df = prep.load_multiregime_data()
-df = prep.load_syn_data()
-df = df.iloc[:, 0:4]
+# df = prep.load_syn_data()
+# df = df.iloc[:, 0:4]
 
 # # --------Identify Regimes in Time series--------
 # regimes, _, _, newdf = get_regimes(data, slidingwin_size)
