@@ -599,7 +599,6 @@ class KnockoffMachine:
         :param X_in: data samples
         :return Xk: knockoff copy per each sample in X
         """
-
         X = torch.from_numpy(X_in).float()
         self.net = self.net.cpu()
         self.net.eval()
