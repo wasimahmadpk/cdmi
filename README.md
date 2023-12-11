@@ -21,7 +21,7 @@ url={https://openreview.net/forum?id=OcNeMVbIdCF}
 
 We discover full causal graph in multivariate nonlinear systems by testing model invariance against Knockoffs-based interventional environments:
 1. First we train deep network $f_i$ using data from observational environment $E_i$.
-2. Then we expose the model to Knockoffs-based interventional environments $E_k$>. 
+2. Then we expose the model to Knockoffs-based interventional environments $E_k$. 
 3. For each pair variables ${z_i, z_j}$ in nonlinear system, we test model invariance across environments. 
 4. We perform KS test over distribution $R_i$, $R_k$ of model residuals in various environments. 
 Our NULL hypothesis is that variable $z_i$ does not cause $z_j$, $H_0$: $R_i$ = $R_k$, 
