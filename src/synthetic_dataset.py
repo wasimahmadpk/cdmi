@@ -94,8 +94,8 @@ if __name__ == '__main__':
     data_obj = SyntheticDataset(root, time_steps, Tref, C, Tao, ex, ey, ez)
     X1, X2, X3, X4, X5 = data_obj.generate_data()
 
-    data = {'Z1': X1[50:], 'Z2': X2[50:], 'Z3': X3[50:], 'Z4': X4[50:], 'Z5': X5[50:]}
-    df = pd.DataFrame(data, columns=['Z1', 'Z2', 'Z3', 'Z4', 'Z5'])
+    data = {'Z1': X1[50:], 'Z2': X3[50:]}
+    df = pd.DataFrame(data, columns=['Z1', 'Z2'])
     df.to_csv(r'/home/ahmad/Projects/deepCausality/datasets/synthetic_datasets/synthetic_data.csv', index_label=False, header=True)
     print(df.head(10))
     print("Correlation Matrix")

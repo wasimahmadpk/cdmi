@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 from sklearn.feature_selection import f_regression, mutual_info_regression
 
 np.random.seed(1)
-pars = parameters.get_geo_params()
+pars = parameters.get_syn_params()
 
 win_size = pars.get("win_size")
 training_length = pars.get("train_len")

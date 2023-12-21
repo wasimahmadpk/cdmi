@@ -3,6 +3,7 @@ import pandas as pd
 import torch
 import seaborn as sns
 from torch.autograd import Function
+from matplotlib.patches import Patch
 from DeepKnockoffs.mmd import mix_rbf_mmd2
 import torch_two_sample.statistics_diff as diff_tests
 import torch_two_sample.statistics_nondiff as nondiff_tests
@@ -54,7 +55,7 @@ def PlotScatterHelper(A, B, ax=None):
     return ax
 
 
-def ScatterCovariance(X, Xk):
+def ScatterCovariance(X, Xk, columns):
     """ Plot the entries of Cov(Xk,Xk) vs Cov(X,X) and Cov(X,Xk) vs Cov(X,X)
     :param X: n-by-p matrix of original variables
     :param Xk: n-by-p matrix of knockoffs
@@ -69,17 +70,52 @@ def ScatterCovariance(X, Xk):
     XkXk = np.corrcoef(Xk.T)
     print("Shape Xk:", np.shape(Xk))
     print("Cov XkXk:", XkXk)
+    allX = np.concatenate((X, Xk), axis=1)
+    xxkk = np.corrcoef(allX.T)
+    print("Shape allX:", np.shape(allX))
+    print("Cov allX:", xxkk)
+
+    exk = X.copy()
+    exk[:, 1] = Xk[:, 1]
+    print('Shape EXK:', np.shape(exk))
+    
 
     # # Plot data
-    # fig = plt.figure()
-    # ax1 = fig.add_subplot(111)
+    fig = plt.figure(figsize=(7, 6), 
+           dpi = 150) 
+    ax1 = fig.add_subplot(111)
+    print('diagnostics:', columns)
     # sns.distplot(X[:, 0], color='red', label='Actual')
+    dfx = pd.DataFrame(data=X, columns=columns)
+    sns.kdeplot(data=dfx, x=columns[0], y=columns[1], cmap='Blues', alpha=0.80, fill=True, levels=7, color='blue', label='Original')
+    # Plot the first bivariate distribution with transparency
+    dfxk = pd.DataFrame(data=Xk, columns=columns)
+    dfexk = pd.DataFrame(data=exk, columns=columns)
+    sns.kdeplot(data=dfexk, x=columns[0], y=columns[1], cmap='Reds', alpha=0.40, fill=True, levels=7, color='red', label='Knockoffs')
     # sns.distplot(Xk[:, 0], color='green', label='Knockoffs')
-    # ax1.set_ylabel('')
+    ax1.set_xlabel(r'')
+    ax1.set_ylabel(r'')
+    # Add a custom legend
+    legend_elements = [
+                        Patch(facecolor=plt.cm.Blues(100), alpha=0.70, edgecolor='k', label=r'$(Z_1, Z_2)$'),
+                        Patch(facecolor=plt.cm.Reds(100), alpha=0.85, edgecolor='k', label=r'$(Z_1, \tilde{Z}_2)$')
+                        ]
+    ax1.legend(handles=legend_elements)
     # ax1.legend()
-    # plt.savefig('Distribution.pdf')
-    # plt.show()
+    ax1.set_title(r'Exchangeability: $(Z_1, Z_2) \overset{d}{=} (Z_1, \tilde{Z}_2)$')
+    plt.savefig('distribution.pdf')
+    plt.show()
     # plt.clf()
+
+    labels = ['Z$_1$', 'Z$_2$', r'$\tilde{Z}_1$', r'$\tilde{Z}_2$']
+    xkdf = pd.DataFrame(data=xxkk, columns=labels)
+
+    plt.figure(figsize=(7, 6), 
+           dpi = 150) 
+    sns.heatmap(xkdf, cmap='Blues', xticklabels=labels, yticklabels=labels)
+    plt.tick_params(axis = 'x', labelsize = 15) # x font label size
+    plt.tick_params(axis = 'y', labelsize = 15) # y font label size
+    plt.show()
 
     PlotScatterHelper(XX, XkXk, ax=axarr[0])
     # axarr[0].set_xlabel(r'$\hat{G}_{\mathbf{Z}\mathbf{Z}}(i,j)$', fontsize=18,  weight='bold')

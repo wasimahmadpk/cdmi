@@ -14,7 +14,7 @@ class Knockoffs:
     def __init__(self):
         self.n = 32
 
-    def GenKnockoffs(self, n, dim, datax):
+    def GenKnockoffs(self, n, dim, datax, columns):
 
         import data
         import diagnostics
@@ -131,7 +131,7 @@ class Knockoffs:
         # diagnostics.ScatterCovariance(X_test, Xk_test_m)
 
         # Plot diagnostics for second-order knockoffs
-        # diagnostics.ScatterCovariance(X_test, Xk_test_g)
+        # diagnostics.ScatterCovariance(X_test, Xk_test_g, columns)
 
         # Plot diagnostics for oracle knockoffs
         # diagnostics.ScatterCovariance(X_test, Xk_test_o)

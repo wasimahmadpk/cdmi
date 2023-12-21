@@ -125,7 +125,7 @@ if not filename.exists():
 data_actual = np.array(original_data[:, :]).transpose()
 n = len(original_data[:, 0])
 obj = Knockoffs()
-knockoffs = obj.GenKnockoffs(n, dim, data_actual)
+knockoffs = obj.GenKnockoffs(n, dim, data_actual, columns)
 
 params = {"dim": dim, "col": columns}
 # Function for estimating causal impact among variables
