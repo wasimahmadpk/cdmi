@@ -64,6 +64,7 @@ df = prep.load_syn_data()
 print(df.describe())
 print(df.shape)
 print(df.head(5))
+
 # df = regimes[1].drop('Clusters', axis=1)
 # df.plot.scatter(x='BO', y='Awake', c='blue')
 # plt.xlabel("PPFD ($\mu$ mol photons $m^{2}s^{-1}$)")

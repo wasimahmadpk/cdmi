@@ -87,18 +87,18 @@ def ScatterCovariance(X, Xk, columns):
     print('diagnostics:', columns)
     # sns.distplot(X[:, 0], color='red', label='Actual')
     dfx = pd.DataFrame(data=X, columns=columns)
-    sns.kdeplot(data=dfx, x=columns[0], y=columns[1], cmap='Blues', alpha=0.80, fill=True, levels=7, color='blue', label='Original')
+    sns.kdeplot(data=dfx, x=columns[0], y=columns[1], alpha=0.50, levels=5, color='blue', label='Original')
     # Plot the first bivariate distribution with transparency
     dfxk = pd.DataFrame(data=Xk, columns=columns)
     dfexk = pd.DataFrame(data=exk, columns=columns)
-    sns.kdeplot(data=dfexk, x=columns[0], y=columns[1], cmap='Reds', alpha=0.40, fill=True, levels=7, color='red', label='Knockoffs')
+    sns.kdeplot(data=dfexk, x=columns[0], y=columns[1],  alpha=0.50, levels=5, color='red', label='Knockoffs')
     # sns.distplot(Xk[:, 0], color='green', label='Knockoffs')
     ax1.set_xlabel(r'')
     ax1.set_ylabel(r'')
     # Add a custom legend
     legend_elements = [
-                        Patch(facecolor=plt.cm.Blues(100), alpha=0.70, edgecolor='k', label=r'$(Z_1, Z_2)$'),
-                        Patch(facecolor=plt.cm.Reds(100), alpha=0.85, edgecolor='k', label=r'$(Z_1, \tilde{Z}_2)$')
+                        Patch(facecolor=plt.cm.Blues(100), edgecolor='k', label=r'$(Z_1, Z_2)$'),
+                        Patch(facecolor=plt.cm.Reds(100), edgecolor='k', label=r'$(Z_1, \tilde{Z}_2)$')
                         ]
     ax1.legend(handles=legend_elements)
     # ax1.legend()
