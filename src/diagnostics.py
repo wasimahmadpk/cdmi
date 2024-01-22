@@ -81,17 +81,16 @@ def ScatterCovariance(X, Xk, columns):
     
 
     # # Plot data
-    fig = plt.figure(figsize=(7, 6), 
-           dpi = 150) 
+    fig = plt.figure(figsize=(7, 6), dpi = 150) 
     ax1 = fig.add_subplot(111)
     print('diagnostics:', columns)
     # sns.distplot(X[:, 0], color='red', label='Actual')
     dfx = pd.DataFrame(data=X, columns=columns)
-    sns.kdeplot(data=dfx, x=columns[0], y=columns[1], alpha=0.50, levels=5, color='blue', label='Original')
+    sns.kdeplot(data=dfx, x=columns[0], y=columns[1], alpha=0.75, cmaps='Blues', edgecolor='b', levels=5, fill=True, label='Original')
     # Plot the first bivariate distribution with transparency
     dfxk = pd.DataFrame(data=Xk, columns=columns)
     dfexk = pd.DataFrame(data=exk, columns=columns)
-    sns.kdeplot(data=dfexk, x=columns[0], y=columns[1],  alpha=0.50, levels=5, color='red', label='Knockoffs')
+    sns.kdeplot(data=dfexk, x=columns[0], y=columns[1],  alpha=0.50, cmaps='Reds', edgecolor='r', levels=5, fill=True, label='Knockoffs')
     # sns.distplot(Xk[:, 0], color='green', label='Knockoffs')
     ax1.set_xlabel(r'')
     ax1.set_ylabel(r'')
@@ -102,8 +101,8 @@ def ScatterCovariance(X, Xk, columns):
                         ]
     ax1.legend(handles=legend_elements)
     # ax1.legend()
-    ax1.set_title(r'Exchangeability: $(Z_1, Z_2) \overset{d}{=} (Z_1, \tilde{Z}_2)$')
-    plt.savefig('distribution.pdf')
+    # ax1.set_title(r'Exchangeability: $(Z_1, Z_2) \overset{d}{=} (Z_1, \tilde{Z}_2)$')
+    plt.savefig('distribution_fill.png')
     plt.show()
     # plt.clf()
 
