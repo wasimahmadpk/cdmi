@@ -44,7 +44,7 @@ prior_graph = pars.get('prior_graph')
 true_conf_mat = pars.get("true_graph")
 
 
-def deepCause(odata, knockoffs, model, params):
+def deepCause(odata, knockoffs, model, columns, params):
 
     mutual_info = []
     for a in range(len(odata)):
@@ -95,7 +95,7 @@ def deepCause(odata, knockoffs, model, params):
         data_actual = np.array(odata[:, 0: training_length + prediction_length]).transpose()
         obj = Knockoffs()
         n = len(odata[:, 0])
-        knockoffs = obj.GenKnockoffs(n, params.get("dim"), data_actual)
+        knockoffs = obj.GenKnockoffs(n, params.get("dim"), data_actual, columns)
         knockoff_sample = np.array(knockoffs[:, i])
 
         mean = np.random.normal(0, 0.05, len(knockoff_sample)) + np.mean(odata[i])
@@ -179,7 +179,7 @@ def deepCause(odata, knockoffs, model, params):
                             data_actual = np.array(odata[:, start: start + training_length + prediction_length]).transpose()
                             obj = Knockoffs()
                             n = len(odata[:, 0])
-                            knockoffs = obj.GenKnockoffs(n, params.get("dim"), data_actual)
+                            knockoffs = obj.GenKnockoffs(n, params.get("dim"), data_actual, columns)
                             knockoff_sample = np.array(knockoffs[:, i])
                             intervene = knockoff_sample
 
