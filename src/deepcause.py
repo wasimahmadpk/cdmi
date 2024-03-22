@@ -32,7 +32,7 @@ from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_
 np.random.seed(1)
 mx.random.seed(2)
 
-pars = parameters.get_syn_params()
+pars = parameters.get_geo_params()
 num_samples = pars.get("num_samples")
 step = pars.get("step_size")
 training_length = pars.get("train_len")
@@ -137,13 +137,13 @@ def deepCause(odata, knockoffs, model, columns, params):
                 diff = []
                 start = 10
 
-                for iter in range(19):  # 30
+                for iter in range(15):  # 30
 
                     mselist_batch = []
                     mselistint_batch = []
                     mapelist_batch = []
                     mapelistint_batch = []
-                    for r in range(2):
+                    for r in range(3):
 
                         test_data = odata[:, start: start + training_length + prediction_length].copy()
                         test_ds = ListDataset(
@@ -183,13 +183,12 @@ def deepCause(odata, knockoffs, model, columns, params):
                             knockoff_sample = np.array(knockoffs[:, i])
                             intervene = knockoff_sample
 
-                        np.random.shuffle(intervene)
                         mselist_batch.append(mse)
                         mapelist_batch.append(mape)
                         mselistint_batch.append(mseint)
                         mapelistint_batch.append(mapeint)
 
-                    start = start + 5                                       # Step size for sliding window # 10
+                    start = start + 1                                       # Step size for sliding window # 10
                     mselist.append(np.mean(mselist_batch))                  # mselist = mselist_batch
                     mapelist.append(np.mean(mapelist_batch))                # mapelist = mapelist_batch
                     mselistint.append(np.mean(mselistint_batch))            # mselistint = mselistint_batch
@@ -262,8 +261,8 @@ def deepCause(odata, knockoffs, model, columns, params):
             # plot residuals distribution
             fig = plt.figure()
             ax1 = fig.add_subplot(111)
-            sns.distplot(mapelol[0], color='red', label='Actual')
-            sns.distplot(mapelolint[0], color='green', label='Counterfactual')
+            sns.displot(mapelol[0], color='red', label='Actual', kind='kde')
+            sns.displot(mapelolint[0], color='green', label='Counterfactual', kind='kde')
 
             if len(columns) > 0:
                 # plt.ylabel(f"CSS: {columns[i]} ---> {columns[j]}")

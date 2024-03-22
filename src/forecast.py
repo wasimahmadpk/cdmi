@@ -17,7 +17,6 @@ import warnings
 # np.random.seed(1)
 # mx.random.seed(2)
 
-
 # Parameters
 pars = parameters.get_geo_params()
 plot_path = pars.get("plot_path")
@@ -81,7 +80,6 @@ def modelTest(model_path, test_ds, num_samples, data, idx, prediction_length, co
         #     filename = pathlib.Path(plot_path + "nepforecastint.pdf")
         #     # plt.savefig(filename)
         #     # plt.show()
-
 
     forecasts = list(forecast_it)
     tss = list(ts_it)

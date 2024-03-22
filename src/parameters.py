@@ -161,16 +161,16 @@ def get_climate_params():
 def get_geo_params():
 
     params = {
-        'epochs': 150,    # 125
+        'epochs': 100,    # 125
         'pred_len': 15,    # 15
-        'train_len': 666,  # 1500
-        'num_layers': 5,    # 5
+        'train_len': 1000,  # 1500
+        'num_layers': 4,    # 5
         'num_samples': 10,
-        'num_cells': 55,     # 50
+        'num_cells': 40,     # 50
         'dropout_rate': 0.1,
         'win_size': 1,
         'slidingwin_size': 100,
-        'dim': 5,
+        'dim': 4,
         'batch_size': 32,
         'prior_graph': np.array([[1, 0, 0, 0, 1],
                                  [0, 1, 0, 0, 1],
