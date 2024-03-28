@@ -217,6 +217,7 @@ def deepCause(odata, knockoffs, model, columns, params):
                 # print(f"Variance: {np.var(mapelol[z])}, Variance Intervention: {np.var(mapelolint[z])}")
                 # t, p = ttest_ind(np.array(mapelolint[z]), np.array(mapelol[z]), equal_var=True)
                 
+                # model invariance test
                 t, p = ks_2samp(np.array(mapelol[z]), np.array(mapelolint[z]))
                 # t, p = kstest(np.array(mapelolint[z]), np.array(mapelol[z]))
                 
@@ -263,8 +264,6 @@ def deepCause(odata, knockoffs, model, columns, params):
             ax1.legend()
             filename = pathlib.Path(plot_path + f"{columns[i]} ---> {columns[j]}.pdf")
             plt.savefig(filename)
-            # plt.show()
-            # plt.close()
 
             mean_cause.append(causal_decision[0])
             indist_cause.append(causal_decision[1])
