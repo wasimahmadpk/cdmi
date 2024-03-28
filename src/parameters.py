@@ -104,7 +104,8 @@ def get_syn_params():
                        0, 0, 0, 1,
                        ],
         'freq': '30min',
-        'plot_path': "/home/ahmad/Projects/deepCausality/plots/"
+        'plot_path': "/home/ahmad/Projects/deepCausality/plots/",
+        'model_path': "/home/ahmad/Projects/deepCausality/models/"
     }
 
     return params
@@ -130,7 +131,8 @@ def get_real_params():
                        0, 1, 0,
                        0, 0, 1],
         'freq': 'D',
-        'plot_path': "/home/ahmad/Projects/deepCausality/plots/"
+        'plot_path': "/home/ahmad/Projects/deepCausality/plots/",
+        'model_path': "/home/ahmad/Projects/deepCausality/models/"
     }
     return params
 
@@ -153,7 +155,8 @@ def get_climate_params():
         'true_graph': [1, 0,
                        1, 1],
         'freq': 'H',
-        'plot_path': "/home/ahmad/Projects/deepCausality/plots/"
+        'plot_path': "/home/ahmad/Projects/deepCausality/plots/",
+        'model_path': "/home/ahmad/Projects/deepCausality/models/"
     }
     return params
 
@@ -163,7 +166,7 @@ def get_geo_params():
     params = {
         'epochs': 100,    # 125
         'pred_len': 16,    # 15
-        'train_len': 2000,  # 1500
+        'train_len': 1000,  # 1500
         'num_layers': 4,    # 5
         'num_samples': 10,
         'num_cells': 40,     # 50
@@ -185,7 +188,8 @@ def get_geo_params():
                        0, 0, 0, 1, 1,
                        0, 0, 0, 0, 1],
         'freq': 'H',
-        'plot_path': "/home/ahmad/Projects/deepCausality/plots/"
+        'plot_path': "/home/ahmad/Projects/deepCausality/plots/",
+        'model_path': "/home/ahmad/Projects/deepCausality/models/"
     }
     return params
 
@@ -216,7 +220,8 @@ def get_hack_params():
                        1, 0, 1, 0, 1, 1,
                        1, 0, 1, 0, 1, 1],
         'freq': 'D',
-        'plot_path': "/home/ahmad/Projects/deepCausality/plots/"
+        'plot_path': "/home/ahmad/Projects/deepCausality/plots/",
+        'model_path': "/home/ahmad/Projects/deepCausality/models/"
     }
     return params
 

@@ -3,7 +3,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from scipy import stats
-import preprocessing as prep
+import functions as func
 # from sklearn import metrics
 # import statsmodels.api as sm
 import matplotlib.pyplot as plt
@@ -88,7 +88,7 @@ def get_regimes(data, wsize):
         skewness = feat.skewness.tolist()
         kurtosis = feat.kurtosis.tolist()
         
-        # plt.plot(prep.normalize(newupp, 'std'))
+        # plt.plot(func.normalize(newupp, 'std'))
         # plt.show()
         mix_feat = newupp + mean_val
 #         print(f"Length of features pool: {len(mix_feat)}")

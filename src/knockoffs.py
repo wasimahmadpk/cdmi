@@ -14,14 +14,11 @@ class Knockoffs:
     def __init__(self):
         self.n = 32
 
-    def GenKnockoffs(self, n, dim, datax, columns):
-
-        import data
-        import diagnostics
+    def GenKnockoffs(self, datax, params):
 
         # Number of features
-        p = dim
-
+        p = params.get('dim')
+        columns = params.get('col')
         # Load the built-in Gaussian model and its default parameters
         # The currently available built-in models are:
         # - gaussian : Multivariate Gaussian distribution
@@ -35,7 +32,7 @@ class Knockoffs:
         DataSampler = data.DataSampler(distribution_params)
 
         # Number of training examples
-        n = 2000
+        n = params.get('length')
 
         # Sample training data
         # X_train = DataSampler.sample(n)

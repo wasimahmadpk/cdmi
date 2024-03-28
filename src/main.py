@@ -37,6 +37,7 @@ plot_path = pars.get("plot_path")
 
 df = datasets.load_geo_data()
 func.corr_heatmap(df)
+
 # # --------Identify Regimes in Time series--------
 # regimes, _, _, newdf = get_regimes(data, slidingwin_size)
 # # -----------------------------------------------
@@ -85,14 +86,18 @@ estimator = DeepAREstimator(
     trainer=Trainer(
         ctx="cpu",
         epochs=epochs,
+        #callbacks=[history],
         hybridize=False,
+        learning_rate=1E-6,
         batch_size=32
     ),
     distr_output=MultivariateGaussianOutput(dim=dim)
 )
 
 # load model if not already trained
-model_path = "../models/trained_model_georegime_cli9.sav"
+path = pars.get('model_path')
+model_path = pathlib.Path(path + f"trained_model_georegime_cli9.sav")
+# model_path = "../models/trained_model_georegime_cli9.sav"
 # model_path = "../models/trained_model_syn22Sep.sav"
 # model_path = "../models/trained_model_river16Jun.sav"
 
@@ -107,8 +112,8 @@ if not filename.exists():
 data_actual = np.array(original_data[:, :]).transpose()
 n = len(original_data[:, 0])
 obj = Knockoffs()
-knockoffs = obj.GenKnockoffs(n, dim, data_actual, columns)
+params = {"length": n, "dim": dim, "col": columns}
+knockoffs = obj.GenKnockoffs(data_actual, params)
 
-params = {"dim": dim, "col": columns}
 # Function for estimating causal impact among variables
-deepCause(original_data, knockoffs, model_path, columns, params)
+deepCause(original_data, knockoffs, model_path, params)

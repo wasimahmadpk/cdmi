@@ -7,8 +7,6 @@ import pandas as pd
 from math import sqrt
 import seaborn as sns
 import functions as func
-import preprocessing as prep
-import functions as func
 from itertools import islice
 from datetime import datetime
 import matplotlib.pyplot as plt
@@ -34,12 +32,11 @@ training_length = pars.get("train_len")
 prediction_length = pars.get("pred_len")
 frequency = pars.get("freq")
 plot_path = pars.get("plot_path")
-# Get prior skeleton
 prior_graph = pars.get('prior_graph')
 
+def deepCause(odata, knockoffs, model, params):
 
-def deepCause(odata, knockoffs, model, columns, params):
-
+    columns = params.get('col')
     mutual_info = []
     for a in range(len(odata)):
             x = odata[:].T
@@ -125,7 +122,7 @@ def deepCause(odata, knockoffs, model, columns, params):
                 diff = []
                 start = 0
 
-                for iter in range(10):  # 30
+                for iter in range(15):  # 30
     
                     mselist_batch = []
                     mselistint_batch = []
@@ -264,6 +261,7 @@ def deepCause(odata, knockoffs, model, columns, params):
             ax1.legend()
             filename = pathlib.Path(plot_path + f"{columns[i]} ---> {columns[j]}.pdf")
             plt.savefig(filename)
+            plt.close()
 
             mean_cause.append(causal_decision[0])
             indist_cause.append(causal_decision[1])
@@ -316,24 +314,3 @@ def deepCause(odata, knockoffs, model, columns, params):
     func.causal_heatmap(causal_matrix_thresholded, columns)
     true_conf_mat = pars.get("true_graph")
     func.evaluate(true_conf_mat, conf_mat)
-
-    # print("-----------------------------------------------------------------------------")
-    # print("Discovered Causal Graphs: ", conf_mat)
-
-    # for ss in range(len(conf_mat)):
-
-    #     # true_conf_mat = conf_mat[ss]
-    #     fscore = round(f1_score(true_conf_mat, conf_mat[ss], average='binary'), 2)
-    #     acc = accuracy_score(true_conf_mat, conf_mat[ss])
-    #     tn, fp, fn, tp = confusion_matrix(true_conf_mat, conf_mat[ss], labels=[0, 1]).ravel()
-    #     precision = precision_score(true_conf_mat, conf_mat[ss])
-    #     recall = recall_score(true_conf_mat, conf_mat[ss])
-        
-    #     print("---------***-----------***----------***----------")
-    #     print(f"Intervention: {heuristic_itn_types[ss]}")
-    #     print(f"TP: {tp}, TN: {tn}, FP: {fp}, FN: {fn}")
-    #     print(f"Precision: {precision}")
-    #     print(f"Recall: {recall}")
-    #     print(f"Accuracy: {acc}")
-    #     print(f"F-score: {fscore}")
-    #     print("---------***-----------***----------***----------")

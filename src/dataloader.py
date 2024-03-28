@@ -75,14 +75,14 @@ def load_geo_data():
     
     # Read spring and summer season geo-climatic data
     start_date = '2018-10-20'
-    end_date = '2019-03-24'
+    end_date = '2019-01-24'
     # mask = (data['DateTime'] > '2014-11-01') & (data['DateTime'] <= '2015-05-28')  # '2015-06-30') Regime 1
     # mask = (data['DateTime'] > '2015-05-01') & (data['DateTime'] <= '2015-10-30')  # Regime 2
     # data = data.loc[mask]
     data = data.fillna(method='pad')
     data = data[(data['DateTime'] >= start_date) & (data['DateTime'] <= end_date)][vars]
     data = data.set_index('DateTime')
-    data = data.apply(func.normalize)
+    data = data.apply(normalize)
 
     return data
 
@@ -162,42 +162,22 @@ def corr_heatmap(df):
 
     # Compute the correlation matrix
     corr_matrix = df.corr()
-
     # Generate a mask for the upper triangle
     mask = np.triu(np.ones_like(corr_matrix, dtype=bool))
-
-    # Set up the matplotlib figure
     plt.figure(figsize=(10, 8))
-
-    # Draw the heatmap with the mask and correct aspect ratio
     sns.heatmap(corr_matrix, mask=mask, annot=True, cmap='coolwarm', fmt=".2f", vmin=-1, vmax=1, center=0, square=True, linewidths=0.5)
     print(f'Correlation Matrix: {corr_matrix}')
-    # Add column names as xticklabels
     plt.xticks(ticks=np.arange(0.5, len(df.columns)), labels=df.columns, rotation=25, ha='right')
-
-    # Add row names as yticklabels
     plt.yticks(ticks=np.arange(0.5, len(df.columns)), labels=df.columns, rotation=0)
-
-    # Add title
     plt.title('Correlation Heatmap')
-
-    # Show the plot
     plt.show()
 
 def causal_heatmap(cmatrix, columns):
 
-    # Set up the matplotlib figure
     plt.figure(figsize=(10, 8))
-
-    # Draw the heatmap with the mask and correct aspect ratio
     sns.heatmap(cmatrix, annot=True, cmap='coolwarm', fmt=".2f", vmin=-1, vmax=1, center=0, square=True, linewidths=0.5)
-    # Add column names as xticklabels
     plt.xticks(ticks=np.arange(0.5, len(columns)), labels=columns, rotation=25, ha='right')
-
-    # Add row names as yticklabels
     plt.yticks(ticks=np.arange(0.5, len(columns)), labels=columns, rotation=0)
-
-    # Add title
     plt.title('Discovered Causal Structure')
     plot_path = r"../deepCausality/plots/"
     filename = pathlib.Path(plot_path + f"causal_matrix.pdf")
