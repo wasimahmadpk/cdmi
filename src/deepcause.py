@@ -1,12 +1,9 @@
-import math
 import pickle
-import random
 import pathlib
 import parameters
 import numpy as np
 import mxnet as mx
 import pandas as pd
-from os import path
 from math import sqrt
 import seaborn as sns
 import functions as func
@@ -16,12 +13,8 @@ from itertools import islice
 from datetime import datetime
 import matplotlib.pyplot as plt
 from knockoffs import Knockoffs
-from scipy.special import stdtr
 from forecast import modelTest
-from sklearn.utils import shuffle
-from gluonts.trainer import Trainer
 from gluonts.evaluation import Evaluator
-from sklearn.metrics import mean_squared_error
 from gluonts.dataset.common import ListDataset
 from gluonts.model.deepar import DeepAREstimator
 from gluonts.model.deepar._network import DeepARTrainingNetwork
@@ -43,7 +36,6 @@ frequency = pars.get("freq")
 plot_path = pars.get("plot_path")
 # Get prior skeleton
 prior_graph = pars.get('prior_graph')
-true_conf_mat = pars.get("true_graph")
 
 
 def deepCause(odata, knockoffs, model, columns, params):
@@ -322,21 +314,9 @@ def deepCause(odata, knockoffs, model, columns, params):
     # Apply condition to the covariance matrix
     causal_matrix_thresholded = np.where(np.abs(causal_matrix) < 0.10, 1, 0)
     print(f'Discovered Causal Structure:\n {causal_matrix_thresholded}')
-
     func.causal_heatmap(causal_matrix_thresholded, columns)
-    # # Plot heatmap using seaborn
-    # plt.clf()
-    # plt.figure(figsize=(8, 6))  # Adjust figure size if needed
-    # hmap = sns.heatmap(causal_matrix_thresholded, cmap='viridis', annot=True, fmt=".1f", linewidths=.5,
-    #             xticklabels=variable_names, yticklabels=variable_names, cbar=False)  # Hide color bar
-    # # Rotate x-axis and y-axis tick labels
-    # hmap.set_xticklabels(hmap.get_xticklabels(), rotation=25, ha='right')
-    # hmap.set_yticklabels(hmap.get_yticklabels(), rotation=25, ha='right')
-
-    # plt.title('Discovered Causal Structure')
-    # filename = pathlib.Path(plot_path + f"causal_matrix.pdf")
-    # plt.savefig(filename)
-    # plt.show()
+    true_conf_mat = pars.get("true_graph")
+    func.evaluate(true_conf_mat, conf_mat)
 
     # print("-----------------------------------------------------------------------------")
     # print("Discovered Causal Graphs: ", conf_mat)

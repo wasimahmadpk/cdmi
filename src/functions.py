@@ -116,7 +116,7 @@ def corr_heatmap(df):
 
     # Draw the heatmap with the mask and correct aspect ratio
     sns.heatmap(corr_matrix, mask=mask, annot=True, cmap='coolwarm', fmt=".2f", vmin=-1, vmax=1, center=0, square=True, linewidths=0.5)
-    print(f'------------------------------ Correlation Matrix ---------------------------- \n {corr_matrix}')
+    print(f'----------------------------- Correlation Matrix ---------------------------- \n {corr_matrix}')
     # Add column names as xticklabels
     plt.xticks(ticks=np.arange(0.5, len(df.columns)), labels=df.columns, rotation=25, ha='right')
 
@@ -144,7 +144,7 @@ def causal_heatmap(cmatrix, columns):
 
     # Add title
     plt.title('Discovered Causal Structure')
-    plot_path = r"../deepCausality/plots/"
+    plot_path = "/home/ahmad/Projects/deepCausality/plots/"
     filename = pathlib.Path(plot_path + f"causal_matrix.pdf")
     plt.savefig(filename)
 
