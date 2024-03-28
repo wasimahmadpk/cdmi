@@ -1,17 +1,13 @@
 import math
 import h5py
-import pickle
-import random
 import pathlib
 import parameters
 import numpy as np
-from os import path
 import pandas as pd
-from math import sqrt
-from datetime import datetime
-from scipy.special import stdtr
+import seaborn as sns
 import matplotlib.pyplot as plt
 from sklearn.feature_selection import f_regression, mutual_info_regression
+
 
 np.random.seed(1)
 pars = parameters.get_syn_params()
@@ -149,19 +145,19 @@ def load_climate_data():
 
 def load_geo_data():
     # Load river discharges data
-    path = r'../datasets/geo_dataset/moxa_data_H.csv'
+    path = r'../datasets/geo_dataset/xmoxa_data_H.csv'
     # vars = ['DateTime', 'rain', 'temperature_outside', 'pressure_outside', 'gw_mb',
     #    'gw_sr', 'gw_sg', 'gw_west', 'gw_knee', 'gw_south', 'wind_x', 'winx_y',
     #    'snow_load', 'humidity', 'glob_radiaton', 'strain_ew_uncorrected',
     #    'strain_ns_uncorrected', 'strain_ew_corrected', 'strain_ns_corrected',
     #    'tides_ew', 'tides_ns']
-    vars = ['DateTime', 'gw_mb', 'gw_sr', 'gw_south', 'gw_west', 'strain_ew_corrected', 'strain_ns_corrected']
-    # vars = ['DateTime', 'temperature_outside', 'pressure_outside', 'strain_ew_corrected', 'strain_ns_corrected']
+    # vars = ['DateTime', 'gw_mb', 'gw_sr', 'gw_south', 'gw_west', 'strain_ew_corrected', 'strain_ns_corrected']
+    vars = ['DateTime', 'temperature_outside', 'pressure_outside', 'wind_y', 'snow_load', 'strain_ns_corrected', 'strain_ew_corrected']
     data = pd.read_csv(path, usecols=vars)
     
     # Read spring and summer season geo-climatic data
-    start_date = '2015-09-07'
-    end_date = '2016-02-28'
+    start_date = '2018-10-20'
+    end_date = '2019-03-24'
     # mask = (data['DateTime'] > '2014-11-01') & (data['DateTime'] <= '2015-05-28')  # '2015-06-30') Regime 1
     # mask = (data['DateTime'] > '2015-05-01') & (data['DateTime'] <= '2015-10-30')  # Regime 2
     # data = data.loc[mask]
@@ -240,3 +236,54 @@ def load_multiregime_data():
     df = pd.read_csv(r"../datasets/synthetic_datasets/synthetic_data_regimes.csv")
     # df = df.apply(normalize)
     return df
+
+def corr_heatmap(df):
+
+    # Assuming you have a DataFrame named df
+    # df = pd.DataFrame(...)
+
+    # Compute the correlation matrix
+    corr_matrix = df.corr()
+
+    # Generate a mask for the upper triangle
+    mask = np.triu(np.ones_like(corr_matrix, dtype=bool))
+
+    # Set up the matplotlib figure
+    plt.figure(figsize=(10, 8))
+
+    # Draw the heatmap with the mask and correct aspect ratio
+    sns.heatmap(corr_matrix, mask=mask, annot=True, cmap='coolwarm', fmt=".2f", vmin=-1, vmax=1, center=0, square=True, linewidths=0.5)
+    print(f'Correlation Matrix: {corr_matrix}')
+    # Add column names as xticklabels
+    plt.xticks(ticks=np.arange(0.5, len(df.columns)), labels=df.columns, rotation=25, ha='right')
+
+    # Add row names as yticklabels
+    plt.yticks(ticks=np.arange(0.5, len(df.columns)), labels=df.columns, rotation=0)
+
+    # Add title
+    plt.title('Correlation Heatmap')
+
+    # Show the plot
+    plt.show()
+
+def causal_heatmap(cmatrix, columns):
+
+    # Set up the matplotlib figure
+    plt.figure(figsize=(10, 8))
+
+    # Draw the heatmap with the mask and correct aspect ratio
+    sns.heatmap(cmatrix, annot=True, cmap='coolwarm', fmt=".2f", vmin=-1, vmax=1, center=0, square=True, linewidths=0.5)
+    # Add column names as xticklabels
+    plt.xticks(ticks=np.arange(0.5, len(columns)), labels=columns, rotation=25, ha='right')
+
+    # Add row names as yticklabels
+    plt.yticks(ticks=np.arange(0.5, len(columns)), labels=columns, rotation=0)
+
+    # Add title
+    plt.title('Discovered Causal Structure')
+    plot_path = r"../deepCausality/plots/"
+    filename = pathlib.Path(plot_path + f"causal_matrix.pdf")
+    plt.savefig(filename)
+
+    # Show the plot
+    plt.show()

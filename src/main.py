@@ -1,30 +1,18 @@
-import math
 import pickle
-import random
 import pathlib
 import parameters
 import numpy as np
 import mxnet as mx
 import pandas as pd
-from os import path
-from math import sqrt
-from itertools import islice
-import preprocessing as prep
-from datetime import datetime
-from deepcause import deepCause
+import functions as func
+import dataloader as datasets
 import matplotlib.pyplot as plt
 from knockoffs import Knockoffs
-from scipy.special import stdtr
-from forecast import modelTest
 from regimes import get_regimes
+from deepcause import deepCause
 from gluonts.trainer import Trainer
-from gluonts.evaluation import Evaluator
-from sklearn.metrics import mean_squared_error
 from gluonts.dataset.common import ListDataset
 from gluonts.model.deepar import DeepAREstimator
-from gluonts.model.deepar._network import DeepARTrainingNetwork
-from gluonts.evaluation.backtest import make_evaluation_predictions
-from scipy.stats import ttest_ind, ttest_ind_from_stats, ttest_1samp
 from gluonts.distribution.multivariate_gaussian import MultivariateGaussianOutput
 
 np.random.seed(1)
@@ -47,8 +35,8 @@ plot_path = pars.get("plot_path")
 
 # Load river discharges data
 
-df = prep.load_geo_data()
-
+df = datasets.load_geo_data()
+func.corr_heatmap(df)
 # # --------Identify Regimes in Time series--------
 # regimes, _, _, newdf = get_regimes(data, slidingwin_size)
 # # -----------------------------------------------
@@ -57,9 +45,7 @@ df = prep.load_geo_data()
     # print(regimes[i].head(5))
 
 # df = data.loc[:1000].copy()
-print(df.describe())
-print(df.shape)
-print(df.head(5))
+print(f'Shape: {df.shape}')
 
 # df = regimes[1].drop('Clusters', axis=1)
 # df.plot.scatter(x='BO', y='Awake', c='blue')
@@ -72,7 +58,6 @@ print(df.head(5))
 original_data = []
 dim = len(df.columns)
 columns = df.columns
-print(f"Dimension {dim} and Columns: {df.columns}")
 
 for col in df:
     original_data.append(df[col])
@@ -107,7 +92,7 @@ estimator = DeepAREstimator(
 )
 
 # load model if not already trained
-model_path = "../models/trained_model_georegime_gwl3.sav"
+model_path = "../models/trained_model_georegime_cli9.sav"
 # model_path = "../models/trained_model_syn22Sep.sav"
 # model_path = "../models/trained_model_river16Jun.sav"
 

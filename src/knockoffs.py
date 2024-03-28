@@ -192,20 +192,25 @@ if __name__ == '__main__':
 
     win_size = 1
     # Load synthetic data
-    syndata = pd.read_csv("/home/ahmad/Projects/deepCause/datasets/ncdata/artificial_data_seasonal.csv")
-    rg = normalize(down_sample(syndata['Rg'], win_size))
-    temp = normalize(down_sample(syndata['T'], win_size))
-    gpp = normalize(down_sample(syndata['GPP'], win_size))
-    reco = normalize(down_sample(syndata['Reco'], win_size))
+    syndata = pd.read_csv(r"../datasets/synthetic_datasets/synthetic_data.csv")
+    rg = normalize(down_sample(syndata.iloc[:, 0], win_size))
+    temp = normalize(down_sample(syndata.iloc[:, 1], win_size))
+    gpp = normalize(down_sample(syndata.iloc[:, 2], win_size))
+    reco = normalize(down_sample(syndata.iloc[:, 3], win_size))
 
-
-    obj = knockoffs()
+    obj = Knockoffs()
     datax = np.array([rg, temp, gpp, reco]).transpose()
     n = len(rg)
     dim = 4
-    knockoffs = obj.GenKnockoffs(n, dim, datax)
+    knockoffs = obj.GenKnockoffs(n, dim, datax, syndata.columns)
     knockoffs = np.array(knockoffs)
     # print("Deep Knockoffs: \n", knockoffs)
+    
+    # Finding correlation coefficient
+    correlation_coefficient = np.corrcoef(rg[:987], knockoffs[:987, 0])[0, 1]
 
-    plt.plot(np.arange(0, 987), rg[0:987], knockoffs[:, 0])
+    print("Correlation Coefficient:", correlation_coefficient)
+
+    plt.plot(np.arange(0, 987), rg[0:987], knockoffs[:987, 0])
+    plt.title(f'Correlation (actual, knockoffs): {correlation_coefficient}')
     plt.show()

@@ -9,7 +9,9 @@ import pandas as pd
 from os import path
 from math import sqrt
 import seaborn as sns
+import functions as func
 import preprocessing as prep
+import functions as func
 from itertools import islice
 from datetime import datetime
 import matplotlib.pyplot as plt
@@ -50,7 +52,7 @@ def deepCause(odata, knockoffs, model, columns, params):
     for a in range(len(odata)):
             x = odata[:].T
             y = odata[a].T
-            mi = prep.mutual_information(x, y)
+            mi = func.mutual_information(x, y)
             # print("MI Value: ", mi)
             mutual_info.append(mi)
 
@@ -91,16 +93,10 @@ def deepCause(odata, knockoffs, model, columns, params):
         # KL-Divergence
         kvi, kvo, kvm, kvu = [], [], [], []
 
-        # Generate Knockoffs
-        data_actual = np.array(odata[:, 0: training_length + prediction_length]).transpose()
-        obj = Knockoffs()
-        n = len(odata[:, 0])
-        knockoffs = obj.GenKnockoffs(n, params.get("dim"), data_actual, columns)
-        knockoff_sample = np.array(knockoffs[:, i])
+        knockoff_sample = np.array(knockoffs[0: training_length+prediction_length, i])
 
         mean = np.random.normal(0, 0.05, len(knockoff_sample)) + np.mean(odata[i])
         outdist = np.random.normal(150, 120, len(knockoff_sample))
-        # outdist = get_shuffled_ts(SAMPLE_RATE, DURATION, odata[i])
         uniform = np.random.uniform(np.min(odata[i]), np.min(odata[i]), len(knockoff_sample))
         interventionlist = [knockoff_sample, outdist[: len(knockoff_sample)], mean, uniform]
         heuristic_itn_types = ['In-dist', 'Out-dist', 'Mean', 'Uniform']
@@ -135,15 +131,15 @@ def deepCause(odata, knockoffs, model, columns, params):
                 mapelistint = []  # list of MAPE values for multiple realization with intervention
                 css_score = []    # list of causal scores for multiple realization
                 diff = []
-                start = 10
+                start = 0
 
-                for iter in range(15):  # 30
-
+                for iter in range(10):  # 30
+    
                     mselist_batch = []
                     mselistint_batch = []
                     mapelist_batch = []
                     mapelistint_batch = []
-                    for r in range(3):
+                    for r in range(1):
 
                         test_data = odata[:, start: start + training_length + prediction_length].copy()
                         test_ds = ListDataset(
@@ -176,11 +172,11 @@ def deepCause(odata, knockoffs, model, columns, params):
 
                         if m == 0:
                             # Generate multiple version Knockoffs
-                            data_actual = np.array(odata[:, start: start + training_length + prediction_length]).transpose()
-                            obj = Knockoffs()
-                            n = len(odata[:, 0])
-                            knockoffs = obj.GenKnockoffs(n, params.get("dim"), data_actual, columns)
-                            knockoff_sample = np.array(knockoffs[:, i])
+                            # data_actual = np.array(odata[:, start: start + training_length + prediction_length]).transpose()
+                            # obj = Knockoffs()
+                            # n = len(odata[:, 0])
+                            # knockoffs = obj.GenKnockoffs(n, params.get("dim"), data_actual, columns)
+                            knockoff_sample = np.array(knockoffs[start: start + training_length + prediction_length, i])
                             intervene = knockoff_sample
 
                         mselist_batch.append(mse)
@@ -188,7 +184,7 @@ def deepCause(odata, knockoffs, model, columns, params):
                         mselistint_batch.append(mseint)
                         mapelistint_batch.append(mapeint)
 
-                    start = start + 1                                       # Step size for sliding window # 10
+                    start = start + 5                                       # Step size for sliding window # 10
                     mselist.append(np.mean(mselist_batch))                  # mselist = mselist_batch
                     mapelist.append(np.mean(mapelist_batch))                # mapelist = mapelist_batch
                     mselistint.append(np.mean(mselistint_batch))            # mselistint = mselistint_batch
@@ -232,13 +228,13 @@ def deepCause(odata, knockoffs, model, columns, params):
                 t, p = ks_2samp(np.array(mapelol[z]), np.array(mapelolint[z]))
                 # t, p = kstest(np.array(mapelolint[z]), np.array(mapelol[z]))
                 
-                kld = prep.kl_divergence(np.array(mapelol[z]), np.array(mapelolint[z]))
+                kld = func.kl_divergence(np.array(mapelol[z]), np.array(mapelolint[z]))
                 kvals.append(kld)
                 
                 if i==j:
-                    pvals.append(1)
+                    pvals.append(0)
                 else:
-                    pvals.append(1-p)
+                    pvals.append(p)
                 
                 print(f'Test statistic: {t}, p-value: {p}, KLD: {kld}')
                 if p < 0.10 or mutual_info[i][j] > 0.90:
@@ -261,8 +257,8 @@ def deepCause(odata, knockoffs, model, columns, params):
             # plot residuals distribution
             fig = plt.figure()
             ax1 = fig.add_subplot(111)
-            sns.displot(mapelol[0], color='red', label='Actual', kind='kde')
-            sns.displot(mapelolint[0], color='green', label='Counterfactual', kind='kde')
+            sns.distplot(mapelol[0], color='red', label='Actual')
+            sns.distplot(mapelolint[0], color='green', label='Counterfactual')
 
             if len(columns) > 0:
                 # plt.ylabel(f"CSS: {columns[i]} ---> {columns[j]}")
@@ -305,35 +301,60 @@ def deepCause(odata, knockoffs, model, columns, params):
     pvalues.append(pval_outdist)
     pvalues.append(pval_mean)
     pvalues.append(pval_uniform)
-    print("P-Values: ", pvalues)
+    # print("P-Values: ", pvalues)
 
     kvalues.append(kval_indist)
     kvalues.append(kval_outdist)
     kvalues.append(kval_mean)
     kvalues.append(kval_uniform)
-    print("KL-Divergence: ", kvalues)
+    # print("KL-Divergence: ", kvalues)
 
     conf_mat.append(conf_mat_mean)
     conf_mat.append(conf_mat_indist)
     conf_mat.append(conf_mat_outdist)
     conf_mat.append(conf_mat_uniform)
-    print("-----------------------------------------------------------------------------")
-    print("Discovered Causal Graphs: ", conf_mat)
 
-    for ss in range(len(conf_mat)):
+    variable_names = columns
+    n = params.get('dim')
+    # Reshape the list into a n x n array (causal matrix)
+    causal_matrix = np.array(pval_indist).reshape(n, n)
 
-        # true_conf_mat = conf_mat[ss]
-        fscore = round(f1_score(true_conf_mat, conf_mat[ss], average='binary'), 2)
-        acc = accuracy_score(true_conf_mat, conf_mat[ss])
-        tn, fp, fn, tp = confusion_matrix(true_conf_mat, conf_mat[ss], labels=[0, 1]).ravel()
-        precision = precision_score(true_conf_mat, conf_mat[ss])
-        recall = recall_score(true_conf_mat, conf_mat[ss])
+    # Apply condition to the covariance matrix
+    causal_matrix_thresholded = np.where(np.abs(causal_matrix) < 0.10, 1, 0)
+    print(f'Discovered Causal Structure:\n {causal_matrix_thresholded}')
+
+    func.causal_heatmap(causal_matrix_thresholded, columns)
+    # # Plot heatmap using seaborn
+    # plt.clf()
+    # plt.figure(figsize=(8, 6))  # Adjust figure size if needed
+    # hmap = sns.heatmap(causal_matrix_thresholded, cmap='viridis', annot=True, fmt=".1f", linewidths=.5,
+    #             xticklabels=variable_names, yticklabels=variable_names, cbar=False)  # Hide color bar
+    # # Rotate x-axis and y-axis tick labels
+    # hmap.set_xticklabels(hmap.get_xticklabels(), rotation=25, ha='right')
+    # hmap.set_yticklabels(hmap.get_yticklabels(), rotation=25, ha='right')
+
+    # plt.title('Discovered Causal Structure')
+    # filename = pathlib.Path(plot_path + f"causal_matrix.pdf")
+    # plt.savefig(filename)
+    # plt.show()
+
+    # print("-----------------------------------------------------------------------------")
+    # print("Discovered Causal Graphs: ", conf_mat)
+
+    # for ss in range(len(conf_mat)):
+
+    #     # true_conf_mat = conf_mat[ss]
+    #     fscore = round(f1_score(true_conf_mat, conf_mat[ss], average='binary'), 2)
+    #     acc = accuracy_score(true_conf_mat, conf_mat[ss])
+    #     tn, fp, fn, tp = confusion_matrix(true_conf_mat, conf_mat[ss], labels=[0, 1]).ravel()
+    #     precision = precision_score(true_conf_mat, conf_mat[ss])
+    #     recall = recall_score(true_conf_mat, conf_mat[ss])
         
-        print("---------***-----------***----------***----------")
-        print(f"Intervention: {heuristic_itn_types[ss]}")
-        print(f"TP: {tp}, TN: {tn}, FP: {fp}, FN: {fn}")
-        print(f"Precision: {precision}")
-        print(f"Recall: {recall}")
-        print(f"Accuracy: {acc}")
-        print(f"F-score: {fscore}")
-        print("---------***-----------***----------***----------")
+    #     print("---------***-----------***----------***----------")
+    #     print(f"Intervention: {heuristic_itn_types[ss]}")
+    #     print(f"TP: {tp}, TN: {tn}, FP: {fp}, FN: {fn}")
+    #     print(f"Precision: {precision}")
+    #     print(f"Recall: {recall}")
+    #     print(f"Accuracy: {acc}")
+    #     print(f"F-score: {fscore}")
+    #     print("---------***-----------***----------***----------")
