@@ -105,7 +105,7 @@ mkl-service==2.4.0
 mock==4.0.3
 mpmath==1.2.1
 multidict==6.0.2
-mxnet==1.6.0
+mxnet==1.9.1
 mxnet-cu92==1.7.0
 nbclassic==0.4.8
 nbclient==0.5.13

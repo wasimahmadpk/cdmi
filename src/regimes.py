@@ -30,26 +30,6 @@ def pyriemann_clusters(data, k=2):
     kmeans.fit(data)
     labels = kmeans.predict(data)
     centroids = kmeans.centroids
-    print(labels)
-    
-#     for k in K:
-#         kmeans = KMeans(k, 'riemann', tol=1e-3, init='random')
-#         kmeans.fit(data)
-#         labels = kmeans.predict(data)
-#         centroids = kmeans.centroids
-#         print(labels)
-        
-#         distortions.append(sum(np.min(cdist(data, kmeans.centroids, 'euclidean'), axis=1)) / np.array(data).shape[0])
-#         inertias.append(kmeans.inertia_)
-#         mapping1[k] = sum(np.min(cdist(data, kmeans.centroids, 'euclidean'), axis=1)) / np.array(data).shape[0]
-#         mapping2[k] = kmeans.inertia_
-        
-#     #   The elbow method for optimal number of clusters
-#     plt.plot(K, inertias, 'bx-')
-#     plt.xlabel('Values of K')
-#     plt.ylabel('Distortion')
-#     plt.title('The Elbow Method using Distortion')
-#     plt.show()
     
     return labels
 
