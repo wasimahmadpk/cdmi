@@ -101,7 +101,7 @@ def get_regimes(data, wsize):
 
 def get_reduced_set(df):
     
-    corr = data.corr()
+    corr = df.corr()
     cls = corr.iloc[0][:].values.tolist()
     selected_idx = np.where(cls>0.50)[0].tolist()
 

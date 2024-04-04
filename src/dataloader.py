@@ -73,8 +73,8 @@ def load_geo_data():
     vars = ['DateTime', 'temperature_outside', 'pressure_outside', 'wind_x', 'wind_y', 'snow_load', 'strain_ns_corrected']
     data = pd.read_csv(path, usecols=vars)
     
-    start_date = '2017-08-17'
-    end_date = '2018-01-10'
+    start_date = '2018-03-17'
+    end_date = '2018-08-10'
     data = data.fillna(method='pad')
     data = data[(data['DateTime'] >= start_date) & (data['DateTime'] <= end_date)][vars]
     data = data.set_index('DateTime')
@@ -111,7 +111,7 @@ def load_hackathon_data():
 
 def load_flux_data():
 
-    # "Load fluxnet 2015 data for grassland IT-Mbo site"
+    # Load fluxnet 2015 data for grassland IT-Mbo site
     fluxnet = pd.read_csv(r"../datasets/fluxnet2015/FLX_IT-MBo_FLUXNET2015_SUBSET_2003-2013_1-4/FLX_IT-MBo_FLUXNET2015_SUBSET_HH_2003-2013_1-4.csv")
     org = fluxnet['SW_IN_F']
     otemp = fluxnet['TA_F']
@@ -120,8 +120,8 @@ def load_flux_data():
     # nee = fluxnet['NEE_VUT_50']
     ogpp = fluxnet['GPP_NT_VUT_50']
     oreco = fluxnet['RECO_NT_VUT_50']
-    # ************* LOad FLUXNET2015 data ***************
-
+    
+    # ------------------- Load FLUXNET2015 data --------------------
     rg = normalize(down_sample(org, win_size))
     temp = normalize(down_sample(otemp, win_size))
     # gpp = normalize(down_sample(nee, win_size, partition='gpp'))

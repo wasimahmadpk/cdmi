@@ -33,6 +33,9 @@ prediction_length = pars.get("pred_len")
 frequency = pars.get("freq")
 plot_path = pars.get("plot_path")
 prior_graph = pars.get('prior_graph')
+num_windows = pars.get('num_sliding_win')
+step_size = pars.get('step_size')
+model_name = pars.get("model_name")
 
 def deepCause(odata, knockoffs, model, params):
 
@@ -119,7 +122,7 @@ def deepCause(odata, knockoffs, model, params):
                 css_score = []    # list of causal scores for multiple realization
                 start = 0
 
-                for iter in range(20):  # 30
+                for iter in range(num_windows):  # 30
     
                     mselist_batch = []
                     mselistint_batch = []
@@ -170,7 +173,7 @@ def deepCause(odata, knockoffs, model, params):
                         mselistint_batch.append(mseint)
                         mapelistint_batch.append(mapeint)
 
-                    start = start + 6                                       # Step size for sliding window # 10
+                    start = start + step_size                                       # Step size for sliding window # 10
                     mselist.append(np.mean(mselist_batch))                  # mselist = mselist_batch
                     mapelist.append(np.mean(mapelist_batch))                # mapelist = mapelist_batch
                     mselistint.append(np.mean(mselistint_batch))            # mselistint = mselistint_batch
@@ -277,7 +280,6 @@ def deepCause(odata, knockoffs, model, params):
         kval_mean.append(kvm)
         kval_uniform.append(kvu)
 
-
         conf_mat_mean = conf_mat_mean + mean_cause
         conf_mat_indist = conf_mat_indist + indist_cause
         conf_mat_outdist = conf_mat_outdist + outdist_cause
@@ -312,4 +314,5 @@ def deepCause(odata, knockoffs, model, params):
     print(f'Discovered Causal Structure:\n {causal_matrix_thresholded}')
     func.causal_heatmap(causal_matrix_thresholded, columns)
     true_conf_mat = pars.get("true_graph")
-    # func.evaluate(true_conf_mat, conf_mat)
+    # func.evaluate(true_conf_mat, conf_mat, intervention_methods)
+    func.plot_causal_graph(causal_matrix_thresholded, columns, model_name)

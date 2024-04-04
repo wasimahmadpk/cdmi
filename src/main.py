@@ -32,6 +32,7 @@ num_cells = pars.get("num_cells")
 dropout_rate = pars.get("dropout_rate")
 batch_size = pars.get("batch_size")
 plot_path = pars.get("plot_path")
+model_name = pars.get("model_name")
 
 df = datasets.load_geo_data()
 df.plot(figsize=(9, 4), linewidth=0.66, use_index=True)
@@ -94,7 +95,7 @@ estimator = DeepAREstimator(
 
 # load model if not already trained
 path = pars.get('model_path')
-model_path = pathlib.Path(path + f"trained_model_georegime_cli7.sav")
+model_path = pathlib.Path(path + model_name)
 # model_path = "../models/trained_model_georegime_cli9.sav"
 # model_path = "../models/trained_model_syn22Sep.sav"
 # model_path = "../models/trained_model_river16Jun.sav"

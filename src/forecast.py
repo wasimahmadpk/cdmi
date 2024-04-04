@@ -68,7 +68,6 @@ def modelTest(model_path, test_ds, num_samples, data, idx, prediction_length, co
             plt.show()
             # plt.clf()
 
-
         # for target, forecast in islice(zip(tss, forecastint), num_plots):
         #     # ax = target[-past_length:][idx].plot(figsize=(14, 10), linewidth=2)
         #     forecast.copy_dim(idx).plot(color='r')

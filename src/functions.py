@@ -4,8 +4,10 @@ import pathlib
 import parameters
 import numpy as np
 import pandas as pd
+import networkx as nx
 import seaborn as sns
 import matplotlib.pyplot as plt
+from matplotlib.lines import Line2D
 from sklearn.feature_selection import f_regression, mutual_info_regression
 from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score, accuracy_score
 
@@ -18,11 +20,11 @@ training_length = pars.get("train_len")
 prediction_length = pars.get("pred_len")
 
 
-def get_shuffled_ts(SAMPLE_RATE, DURATION, root):
+def get_shuffled_ts(sample_rate, duration, root):
     # Number of samples in normalized_tone
-    N = SAMPLE_RATE * DURATION
+    N = sample_rate * duration
     yf = rfft(root)
-    xf = rfftfreq(N, 1 / SAMPLE_RATE)
+    xf = rfftfreq(N, 1 / sample_rate)
     # plt.plot(xf, np.abs(yf))
     # plt.show()
     new_ts = irfft(shuffle(yf))
@@ -135,7 +137,8 @@ def causal_heatmap(cmatrix, columns):
     plt.figure(figsize=(10, 8))
 
     # Draw the heatmap with the mask and correct aspect ratio
-    sns.heatmap(cmatrix, annot=True, cmap='coolwarm', fmt=".2f", vmin=-1, vmax=1, center=0, square=True, linewidths=0.5)
+    sns.heatmap(cmatrix, annot=True, cmap='BuPu', fmt=".0f", cbar=False, square=True, linewidths=0.5)
+
     # Add column names as xticklabels
     plt.xticks(ticks=np.arange(0.5, len(columns)), labels=columns, rotation=25, ha='right')
 
@@ -144,14 +147,71 @@ def causal_heatmap(cmatrix, columns):
 
     # Add title
     plt.title('Discovered Causal Structure')
-    plot_path = "/home/ahmad/Projects/deepCausality/plots/"
+    plot_path = "/home/ahmad/Projects/deepCausality/plots/cgraphs/"
     filename = pathlib.Path(plot_path + f"causal_matrix.pdf")
     plt.savefig(filename)
 
     # Show the plot
     plt.show()
 
-def evaluate(true_conf_mat, conf_mat):
+
+
+def plot_causal_graph(matrix, variables, model, edge_intensity=None):
+
+
+      # Initialize empty lists for FROM and TO
+    src_node = []
+    dest_node = []
+
+    # Iterate over rows
+    for i, row in enumerate(matrix):
+        # Iterate over columns
+        for j, value in enumerate(row):
+            # If value is 1, add variable name to FROM list and column name to TO list
+            if value == 1:
+                src_node.append(variables[i])
+                dest_node.append(variables[j])
+
+    # Create graph object
+    G = nx.DiGraph()
+
+    # Add edges from FROM to TO
+    for from_node, to_node in zip(src_node, dest_node):
+        # Exclude self-connections
+        if from_node != to_node:
+            G.add_edge(from_node, to_node)
+
+    # Plot the graph
+    fig, ax = plt.subplots(figsize=(8, 8))
+
+    pos = nx.circular_layout(G)
+
+    nx.draw_networkx(G, pos, arrows=True,
+                     edge_color='midnightblue', width=4,
+                     connectionstyle='arc3, rad=0.25',
+                     node_size=5555, node_color="lightblue",
+                     alpha=0.95, linewidths=1,
+                     font_size=16, font_weight='bold',
+                     ax=ax)
+
+    ax.set(facecolor="white")
+    ax.grid(False)
+    ax.set_xlim([1.1 * x for x in ax.get_xlim()])
+    ax.set_ylim([1.1 * y for y in ax.get_ylim()])
+
+    plt.axis('off')
+    plt.subplots_adjust(wspace=0.15, hspace=0.05)
+    
+    # Add title
+    # plt.title('Discovered Causal Structure')
+    plot_path = "/home/ahmad/Projects/deepCausality/plots/cgraphs/"
+    filename = pathlib.Path(plot_path + f"causal_graphs_{model}.pdf")
+    plt.savefig(filename)
+    plt.show()
+
+
+
+def evaluate(true_conf_mat, conf_mat, intervention_methods):
     print('Called from Fun(c)!')
 
     for ss in range(len(conf_mat)):
@@ -164,7 +224,7 @@ def evaluate(true_conf_mat, conf_mat):
         recall = recall_score(true_conf_mat, conf_mat[ss])
         
         print("---------***-----------***----------***----------")
-        print(f"Intervention: {heuristic_itn_types[ss]}")
+        print(f"Intervention: {intervention_methods[ss]}")
         print(f"TP: {tp}, TN: {tn}, FP: {fp}, FN: {fn}")
         print(f"Precision: {precision}")
         print(f"Recall: {recall}")

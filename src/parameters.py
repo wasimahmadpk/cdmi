@@ -164,15 +164,17 @@ def get_climate_params():
 def get_geo_params():
 
     params = {
-        'epochs': 50,    # 125
-        'pred_len': 15,    # 15
-        'train_len': 2500,  # 1500
-        'num_layers': 4,    # 5
+        'epochs': 50,             # 125
+        'pred_len': 15,           # 15
+        'train_len': 2500,        # 1500
+        'num_layers': 4,          # 5
         'num_samples': 40,
-        'num_cells': 20,     # 50
+        'num_cells': 20,          # 50
         'dropout_rate': 0.1,
         'win_size': 1,
-        'slidingwin_size': 100,
+        'step_size': 2,
+        'num_sliding_win': 3,
+        'sliding_win_size': 100,
         'dim': 4,
         'batch_size': 32,
         'prior_graph': np.array([
@@ -189,7 +191,8 @@ def get_geo_params():
                        0, 0, 0, 0, 1],
         'freq': 'H',
         'plot_path': "/home/ahmad/Projects/deepCausality/plots/",
-        'model_path': "/home/ahmad/Projects/deepCausality/models/"
+        'model_path': "/home/ahmad/Projects/deepCausality/models/",
+        'model_name': 'trained_model_georegime_cli8.sav'
     }
     return params
 
