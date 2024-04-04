@@ -33,9 +33,9 @@ dropout_rate = pars.get("dropout_rate")
 batch_size = pars.get("batch_size")
 plot_path = pars.get("plot_path")
 
-# Load river discharges data
-
 df = datasets.load_geo_data()
+df.plot(figsize=(9, 4), linewidth=0.66, use_index=True)
+plt.show()
 func.corr_heatmap(df)
 
 # # --------Identify Regimes in Time series--------
@@ -57,8 +57,7 @@ print(f'Shape: {df.shape}')
 # plt.show()
 
 original_data = []
-dim = len(df.columns)
-columns = df.columns
+dim, columns = len(df.columns), df.columns
 
 for col in df:
     original_data.append(df[col])
@@ -86,9 +85,8 @@ estimator = DeepAREstimator(
     trainer=Trainer(
         ctx="cpu",
         epochs=epochs,
-        #callbacks=[history],
         hybridize=False,
-        learning_rate=1E-6,
+        learning_rate=1E-4,
         batch_size=32
     ),
     distr_output=MultivariateGaussianOutput(dim=dim)
@@ -96,7 +94,7 @@ estimator = DeepAREstimator(
 
 # load model if not already trained
 path = pars.get('model_path')
-model_path = pathlib.Path(path + f"trained_model_georegime_cli9.sav")
+model_path = pathlib.Path(path + f"trained_model_georegime_cli7.sav")
 # model_path = "../models/trained_model_georegime_cli9.sav"
 # model_path = "../models/trained_model_syn22Sep.sav"
 # model_path = "../models/trained_model_river16Jun.sav"

@@ -69,26 +69,23 @@ def load_geo_data():
     #    'snow_load', 'humidity', 'glob_radiaton', 'strain_ew_uncorrected',
     #    'strain_ns_uncorrected', 'strain_ew_corrected', 'strain_ns_corrected',
     #    'tides_ew', 'tides_ns']
-    # vars = ['DateTime', 'gw_mb', 'gw_sr', 'gw_south', 'gw_west', 'strain_ew_corrected', 'strain_ns_corrected']
-    vars = ['DateTime', 'temperature_outside', 'pressure_outside', 'wind_y', 'snow_load', 'strain_ns_corrected', 'strain_ew_corrected']
+    # vars = ['DateTime', 'gwl_mb', 'gwl_sr', 'gwl_knee', 'gwl_south', 'strain_ew_corrected', 'strain_ns_corrected']
+    vars = ['DateTime', 'temperature_outside', 'pressure_outside', 'wind_x', 'wind_y', 'snow_load', 'strain_ns_corrected']
     data = pd.read_csv(path, usecols=vars)
     
-    # Read spring and summer season geo-climatic data
-    start_date = '2018-10-20'
-    end_date = '2019-01-24'
-    # mask = (data['DateTime'] > '2014-11-01') & (data['DateTime'] <= '2015-05-28')  # '2015-06-30') Regime 1
-    # mask = (data['DateTime'] > '2015-05-01') & (data['DateTime'] <= '2015-10-30')  # Regime 2
-    # data = data.loc[mask]
+    start_date = '2017-08-17'
+    end_date = '2018-01-10'
     data = data.fillna(method='pad')
     data = data[(data['DateTime'] >= start_date) & (data['DateTime'] <= end_date)][vars]
     data = data.set_index('DateTime')
     data = data.apply(normalize)
+    data.rename(columns={'temperature_outside': 'T', 'pressure_outside': 'P', 'snow_load': 'Snow$_{load}$', 'glob_radiaton': 'R$_g$', 'strain_ns_corrected':'Strain$_{ns}$',  'strain_ew_corrected':'Strain$_{ew}$', 'gwl_mb':'GW$_{mb}$', 'gwl_knee':'GW$_{knee}$', 'gwl_south':'GW$_{south}$', 'gwl_west':'GW$_{west}$', 'gwl_sg':'GW$_{sg}$', 'gwl_sr':'GW$_{sr}$', 'wind_x': 'Wind$_{ew}$', 'wind_y': 'Wind$_{ns}$'}, inplace=True)
 
     return data
 
 
 def load_hackathon_data():
-    # Load river discharges data
+    # Load health data
     bot, bov = simple_load_csv(r"../datasets/hackathon_data/blood-oxygenation_interpolated_3600_pt_avg_14.csv")
     wt, wv = simple_load_csv(r"../datasets/hackathon_data/weight_interpolated_3600_pt_avg_6.csv")
     hrt, hrv = simple_load_csv(r"../datasets/hackathon_data/resting-heart-rate_interpolated_3600_iv_avg_4.csv")

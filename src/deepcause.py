@@ -75,10 +75,8 @@ def deepCause(odata, knockoffs, model, params):
         outdist_cause = []
         uni_cause = []
 
-
         # P-Values
         pvi, pvo, pvm, pvu = [], [], [], []
-
         # KL-Divergence
         kvi, kvo, kvm, kvu = [], [], [], []
 
@@ -88,14 +86,14 @@ def deepCause(odata, knockoffs, model, params):
         outdist = np.random.normal(150, 120, len(knockoff_sample))
         uniform = np.random.uniform(np.min(odata[i]), np.min(odata[i]), len(knockoff_sample))
         interventionlist = [knockoff_sample, outdist[: len(knockoff_sample)], mean, uniform]
-        heuristic_itn_types = ['In-dist', 'Out-dist', 'Mean', 'Uniform']
+        intervention_methods = ['In-dist', 'Out-dist', 'Mean', 'Uniform']
 
         for j in range(len(odata)):
             # back_door_int = []
             # back_door = prior_graph[:, j].nonzero()[0]
-            # print("----------*****-----------------------*****-----------------******-----------")
+            # print("-------------*****-----------------------*****-------------")
             # print(f"Front/Backdoor Paths: {np.array(back_door) + 1} ---> {j + 1}")
-            print("----------*****-----------------------*****-----------------******-----------")
+            print("-------------*****-----------------------*****-------------")
 
             columns = params.get('col')
             pred_var = odata[j]
@@ -119,10 +117,9 @@ def deepCause(odata, knockoffs, model, params):
                 mapelist = []     # list of MAPE values for multiple realization without intervention
                 mapelistint = []  # list of MAPE values for multiple realization with intervention
                 css_score = []    # list of causal scores for multiple realization
-                diff = []
                 start = 0
 
-                for iter in range(15):  # 30
+                for iter in range(20):  # 30
     
                     mselist_batch = []
                     mselistint_batch = []
@@ -173,7 +170,7 @@ def deepCause(odata, knockoffs, model, params):
                         mselistint_batch.append(mseint)
                         mapelistint_batch.append(mapeint)
 
-                    start = start + 5                                       # Step size for sliding window # 10
+                    start = start + 6                                       # Step size for sliding window # 10
                     mselist.append(np.mean(mselist_batch))                  # mselist = mselist_batch
                     mapelist.append(np.mean(mapelist_batch))                # mapelist = mapelist_batch
                     mselistint.append(np.mean(mselistint_batch))            # mselistint = mselistint_batch
@@ -196,19 +193,19 @@ def deepCause(odata, knockoffs, model, params):
             if len(columns) > 0:
 
                 print(f"Causal Link: {columns[i]} --------------> {columns[j]}")
-                print("----------*****-----------------------*****-----------------******-----------")
+                print("-------------*****-----------------------*****-------------")
                 fnamehist = plot_path + "{columns[i]}_{columns[j]}:hist"
             else:
                 print(f"Causal Link: Z_{i + 1} --------------> Z_{j + 1}")
-                print("----------*****-----------------------*****-----------------******-----------")
+                print("-------------*****-----------------------*****-------------")
                 fnamehist = plot_path + "{Z_[i + 1]}_{Z_[j + 1]}:hist"
             
             pvals = []
             kvals = []
             
-            for z in range(len(heuristic_itn_types)):
+            for z in range(len(intervention_methods)):
 
-                print("Intervention: " + heuristic_itn_types[z])
+                print("Intervention: " + intervention_methods[z])
                 
                 # print(f"Mean: {np.mean(mapelol[z])}, Mean Intervention: {np.mean(mapelolint[z])}")
                 # print(f"Variance: {np.var(mapelol[z])}, Variance Intervention: {np.var(mapelolint[z])}")
@@ -216,9 +213,10 @@ def deepCause(odata, knockoffs, model, params):
                 
                 # model invariance test
                 t, p = ks_2samp(np.array(mapelol[z]), np.array(mapelolint[z]))
+                t, p = round(t, 2), round(p, 2)
                 # t, p = kstest(np.array(mapelolint[z]), np.array(mapelol[z]))
                 
-                kld = func.kl_divergence(np.array(mapelol[z]), np.array(mapelolint[z]))
+                kld = round(func.kl_divergence(np.array(mapelol[z]), np.array(mapelolint[z])), 2)
                 kvals.append(kld)
                 
                 if i==j:
@@ -228,10 +226,10 @@ def deepCause(odata, knockoffs, model, params):
                 
                 print(f'Test statistic: {t}, p-value: {p}, KLD: {kld}')
                 if p < 0.10 or mutual_info[i][j] > 0.90:
-                    print("Null hypothesis is rejected")
+                    print("\033[92mNull hypothesis is rejected\033[0m")
                     causal_decision.append(1)
                 else:
-                    print("Fail to reject null hypothesis")
+                    print("\033[94mFail to reject null hypothesis\033[0m")
                     causal_decision.append(0)
 
             pvi.append(pvals[0])
@@ -310,7 +308,8 @@ def deepCause(odata, knockoffs, model, params):
 
     # Apply condition to the covariance matrix
     causal_matrix_thresholded = np.where(np.abs(causal_matrix) < 0.10, 1, 0)
+    print("-------------*****-----------------------*****-------------")
     print(f'Discovered Causal Structure:\n {causal_matrix_thresholded}')
     func.causal_heatmap(causal_matrix_thresholded, columns)
     true_conf_mat = pars.get("true_graph")
-    func.evaluate(true_conf_mat, conf_mat)
+    # func.evaluate(true_conf_mat, conf_mat)
