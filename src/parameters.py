@@ -81,16 +81,17 @@ def get_syn_params():
     # Parameters for synthetic data
     params = {
 
-        'epochs': 100,
-        'pred_len': 14,
-        'train_len': 555,
-        'num_layers': 4,
-        'num_cells': 44,
-        'num_samples': 10,
+        'epochs': 50,             # 125
+        'pred_len': 12,           # 15
+        'train_len': 500,        # 1500
+        'num_layers': 4,          # 5
+        'num_samples': 40,
+        'num_cells': 20,          # 50
         'dropout_rate': 0.1,
         'win_size': 1,
-        'slidingwin_size': 100,
-        'step_size': 10,
+        'step_size': 3,
+        'num_sliding_win': 20,
+        'sliding_win_size': 100,
         'dim': 5,
         'batch_size': 32,
         'prior_graph': np.array([[1, 1, 1, 1],
@@ -105,7 +106,8 @@ def get_syn_params():
                        ],
         'freq': '30min',
         'plot_path': "/home/ahmad/Projects/deepCausality/plots/",
-        'model_path': "/home/ahmad/Projects/deepCausality/models/"
+        'model_path': "/home/ahmad/Projects/deepCausality/models/",
+        'model_name': 'trained_model_syntest.sav'
     }
 
     return params
@@ -192,7 +194,7 @@ def get_geo_params():
         'freq': 'H',
         'plot_path': "/home/ahmad/Projects/deepCausality/plots/",
         'model_path': "/home/ahmad/Projects/deepCausality/models/",
-        'model_name': 'trained_model_georegime_cli2test.sav'
+        'model_name': 'trained_model_syn.sav'
     }
     return params
 

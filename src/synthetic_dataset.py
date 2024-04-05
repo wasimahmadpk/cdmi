@@ -5,7 +5,6 @@ import parameters
 import numpy as np
 import pandas as pd
 from netCDF4 import Dataset
-import preprocessing as prep
 import matplotlib.pyplot as plt
 
 
@@ -81,21 +80,21 @@ if __name__ == '__main__':
     root = noise
 
     # root = np.random.normal(0, 1.0, 2000)
-    time_steps, Tref = 2100, 15
+    time_steps, Tref = 3000, 15
 
     ex, ey, ez = [], [], []
     for i in range(3):
         ex.append(np.random.normal(0, 0.10, time_steps))
-        ey.append(np.random.normal(i + i*0.1, 0.10, time_steps))
-        ez.append(np.random.normal(i + i*0.1, 0.11, time_steps))
+        ey.append(np.random.normal(0, 0.10, time_steps))
+        ez.append(np.random.normal(0, 0.11, time_steps))
 
     C = {'c1': 0.70, 'c2': 1.0, 'c3': 0.75, 'c4': 1.25, 'c5': 1.60}           # c2:1.75, c5:1.85
     Tao = {'t1': 2, 't2': 3, 't3': 4, 't4': 1, 't5': 6, 't6': 5}
     data_obj = SyntheticDataset(root, time_steps, Tref, C, Tao, ex, ey, ez)
     X1, X2, X3, X4, X5 = data_obj.generate_data()
 
-    data = {'Z1': X1[50:], 'Z2': X2[50:]}
-    df = pd.DataFrame(data, columns=['Z1', 'Z2'])
+    data = {'Z1': X1[50:], 'Z2': X2[50:], 'Z3': X3[50:], 'Z4': X4[50:], 'Z5': X5[50:]}
+    df = pd.DataFrame(data, columns=['Z1', 'Z2', 'Z3', 'Z4', 'Z5'])
     df.to_csv(r'/home/ahmad/Projects/deepCausality/datasets/synthetic_datasets/synthetic_data.csv', index_label=False, header=True)
     print(df.head(10))
     print("Correlation Matrix")

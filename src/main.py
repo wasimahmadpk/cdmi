@@ -21,7 +21,7 @@ mx.random.seed(2)
 
 start_time = time.time()
 # Parameters
-pars = parameters.get_geo_params()
+pars = parameters.get_syn_params()
 freq = pars.get("freq")
 epochs = pars.get("epochs")
 win_size = pars.get("win_size")
@@ -36,7 +36,7 @@ batch_size = pars.get("batch_size")
 plot_path = pars.get("plot_path")
 model_name = pars.get("model_name")
 
-df = datasets.load_geo_data()
+df = datasets.load_syn_data()
 df.plot(figsize=(9, 4), linewidth=0.66, use_index=True)
 plt.show()
 func.corr_heatmap(df)
