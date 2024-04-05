@@ -70,11 +70,11 @@ def load_geo_data():
     #    'strain_ns_uncorrected', 'strain_ew_corrected', 'strain_ns_corrected',
     #    'tides_ew', 'tides_ns']
     # vars = ['DateTime', 'gwl_mb', 'gwl_sr', 'gwl_knee', 'gwl_south', 'strain_ew_corrected', 'strain_ns_corrected']
-    vars = ['DateTime', 'temperature_outside', 'pressure_outside', 'wind_x', 'wind_y', 'snow_load', 'strain_ns_corrected']
+    vars = ['DateTime', 'temperature_outside', 'pressure_outside', 'strain_ns_corrected']
     data = pd.read_csv(path, usecols=vars)
     
-    start_date = '2018-03-17'
-    end_date = '2018-08-10'
+    start_date = '2015-04-26'
+    end_date = '2015-07-19'
     data = data.fillna(method='pad')
     data = data[(data['DateTime'] >= start_date) & (data['DateTime'] <= end_date)][vars]
     data = data.set_index('DateTime')

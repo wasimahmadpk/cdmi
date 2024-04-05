@@ -1,4 +1,5 @@
 import pickle
+import time
 import pathlib
 import parameters
 import numpy as np
@@ -161,11 +162,11 @@ def deepCause(odata, knockoffs, model, params):
 
                         if m == 0:
                             # Generate multiple version Knockoffs
-                            # data_actual = np.array(odata[:, start: start + training_length + prediction_length]).transpose()
-                            # obj = Knockoffs()
-                            # n = len(odata[:, 0])
-                            # knockoffs = obj.GenKnockoffs(n, params.get("dim"), data_actual, columns)
-                            knockoff_sample = np.array(knockoffs[start: start + training_length + prediction_length, i])
+                            data_actual = np.array(odata[:, start: start + training_length + prediction_length]).transpose()
+                            obj = Knockoffs()
+                            n = len(odata[:, 0])
+                            knockoffs = obj.GenKnockoffs(data_actual, params)
+                            knockoff_sample = np.array(knockoffs[:, i])
                             intervene = knockoff_sample
 
                         mselist_batch.append(mse)
@@ -228,7 +229,7 @@ def deepCause(odata, knockoffs, model, params):
                     pvals.append(p)
                 
                 print(f'Test statistic: {t}, p-value: {p}, KLD: {kld}')
-                if p < 0.10 or mutual_info[i][j] > 0.90:
+                if p < 0.05:         # or mutual_info[i][j] > 0.90:
                     print("\033[92mNull hypothesis is rejected\033[0m")
                     causal_decision.append(1)
                 else:
@@ -316,3 +317,4 @@ def deepCause(odata, knockoffs, model, params):
     true_conf_mat = pars.get("true_graph")
     # func.evaluate(true_conf_mat, conf_mat, intervention_methods)
     func.plot_causal_graph(causal_matrix_thresholded, columns, model_name)
+    return time.time()

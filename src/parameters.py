@@ -165,15 +165,15 @@ def get_geo_params():
 
     params = {
         'epochs': 50,             # 125
-        'pred_len': 15,           # 15
-        'train_len': 2500,        # 1500
-        'num_layers': 4,          # 5
-        'num_samples': 40,
+        'pred_len': 12,           # 15
+        'train_len': 500,        # 1500
+        'num_layers': 3,          # 5
+        'num_samples': 30,
         'num_cells': 20,          # 50
         'dropout_rate': 0.1,
         'win_size': 1,
-        'step_size': 2,
-        'num_sliding_win': 3,
+        'step_size': 3,
+        'num_sliding_win': 20,
         'sliding_win_size': 100,
         'dim': 4,
         'batch_size': 32,
@@ -192,7 +192,7 @@ def get_geo_params():
         'freq': 'H',
         'plot_path': "/home/ahmad/Projects/deepCausality/plots/",
         'model_path': "/home/ahmad/Projects/deepCausality/models/",
-        'model_name': 'trained_model_georegime_cli8.sav'
+        'model_name': 'trained_model_georegime_cli2test.sav'
     }
     return params
 

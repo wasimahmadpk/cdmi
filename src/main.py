@@ -1,4 +1,5 @@
 import pickle
+import time
 import pathlib
 import parameters
 import numpy as np
@@ -18,6 +19,7 @@ from gluonts.distribution.multivariate_gaussian import MultivariateGaussianOutpu
 np.random.seed(1)
 mx.random.seed(2)
 
+start_time = time.time()
 # Parameters
 pars = parameters.get_geo_params()
 freq = pars.get("freq")
@@ -115,4 +117,10 @@ params = {"length": n, "dim": dim, "col": columns}
 knockoffs = obj.GenKnockoffs(data_actual, params)
 
 # Function for estimating causal impact among variables
-deepCause(original_data, knockoffs, model_path, params)
+end_time = deepCause(original_data, knockoffs, model_path, params)
+
+# Calculate difference
+elapsed_time = end_time - start_time
+
+# Print elapsed time
+print("Computation time:", round(elapsed_time/60), "mins")

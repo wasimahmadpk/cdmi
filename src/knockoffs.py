@@ -106,7 +106,7 @@ class Knockoffs:
 
         # Sample test data
         # X_test = DataSampler.sample(n, test=True)
-        X_test = datax[0:round(len(datax)*1.0), :]
+        X_test = datax[:round(len(datax)*1.0):, :]
         # print("Test shape:", X_test.shape)
         # print("Generated a test dataset of size: %d x %d." % (X_test.shape))
 
@@ -199,15 +199,30 @@ if __name__ == '__main__':
     datax = np.array([rg, temp, gpp, reco]).transpose()
     n = len(rg)
     dim = 4
-    knockoffs = obj.GenKnockoffs(n, dim, datax, syndata.columns)
+    cols = syndata.columns
+    params = {"length": n, "dim": dim, "col": cols}
+    knockoffs = obj.GenKnockoffs(datax, params)
     knockoffs = np.array(knockoffs)
     # print("Deep Knockoffs: \n", knockoffs)
     
-    # Finding correlation coefficient
-    correlation_coefficient = np.corrcoef(rg[:987], knockoffs[:987, 0])[0, 1]
+    cov_matrix = np.cov(datax[500:1500,  :], rowvar=False)  # Set rowvar=False for variables in columns
+    cov_matrixk = np.cov(knockoffs[500:1500], rowvar=False)  # Set rowvar=False for variables in columns
 
-    print("Correlation Coefficient:", correlation_coefficient)
+    print("Original Covariance:")
+    print(cov_matrix)
 
-    plt.plot(np.arange(0, 987), rg[0:987], knockoffs[:987, 0])
-    plt.title(f'Correlation (actual, knockoffs): {correlation_coefficient}')
-    plt.show()
+    print("Knockoffs Covariance:")
+    print(cov_matrixk)
+
+    for i, col in enumerate(cols[:-1]):
+        print(col, i)
+        # Finding correlation coefficient
+        correlation_coefficient = np.corrcoef(syndata[col][:987], knockoffs[:987, i])[0, 1]
+
+        plt.plot(np.arange(0, 987), syndata[col][:987],  knockoffs[:987, i])
+
+        print("Correlation Coefficient:", correlation_coefficient)
+
+        # plt.plot(np.arange(0, 987), rg[0:987], knockoffs[:987, 0])
+        plt.title(f'Correlation (actual, knockoffs): {correlation_coefficient}')
+        plt.show()

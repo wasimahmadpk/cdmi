@@ -155,11 +155,8 @@ def causal_heatmap(cmatrix, columns):
     plt.show()
 
 
-
 def plot_causal_graph(matrix, variables, model, edge_intensity=None):
-
-
-      # Initialize empty lists for FROM and TO
+    # Initialize empty lists for FROM and TO
     src_node = []
     dest_node = []
 
@@ -174,7 +171,11 @@ def plot_causal_graph(matrix, variables, model, edge_intensity=None):
 
     # Create graph object
     G = nx.DiGraph()
-
+    
+    # Add all nodes to the graph
+    for variable in variables:
+        G.add_node(variable)
+    
     # Add edges from FROM to TO
     for from_node, to_node in zip(src_node, dest_node):
         # Exclude self-connections
@@ -186,13 +187,16 @@ def plot_causal_graph(matrix, variables, model, edge_intensity=None):
 
     pos = nx.circular_layout(G)
 
-    nx.draw_networkx(G, pos, arrows=True,
-                     edge_color='midnightblue', width=4,
-                     connectionstyle='arc3, rad=0.25',
-                     node_size=5555, node_color="lightblue",
-                     alpha=0.95, linewidths=1,
-                     font_size=16, font_weight='bold',
-                     ax=ax)
+    # Draw nodes with fancy shapes and colors
+    node_size = 7000
+    node_color = ["lightblue" for _ in range(len(G.nodes))]
+    node_shape = "o"  # Circle shape
+    node_style = "solid"  # Solid outline
+    node_alpha = 0.75
+    nx.draw_networkx(G, pos, arrows=True, node_size=node_size, node_color=node_color, node_shape=node_shape,
+                     edge_color='midnightblue', width=2, connectionstyle='arc3, rad=0.25',
+                     edgecolors="midnightblue", linewidths=2, alpha=node_alpha, font_size=16,
+                     font_weight='bold', ax=ax, arrowsize=20)  # Adjust arrowsize
 
     ax.set(facecolor="white")
     ax.grid(False)
@@ -204,11 +208,12 @@ def plot_causal_graph(matrix, variables, model, edge_intensity=None):
     
     # Add title
     # plt.title('Discovered Causal Structure')
+
+    # Save plot
     plot_path = "/home/ahmad/Projects/deepCausality/plots/cgraphs/"
-    filename = pathlib.Path(plot_path + f"causal_graphs_{model}.pdf")
+    filename = plot_path + f"causal_graphs_{model}.pdf"
     plt.savefig(filename)
     plt.show()
-
 
 
 def evaluate(true_conf_mat, conf_mat, intervention_methods):
