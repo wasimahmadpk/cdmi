@@ -1,4 +1,4 @@
-# [Causal Discovery using Model Invariance (CDMI)]
+# Causal Discovery using Model Invariance (CDMI)
 
 This repository contains code for our paper accepted in ICML Workshop 2022 on Spurious Correlations, Invariance and Stability (SCIS): Causal Discovery using Model Invariance 
 via Knockoffs by Wasim Ahmad, Maha Shadaydeh and Joachim Denzler.
