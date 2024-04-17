@@ -26,7 +26,7 @@ from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_
 np.random.seed(1)
 mx.random.seed(2)
 
-pars = parameters.get_syn_params()
+pars = parameters.get_geo_params()
 num_samples = pars.get("num_samples")
 step = pars.get("step_size")
 training_length = pars.get("train_len")
@@ -262,7 +262,7 @@ def deepCause(odata, knockoffs, model, params):
             plt.gcf()
             ax1.legend()
             filename = pathlib.Path(plot_path + f"{columns[i]} ---> {columns[j]}.pdf")
-            plt.savefig(filename)
+            plt.savefig(filename,  dpi=350)
             plt.close()
 
             mean_cause.append(causal_decision[0])

@@ -63,23 +63,23 @@ def load_climate_data():
 
 def load_geo_data():
     # Load river discharges data
-    path = r'../datasets/geo_dataset/xmoxa_data_H.csv'
+    path = r'../datasets/geo_dataset/moxa_data_D.csv'
     # vars = ['DateTime', 'rain', 'temperature_outside', 'pressure_outside', 'gw_mb',
     #    'gw_sr', 'gw_sg', 'gw_west', 'gw_knee', 'gw_south', 'wind_x', 'winx_y',
     #    'snow_load', 'humidity', 'glob_radiaton', 'strain_ew_uncorrected',
     #    'strain_ns_uncorrected', 'strain_ew_corrected', 'strain_ns_corrected',
     #    'tides_ew', 'tides_ns']
     # vars = ['DateTime', 'gwl_mb', 'gwl_sr', 'gwl_knee', 'gwl_south', 'strain_ew_corrected', 'strain_ns_corrected']
-    vars = ['DateTime', 'temperature_outside', 'pressure_outside', 'strain_ns_corrected']
+    vars = ['DateTime', 'temperature_outside', 'pressure_outside', 'gw_mb', 'strain_ns_corrected']
     data = pd.read_csv(path, usecols=vars)
     
-    start_date = '2015-04-26'
-    end_date = '2015-07-19'
+    start_date = '2015-04-01'
+    end_date = '2015-08-29'
     data = data.fillna(method='pad')
     data = data[(data['DateTime'] >= start_date) & (data['DateTime'] <= end_date)][vars]
     data = data.set_index('DateTime')
     data = data.apply(normalize)
-    data.rename(columns={'temperature_outside': 'T', 'pressure_outside': 'P', 'snow_load': 'Snow$_{load}$', 'glob_radiaton': 'R$_g$', 'strain_ns_corrected':'Strain$_{ns}$',  'strain_ew_corrected':'Strain$_{ew}$', 'gwl_mb':'GW$_{mb}$', 'gwl_knee':'GW$_{knee}$', 'gwl_south':'GW$_{south}$', 'gwl_west':'GW$_{west}$', 'gwl_sg':'GW$_{sg}$', 'gwl_sr':'GW$_{sr}$', 'wind_x': 'Wind$_{ew}$', 'wind_y': 'Wind$_{ns}$'}, inplace=True)
+    data.rename(columns={'temperature_outside': 'T', 'pressure_outside': 'P', 'snow_load': 'Snow$_{load}$', 'glob_radiaton': 'R$_g$', 'strain_ns_corrected':'Strain$_{ns}$',  'strain_ew_corrected':'Strain$_{ew}$', 'gw_mb':'GW$_{mb}$', 'gw_knee':'GW$_{knee}$', 'gw_south':'GW$_{south}$', 'gw_west':'GW$_{west}$', 'gw_sg':'GW$_{sg}$', 'gw_sr':'GW$_{sr}$', 'wind_x': 'Wind$_{ew}$', 'wind_y': 'Wind$_{ns}$'}, inplace=True)
 
     return data
 
