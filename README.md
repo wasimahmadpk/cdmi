@@ -50,8 +50,8 @@ https://www.gkd.bayern.de.
 We also extend CDMI to discover causal graph in non-stationary time series. To do that, first we segment multivariate non-stationary time series based on their dynamics using [Regime Identification](https://github.com/wasimahmadpk/RegimeIdentification) method and perform regime-oriented causal discovery.
 
 ## Dependencies
-`requirements.txt` contains all the packages that are related to the project. Note: Use (python=3.8.15)
-To install them, simply create a new [conda](https://docs.conda.io/en/latest/) environment and type
+`requirements.txt` contains all the packages that are related to the project.
+To install them, simply create a new [conda](https://docs.conda.io/en/latest/) environment (use python=3.8.15) and type
 ```
 pip install -r requirements.txt
 ```
