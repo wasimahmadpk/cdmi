@@ -183,7 +183,7 @@ def plot_causal_graph(matrix, variables, model, edge_intensity=None):
             G.add_edge(from_node, to_node)
 
     # Plot the graph
-    fig, ax = plt.subplots(figsize=(6, 6))
+    fig, ax = plt.subplots(figsize=(7, 7))
 
     pos = nx.circular_layout(G)
 
