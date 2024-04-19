@@ -317,4 +317,4 @@ def deepCause(odata, knockoffs, model, params):
     true_conf_mat = pars.get("true_graph")
     # func.evaluate(true_conf_mat, conf_mat, intervention_methods)
     # func.plot_causal_graph(causal_matrix_thresholded, columns, model_name)
-    return causal_matrix_thresholded, time.time()
+    return causal_matrix_thresholded, conf_mat, time.time()
