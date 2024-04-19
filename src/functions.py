@@ -152,7 +152,7 @@ def causal_heatmap(cmatrix, columns):
     plt.savefig(filename)
 
     # Show the plot
-    plt.show()
+    # plt.show()
 
 
 def plot_causal_graph(matrix, variables, model, edge_intensity=None):
@@ -183,12 +183,12 @@ def plot_causal_graph(matrix, variables, model, edge_intensity=None):
             G.add_edge(from_node, to_node)
 
     # Plot the graph
-    fig, ax = plt.subplots(figsize=(9, 9))
+    fig, ax = plt.subplots(figsize=(6, 6))
 
     pos = nx.circular_layout(G)
 
     # Draw nodes with fancy shapes and colors
-    node_size = 7000
+    node_size = 5000
     node_color = ["lightblue" for _ in range(len(G.nodes))]
     node_shape = "o"  # Circle shape
     node_style = "solid"  # Solid outline
@@ -212,6 +212,7 @@ def plot_causal_graph(matrix, variables, model, edge_intensity=None):
     # Save plot
     plot_path = "/home/ahmad/Projects/deepCausality/plots/cgraphs/"
     filename = plot_path + f"causal_graphs_{model}.pdf"
+    plt.tight_layout()
     plt.savefig(filename)
     plt.show()
 
