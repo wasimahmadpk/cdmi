@@ -56,7 +56,7 @@ def modelTest(model_path, test_ds, num_samples, data, idx, prediction_length, co
 
         for target, forecast in islice(zip(tss, forecasts), num_plots):
 
-            ax = target[-past_length:][idx].plot(figsize=(10, 6), linewidth=1)
+            ax = target[-past_length:][idx].plot(figsize=(11, 6), linewidth=1)
             forecast.copy_dim(idx).plot(color='g')
             plt.grid(which='both')
             plt.legend(["observations", "median prediction", "90% confidence interval", "50% confidence interval"])
