@@ -26,7 +26,7 @@ from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_
 np.random.seed(1)
 mx.random.seed(2)
 
-pars = parameters.get_geo_params()
+pars = parameters.get_rivernet_params()
 num_samples = pars.get("num_samples")
 step = pars.get("step_size")
 training_length = pars.get("train_len")
@@ -88,7 +88,7 @@ def deepCause(odata, knockoffs, model, params):
 
         mean = np.random.normal(0, 0.05, len(knockoff_sample)) + np.mean(odata[i])
         outdist = np.random.normal(150, 120, len(knockoff_sample))
-        uniform = np.random.uniform(np.min(odata[i]), np.min(odata[i]), len(knockoff_sample))
+        uniform = np.random.uniform(np.min(odata[i]), np.max(odata[i]), len(knockoff_sample))
         interventionlist = [knockoff_sample, outdist[: len(knockoff_sample)], mean, uniform]
         intervention_methods = ['In-dist', 'Out-dist', 'Mean', 'Uniform']
 
@@ -215,7 +215,7 @@ def deepCause(odata, knockoffs, model, params):
                 # print(f"Variance: {np.var(mapelol[z])}, Variance Intervention: {np.var(mapelolint[z])}")
                 # t, p = ttest_ind(np.array(mapelolint[z]), np.array(mapelol[z]), equal_var=True)
                 
-                # model invariance test
+                # invariance test
                 t, p = ks_2samp(np.array(mapelol[z]), np.array(mapelolint[z]))
                 t, p = round(t, 2), round(p, 2)
                 # t, p = kstest(np.array(mapelolint[z]), np.array(mapelol[z]))

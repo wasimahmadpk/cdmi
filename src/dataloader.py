@@ -60,6 +60,18 @@ def load_climate_data():
 
     return df
 
+def load_river_network():
+
+    #  Full data set.
+    data = pd.read_csv(r"../datasets/rivers_alpha/prototype_ts_ds.csv", index_col=0)
+    data.columns = [int(x.split("_")[0]) for x in data.columns]
+    data = data.loc[:,~data.columns.duplicated()].copy()
+    data = data[[568102, 568121, 568133, 568160, 568350]]
+    data = data.dropna()
+
+    return data[:3333]
+
+
 
 def load_geo_data():
     # Load river discharges data

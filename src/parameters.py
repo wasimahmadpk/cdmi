@@ -199,6 +199,42 @@ def get_geo_params():
     return params
 
 
+def get_rivernet_params():
+
+    params = {
+        'epochs': 70,             # 125
+        'pred_len': 15,           # 15
+        'train_len': 1500,        # 1500
+        'num_layers': 4,          # 5
+        'num_samples': 40,
+        'num_cells': 20,          # 50
+        'dropout_rate': 0.1,
+        'win_size': 1,
+        'step_size': 5,
+        'num_sliding_win': 30,
+        'sliding_win_size': 100,
+        'dim': 5,
+        'batch_size': 32,
+        'prior_graph': np.array([
+                      [1, 0, 0, 0, 1],
+                      [0, 1, 0, 0, 1],
+                      [0, 0, 1, 0, 1],
+                      [0, 0, 0, 1, 1],
+                      [0, 0, 0, 0, 1]]),
+        
+        'true_graph': [1, 1, 0, 0, 0,
+                       0, 1, 1, 0, 0,
+                       0, 0, 1, 1, 0,
+                       0, 0, 0, 1, 0,
+                       0, 0, 1, 0, 1],
+        'freq': 'H',
+        'plot_path': "/home/ahmad/Projects/deepCausality/plots/",
+        'model_path': "/home/ahmad/Projects/deepCausality/models/",
+        'model_name': 'trained_model_rivernet5.sav'
+    }
+    return params
+
+
 def get_hack_params():
 
     params = {
