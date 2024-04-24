@@ -225,11 +225,12 @@ def deepCause(odata, knockoffs, model, params):
                 
                 if i==j:
                     pvals.append(0)
+                    p = 0
                 else:
                     pvals.append(p)
                 
                 print(f'Test statistic: {t}, p-value: {p}, KLD: {kld}')
-                if p < 0.05:         # or mutual_info[i][j] > 0.90:
+                if p < 0.05 or i==j:         # or mutual_info[i][j] > 0.90:
                     print("\033[92mNull hypothesis is rejected\033[0m")
                     causal_decision.append(1)
                 else:
@@ -265,9 +266,9 @@ def deepCause(odata, knockoffs, model, params):
             plt.savefig(filename,  dpi=350)
             plt.close()
 
-            mean_cause.append(causal_decision[0])
-            indist_cause.append(causal_decision[1])
-            outdist_cause.append(causal_decision[2])
+            indist_cause.append(causal_decision[0])
+            outdist_cause.append(causal_decision[1])
+            mean_cause.append(causal_decision[2])
             uni_cause.append(causal_decision[3])
             causal_decision = []
 
@@ -280,12 +281,13 @@ def deepCause(odata, knockoffs, model, params):
         kval_outdist.append(kvo)
         kval_mean.append(kvm)
         kval_uniform.append(kvu)
-
-        conf_mat_mean = conf_mat_mean + mean_cause
+        
         conf_mat_indist = conf_mat_indist + indist_cause
         conf_mat_outdist = conf_mat_outdist + outdist_cause
+        conf_mat_mean = conf_mat_mean + mean_cause
         conf_mat_uniform = conf_mat_uniform + uni_cause
-        mean_cause, indist_cause, outdist_cause, uni_cause = [], [], [], []
+        
+        indist_cause, outdist_cause, mean_cause, uni_cause = [], [], [], []
 
     pvalues.append(pval_indist)
     pvalues.append(pval_outdist)
@@ -299,9 +301,9 @@ def deepCause(odata, knockoffs, model, params):
     kvalues.append(kval_uniform)
     # print("KL-Divergence: ", kvalues)
 
-    conf_mat.append(conf_mat_mean)
     conf_mat.append(conf_mat_indist)
     conf_mat.append(conf_mat_outdist)
+    conf_mat.append(conf_mat_mean)
     conf_mat.append(conf_mat_uniform)
 
     variable_names = columns
