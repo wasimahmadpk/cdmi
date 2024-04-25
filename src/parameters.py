@@ -211,7 +211,7 @@ def get_rivernet_params():
         'dropout_rate': 0.1,
         'win_size': 1,
         'step_size': 5,
-        'num_sliding_win': 30,
+        'num_sliding_win': 20,
         'sliding_win_size': 100,
         'dim': 5,
         'batch_size': 32,
