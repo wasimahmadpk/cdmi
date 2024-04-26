@@ -22,7 +22,7 @@ class SCMS:
         self.CoeffC, self.CoeffE = np.arange(0.25, 2.00, 0.25), np.arange(0.75, 1.0, 0.05)
         self.var = np.arange(0.25, 1.0, 0.25)
         self.lags = np.arange(0, 5)
-        self.path = r'/home/ahmad/Projects/VCM/datasets/synthetic_datasets'
+        self.path = r'../datasets/synthetic_datasets'
         self.lag_list = []
         
         adj_mat = self.generate_adj_matrix()
@@ -151,7 +151,7 @@ class SCMS:
 
         # Add nodes
         for n in range(self.num_nodes):
-            G.add_node(n+1, label=f'Z{n+1}')
+            G.add_node(n+1, label=f'Z$_{n+1}$')
 
         for e in range(len(self.list_links)):
             G.add_edge(self.list_links[e][0]+1, self.list_links[e][1]+1)

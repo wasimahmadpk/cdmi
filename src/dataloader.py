@@ -17,6 +17,7 @@ win_size = pars.get("win_size")
 training_length = pars.get("train_len")
 prediction_length = pars.get("pred_len")
 normalize = func.normalize
+down_sample = func.down_sample
 
 def load_river_data():
     # Load river discharges data
