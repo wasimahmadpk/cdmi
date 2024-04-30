@@ -115,7 +115,7 @@ def plot_regimes(data, clusters, cluster_idx, winsize, toplot):
 
     # toplot = [ 'rain','strain_ns_corrected', 'tides_ns', 'temperature_outside', 'pressure_outside', 'gw_west']
     # toplot = ['temperature_outside', 'pressure_outside', 'strain_ew_corrected']
-    toplot = ['Z1', 'Z2', 'Z3']
+    toplot = ['Z1', 'Z2', 'Z3', 'Z4']
     # toplot = ['Hs', 'P', 'W' ]
     colors = ['r', 'g', 'b']
 
