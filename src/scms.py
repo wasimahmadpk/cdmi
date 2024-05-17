@@ -10,7 +10,7 @@ import matplotlib.pyplot as plt
 from scipy.sparse import csr_matrix
 # np.random.seed(1)
 
-class SCMS:
+class structural_causal_models:
 
     def __init__(self, num_nodes, link_density=0.15, time_steps=2000):
 
@@ -48,6 +48,7 @@ class SCMS:
         # 2pi because np.sin takes radians
         y = np.sin((1*np.pi)*frequencies)
         return t, y
+
 
     # Time series base
     def generate_ts(self):
@@ -151,7 +152,7 @@ class SCMS:
 
         # Add nodes
         for n in range(self.num_nodes):
-            G.add_node(n+1, label=f'Z$_{n+1}$')
+            G.add_node(n+1, label='Z$_{' + str({n+1}) + '}$')
 
         for e in range(len(self.list_links)):
             G.add_edge(self.list_links[e][0]+1, self.list_links[e][1]+1)
@@ -159,7 +160,7 @@ class SCMS:
        # Draw the directed graph with labels
         pos = nx.circular_layout(G)
         labels = nx.get_node_attributes(G, 'label')  # Get labels from node attributes
-        nx.draw(G, pos, with_labels=True, labels=labels, node_size=1000, node_color='lightblue', font_size=12, font_color='black', font_weight='bold', edge_color='gray', width=2.0, arrows=True)
+        nx.draw(G, pos, with_labels=True, labels=labels, node_size=1000, node_color='lightblue', font_size=12, font_color='black', font_weight='bold', edge_color='gray', width=1.50, arrows=True)
 
         # Display the directed graph with labels
         plt.show()
@@ -169,6 +170,6 @@ class SCMS:
 if __name__ == '__main__':
     
     nodes = 5
-    scms = SCMS(nodes)
+    scms = structural_causal_models(nodes)
     df = scms.df_timeseries()
     scms.plot_ts()

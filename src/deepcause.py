@@ -1,5 +1,6 @@
-import pickle
+import re
 import time
+import pickle
 import pathlib
 import parameters
 import numpy as np
@@ -20,7 +21,7 @@ from gluonts.model.deepar._network import DeepARTrainingNetwork
 from gluonts.evaluation.backtest import make_evaluation_predictions
 from sklearn.feature_selection import f_regression, mutual_info_regression
 from gluonts.distribution.multivariate_gaussian import MultivariateGaussianOutput
-from scipy.stats import ttest_ind, ttest_ind_from_stats, ttest_1samp, ks_2samp, kstest
+from scipy.stats import ttest_ind, ttest_ind_from_stats, ttest_1samp, ks_2samp, kstest, spearmanr
 from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score, accuracy_score
 
 np.random.seed(1)
@@ -206,8 +207,36 @@ def deepCause(odata, knockoffs, model, params):
             
             pvals = []
             kvals = []
+
+            # ------------------------- plot residuals ---------------------------------------
+
+            fig = plt.figure()
+            ax = fig.add_subplot(111)
+
+            # Calculate Spearman correlation coefficient and its p-value
+            corr, p_val = spearmanr(mapelol[0], mapelolint[0])
+
+            plt.plot(mapelol[0], color='g', alpha=0.7, label='Actual $\epsilon$')
+            plt.plot(mapelolint[0], color='r', alpha=0.7, label='Counterfactual $\epsilon$')
+            plt.title(f'corr: {round(corr, 2)}, p-val: {round(p_val, 2)}')
+            if len(columns) > 0:
+                effect_var = re.sub(r'(\d+)', lambda match: f'$_{match.group(1)}$', columns[j])
+                ax.set_ylabel(f'{columns[i]} ---> {columns[j]}')
+            else:
+                # plt.ylabel(f"CSS: Z_{i + 1} ---> Z_{j + 1}")
+                ax.set_ylabel(f'Z_{i + 1} ---> Z_{j + 1}')
+
+            plt.gcf()
+            ax.legend()
+            filename = pathlib.Path(plot_path + f'res_{columns[i]} ---> {columns[j]}.pdf')
+            plt.savefig(filename)
+            plt.show()
+            # ---------------------------------------------------------------------------------
             
             for z in range(len(intervention_methods)):
+
+                 # Calculate Spearman correlation coefficient and its p-value
+                corr, pv_corr = spearmanr(mapelol[z], mapelolint[z])
 
                 print("Intervention: " + intervention_methods[z])
                 
@@ -234,8 +263,12 @@ def deepCause(odata, knockoffs, model, params):
                     print("\033[92mNull hypothesis is rejected\033[0m")
                     causal_decision.append(1)
                 else:
-                    print("\033[94mFail to reject null hypothesis\033[0m")
-                    causal_decision.append(0)
+                     if pv_corr > 0.05:
+                        print("\033[92mNull hypothesis is rejected\033[0m")
+                        causal_decision.append(1)
+                     else:
+                        print("\033[94mFail to reject null hypothesis\033[0m")
+                        causal_decision.append(0)
 
             pvi.append(pvals[0])
             pvo.append(pvals[1])
