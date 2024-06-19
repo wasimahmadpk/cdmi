@@ -105,8 +105,8 @@ def get_syn_params():
                        0, 0, 0, 1,
                        ],
         'freq': '30min',
-        'plot_path': "/home/ahmad/Projects/deepCausality/plots/",
-        'model_path': "/home/ahmad/Projects/deepCausality/models/",
+        'plot_path': "/home/ahmad/Projects/cdmi/plots/",
+        'model_path': "/home/ahmad/Projects/cdmi/models/",
         'model_name': 'trained_model_syntest.sav'
     }
 
@@ -192,8 +192,8 @@ def get_geo_params():
                        0, 0, 0, 1, 1,
                        0, 0, 0, 0, 1],
         'freq': 'H',
-        'plot_path': "/home/ahmad/Projects/deepCausality/plots/",
-        'model_path': "/home/ahmad/Projects/deepCausality/models/",
+        'plot_path': "/home/ahmad/Projects/cdmi/plots/",
+        'model_path': "/home/ahmad/Projects/cdmi/models/",
         'model_name': 'trained_model_geotest.sav'
     }
     return params
@@ -202,10 +202,10 @@ def get_geo_params():
 def get_rivernet_params():
 
     params = {
-        'epochs': 70,             # 125
+        'epochs': 5,             # 125
         'pred_len': 15,           # 15
-        'train_len': 1500,        # 1500
-        'num_layers': 4,          # 5
+        'train_len': 1000,        # 1500
+        'num_layers': 3,          # 5
         'num_samples': 40,
         'num_cells': 20,          # 50
         'dropout_rate': 0.1,
@@ -228,8 +228,8 @@ def get_rivernet_params():
                        0, 0, 0, 1, 0,
                        0, 0, 1, 0, 1],
         'freq': 'H',
-        'plot_path': "/home/ahmad/Projects/deepCausality/plots/",
-        'model_path': "/home/ahmad/Projects/deepCausality/models/",
+        'plot_path': "/home/ahmad/Projects/cdmi/plots/",
+        'model_path': "/home/ahmad/Projects/cdmi/models/",
         'model_name': 'trained_model_rivernet5.sav'
     }
     return params

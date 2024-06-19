@@ -70,6 +70,10 @@ def load_river_network():
     data = data[[568102, 568121, 568133, 568160, 568350]]
     data = data.dropna()
 
+    # Rename columns by prepending 'R'
+    new_column_names = {col: f"R{col}" for col in data.columns}
+    data.rename(columns=new_column_names, inplace=True)
+
     return data[:3333]
 
 

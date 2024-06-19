@@ -220,7 +220,7 @@ def deepCause(odata, knockoffs, model, params):
             plt.plot(mapelolint[0], color='r', alpha=0.7, label='Counterfactual $\epsilon$')
             plt.title(f'corr: {round(corr, 2)}, p-val: {round(p_val, 2)}')
             if len(columns) > 0:
-                effect_var = re.sub(r'(\d+)', lambda match: f'$_{match.group(1)}$', columns[j])
+                # effect_var = re.sub(r'(\d+)', lambda match: f'$_{match.group(1)}$', columns[j])
                 ax.set_ylabel(f'{columns[i]} ---> {columns[j]}')
             else:
                 # plt.ylabel(f"CSS: Z_{i + 1} ---> Z_{j + 1}")
@@ -230,7 +230,9 @@ def deepCause(odata, knockoffs, model, params):
             ax.legend()
             filename = pathlib.Path(plot_path + f'res_{columns[i]} ---> {columns[j]}.pdf')
             plt.savefig(filename)
-            plt.show()
+            plt.close()
+
+            # plt.show()
             # ---------------------------------------------------------------------------------
             
             for z in range(len(intervention_methods)):
@@ -347,9 +349,9 @@ def deepCause(odata, knockoffs, model, params):
     # Apply condition to the covariance matrix
     causal_matrix_thresholded = np.where(np.abs(causal_matrix) < 0.10, 1, 0)
     print("-------------*****-----------------------*****-------------")
-    print(f'Discovered Causal Structure:\n {causal_matrix_thresholded}')
+    # print(f'Discovered Causal Structure:\n {causal_matrix_thresholded}')
     # func.causal_heatmap(causal_matrix_thresholded, columns)
     true_conf_mat = pars.get("true_graph")
-    # func.evaluate(true_conf_mat, conf_mat, intervention_methods)
+    func.evaluate(true_conf_mat, conf_mat, intervention_methods)
     # func.plot_causal_graph(causal_matrix_thresholded, columns, model_name)
     return causal_matrix_thresholded, conf_mat, time.time()

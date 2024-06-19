@@ -210,18 +210,16 @@ def plot_causal_graph(matrix, variables, model, edge_intensity=None):
     # plt.title('Discovered Causal Structure')
 
     # Save plot
-    plot_path = "/home/ahmad/Projects/deepCausality/plots/cgraphs/"
+    plot_path = "/home/ahmad/Projects/cdmi/plots/cgraphs/"
     filename = plot_path + f"causal_graphs_{model}.pdf"
     plt.tight_layout()
     plt.savefig(filename)
-    plt.show()
+    # plt.show()
 
 
 def evaluate(true_conf_mat, conf_mat, intervention_methods):
-    print('Called from Fun(c)!')
 
     for ss in range(len(conf_mat)):
-
         # true_conf_mat = conf_mat[ss]
         fscore = round(f1_score(true_conf_mat, conf_mat[ss], average='binary'), 2)
         acc = accuracy_score(true_conf_mat, conf_mat[ss])

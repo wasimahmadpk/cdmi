@@ -117,7 +117,7 @@ params = {"length": n, "dim": dim, "col": columns}
 knockoffs = obj.GenKnockoffs(data_actual, params)
 
 # Function for estimating causal impact among variables
-causal_matrix, predicted_graph, end_time = deepCause(original_data, knockoffs, model_path, params)
+causal_matrix, predicted_graph, end_time = causal_graph(original_data, knockoffs, model_path, params)
 
 # Calculate difference
 elapsed_time = end_time - start_time
