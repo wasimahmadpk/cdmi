@@ -14,7 +14,7 @@ class Knockoffs:
     def __init__(self):
         self.n = 32
 
-    def GenKnockoffs(self, datax, params):
+    def Generate_Knockoffs(self, datax, params):
 
         # Number of features
         p = params.get('dim')

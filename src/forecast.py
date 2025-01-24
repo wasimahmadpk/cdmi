@@ -24,7 +24,6 @@ plot_path = pars.get("plot_path")
 def mean_absolute_percentage_error(y_true, y_pred):
 
     mape = np.mean(np.abs((y_true - y_pred)/y_true))*100
-    print("MAPE: ", mape)
     return mape
 
 
@@ -93,8 +92,7 @@ def modelTest(model_path, test_ds, num_samples, data, idx, prediction_length, co
     y_pred = np.array(y_pred)
     y_true = data[-prediction_length:]
     
-    # mape = mean_absolute_percentage_error(y_true, np.mean(y_pred, axis=0))
-    mape = mean_absolute_error(y_true, np.mean(y_pred, axis=0))
+    mape = mean_absolute_percentage_error(y_true, np.mean(y_pred, axis=0))
     mse = mean_squared_error(y_true, np.mean(y_pred, axis=0))
     mae = mean_absolute_error(y_true, np.mean(y_pred, axis=0))
 

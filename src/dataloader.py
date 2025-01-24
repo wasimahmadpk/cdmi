@@ -61,21 +61,6 @@ def load_climate_data():
 
     return df
 
-def load_river_network():
-
-    #  Full data set.
-    data = pd.read_csv(r"../datasets/rivers_alpha/prototype_ts_ds.csv", index_col=0)
-    data.columns = [int(x.split("_")[0]) for x in data.columns]
-    data = data.loc[:,~data.columns.duplicated()].copy()
-    data = data[[568102, 568121, 568133, 568160, 568350]]
-    data = data.dropna()
-
-    # Rename columns by prepending 'R'
-    new_column_names = {col: f"R{col}" for col in data.columns}
-    data.rename(columns=new_column_names, inplace=True)
-
-    return data[:3333]
-
 
 
 def load_geo_data():
@@ -154,6 +139,71 @@ def load_flux_data():
     df = pd.DataFrame(data, columns=['Rg', 'T', 'GPP', 'Reco'])
 
     return df
+
+
+
+
+def load_rivernet(river):
+    
+    # Load river discharges data
+    path_data = f'/home/ahmad/Projects/cdmi/datasets/rivernet/{river}_data.csv'
+    path_ground_truth = f'/home/ahmad/Projects/cdmi/datasets/rivernet/{river}_label.csv'
+
+    data = pd.read_csv(path_data)
+
+    data['datetime'] = pd.to_datetime(data['datetime'])
+    # Set datetime as the index
+    data.set_index('datetime', inplace=True)
+
+    # print(f'Before Nans shape: {data.shape}')
+    # print(f'Before Nas mean: {data.mean()}')
+
+    data["dt"] = pd.to_datetime(data.index).round('6H').values
+    # print(data.shape)
+    data = data.groupby("dt").mean()
+    data.interpolate(inplace=True)
+    # print(f'Shape of river data: {data.shape}')
+    # Resample the data to desired sampling
+    # data = data.resample('6H').mean()
+
+    ground_truth = func.read_ground_truth(path_ground_truth)
+    # np.fill_diagonal(ground_truth, 1)
+    # print(f'Ground truth: \n {ground_truth}')
+
+    check_trailing_nans = np.where(data.isnull().values.any(axis=1) == 0)[0]
+    data = data[check_trailing_nans.min() : check_trailing_nans.max()+1]
+    # assert data.isnull().sum().max() == 0, "Check nans!"
+    
+    # Apply seasonal differencing (lag = 365) to all columns
+    df_diff = data.copy()  # Copy original DataFrame to preserve it
+
+    # for column in data.columns:
+    #     # Apply seasonal differencing to each column
+    #     df_diff[column] = data[column] - data[column].shift(52)
+
+    # Drop NaN values caused by shifting (from the first 365 days)
+    df_diff.dropna(inplace=True)
+    # print(f'Shape of river data: {df_diff.shape}')
+    # print(f'Mean of the data: {df_diff.mean()}')
+
+    # # Plot the original and differenced data for each column
+    # plt.figure(figsize=(12, 8))
+
+    # for i, column in enumerate(data.columns, 1):
+    #     plt.subplot(len(data.columns), 1, i)
+    #     plt.plot(data[column], label=f'Original {column}', color='blue', alpha=0.7)
+    #     plt.plot(df_diff[column], label=f'Differenced {column}', color='orange', linestyle='--')
+    #     plt.legend()
+    #     plt.title(f"Seasonal Differencing for Column {column}")
+
+    # plt.tight_layout()
+    # plt.show()
+
+    # Display the differenced data (to check results)
+    df = df_diff.apply(normalize)
+
+    return df_diff, ground_truth
+
 
 
 def load_syn_data():

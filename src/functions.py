@@ -8,6 +8,7 @@ import networkx as nx
 import seaborn as sns
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
+from sklearn.metrics import precision_recall_curve
 from sklearn.feature_selection import f_regression, mutual_info_regression
 from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score, accuracy_score
 
@@ -216,6 +217,63 @@ def plot_causal_graph(matrix, variables, model, edge_intensity=None):
     plt.savefig(filename)
     # plt.show()
 
+def remove_diagonal_and_flatten(matrix):
+    """
+    Removes the diagonal elements of a 2D matrix and returns the remaining
+    elements as a flattened list.
+
+    Parameters:
+        matrix (np.ndarray): A 2D NumPy array.
+
+    Returns:
+        list: A list of elements excluding the diagonal.
+    """
+    # Ensure the input is a 2D NumPy array
+    print(f'Len of mat shape: {len(matrix.shape)}:, {matrix}')
+    print(f'{isinstance(matrix, np.ndarray)}: {len(matrix.shape) != 2}')
+    if not isinstance(matrix, np.ndarray) or len(matrix.shape) != 2:
+        raise ValueError("Input must be a 2D NumPy array.")
+    if matrix.shape[0] != matrix.shape[1]:
+        raise ValueError("Input matrix must be square.")
+
+    # Mask the diagonal and flatten the result
+    # mask = np.ones(matrix.shape, dtype=bool)
+    mask = ~np.eye(matrix.shape[0], dtype=bool)
+    return matrix[mask].tolist()
+
+def f1_max(labs,preds):
+
+    # F1 MAX
+    # print(f'lab: {labs}, pred:{preds}')
+    precision, recall, thresholds = precision_recall_curve(labs, preds)
+    f1_scores = 2 * recall * precision / (recall + precision)
+    f1_thresh = thresholds[np.argmax(f1_scores)]
+    f1_score = np.nanmax(f1_scores)
+    return f1_thresh, f1_score
+
+
+def read_ground_truth(file_path):
+    """
+    Reads a CSV file containing binary data with extra headers and index columns,
+    discarding the first two rows and the first two columns, and returns a numpy array
+    of the binary data.
+    
+    Parameters:
+    - file_path (str): The path to the CSV file.
+    
+    Returns:
+    - np.ndarray: A 2D numpy array containing the binary data.
+    """
+    # Read the CSV file, starting from the third row, and use the first column as the index
+    df = pd.read_csv(file_path, header=1, index_col=0)
+    
+    # Drop the first column to get only the binary data
+    binary_data_df = df.iloc[:, 1:]
+
+    # Convert the DataFrame to a numpy array of integers
+    binary_data = binary_data_df.to_numpy().astype(int)
+    
+    return binary_data.T
 
 def evaluate(true_conf_mat, conf_mat, intervention_methods):
 

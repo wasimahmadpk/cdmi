@@ -11,8 +11,8 @@ import seaborn as sns
 import functions as func
 from itertools import islice
 from datetime import datetime
-import matplotlib.pyplot as plt
 from knockoffs import Knockoffs
+import matplotlib.pyplot as plt
 from forecast import modelTest
 from gluonts.evaluation import Evaluator
 from gluonts.dataset.common import ListDataset
@@ -27,21 +27,21 @@ from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_
 np.random.seed(1)
 mx.random.seed(2)
 
-pars = parameters.get_rivernet_params()
-num_samples = pars.get("num_samples")
-step = pars.get("step_size")
-training_length = pars.get("train_len")
-prediction_length = pars.get("pred_len")
-frequency = pars.get("freq")
-plot_path = pars.get("plot_path")
-prior_graph = pars.get('prior_graph')
-num_windows = pars.get('num_sliding_win')
-step_size = pars.get('step_size')
-model_name = pars.get("model_name")
 
-def deepCause(odata, knockoffs, model, params):
+def deepCause(odata, model, pars):
 
-    columns = params.get('col')
+    num_samples = pars.get("num_samples")
+    step = pars.get("step_size")
+    training_length = pars.get("train_len")
+    prediction_length = pars.get("pred_len")
+    frequency = pars.get("freq")
+    plot_path = pars.get("plot_path")
+    prior_graph = pars.get('prior_graph')
+    num_windows = pars.get('num_sliding_win')
+    step_size = pars.get('step_size')
+    model_name = pars.get("model_name")
+
+    columns = pars.get('col')
     mutual_info = []
     for a in range(len(odata)):
             x = odata[:].T
@@ -85,6 +85,12 @@ def deepCause(odata, knockoffs, model, params):
         # KL-Divergence
         kvi, kvo, kvm, kvu = [], [], [], []
 
+         # Generate Knockoffs
+        data_actual = np.array(odata[: , 0: training_length + prediction_length]).transpose()
+        n = len(data_actual[:, 0])
+        pars.update({'length': n})
+        obj = Knockoffs()
+        knockoffs = obj.Generate_Knockoffs(data_actual, pars)
         knockoff_sample = np.array(knockoffs[0: training_length+prediction_length, i])
 
         mean = np.random.normal(0, 0.05, len(knockoff_sample)) + np.mean(odata[i])
@@ -100,7 +106,6 @@ def deepCause(odata, knockoffs, model, params):
             # print(f"Front/Backdoor Paths: {np.array(back_door) + 1} ---> {j + 1}")
             print("-------------*****-----------------------*****-------------")
 
-            columns = params.get('col')
             pred_var = odata[j]
             pred_var_name = "Z_" + str(j + 1) + ""
 
@@ -166,7 +171,7 @@ def deepCause(odata, knockoffs, model, params):
                             data_actual = np.array(odata[:, start: start + training_length + prediction_length]).transpose()
                             obj = Knockoffs()
                             n = len(odata[:, 0])
-                            knockoffs = obj.GenKnockoffs(data_actual, params)
+                            knockoffs = obj.Generate_Knockoffs(data_actual, pars)
                             knockoff_sample = np.array(knockoffs[:, i])
                             intervene = knockoff_sample
 
@@ -341,8 +346,16 @@ def deepCause(odata, knockoffs, model, params):
     conf_mat.append(conf_mat_mean)
     conf_mat.append(conf_mat_uniform)
 
-    variable_names = columns
-    n = params.get('dim')
+    true_conf_mat = pars.get("true_graph")
+    print(f'Actual graph: {np.array(true_conf_mat)}')
+    # --------------- f1-max ------------------
+    pred = np.array(pval_indist)   #1 - np.array(kld_matrix)
+    actual_lab = func.remove_diagonal_and_flatten(np.array(true_conf_mat))
+    pred_score = func.remove_diagonal_and_flatten(pred)
+    threshod, fmax = func.f1_max(actual_lab, pred_score)
+    print(f'F1-Max: {fmax}')
+    # -----------------------------------------
+    n = pars.get('dim')
     # Reshape the list into a n x n array (causal matrix)
     causal_matrix = np.array(pval_indist).reshape(n, n)
 
@@ -351,7 +364,8 @@ def deepCause(odata, knockoffs, model, params):
     print("-------------*****-----------------------*****-------------")
     # print(f'Discovered Causal Structure:\n {causal_matrix_thresholded}')
     # func.causal_heatmap(causal_matrix_thresholded, columns)
-    true_conf_mat = pars.get("true_graph")
-    func.evaluate(true_conf_mat, conf_mat, intervention_methods)
-    # func.plot_causal_graph(causal_matrix_thresholded, columns, model_name)
-    return causal_matrix_thresholded, conf_mat, time.time()
+    print(f'Actual: {np.array(true_conf_mat)}')
+    print(f'Predicted: {np.array(conf_mat[0]).reshape(n, n)}')
+    func.evaluate(np.array(true_conf_mat).flatten().tolist(), conf_mat, intervention_methods)
+    func.plot_causal_graph(causal_matrix_thresholded, columns, model_name)
+    return causal_matrix_thresholded, conf_mat, fmax, time.time()

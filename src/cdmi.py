@@ -9,7 +9,6 @@ import pandas as pd
 import functions as func
 import dataloader as datasets
 import matplotlib.pyplot as plt
-from knockoffs import Knockoffs
 from regimes import get_regimes
 from deepcause import deepCause
 from gluonts.trainer import Trainer
@@ -65,6 +64,8 @@ def causal_graph(input, pars):
     batch_size = pars.get("batch_size")
     plot_path = pars.get("plot_path")
     model_name = pars.get("model_name")
+    print(f'COnfMat: {len(np.array(pars.get("true_graph")).shape)}')
+    
     
     # Your function logic using data and params
 
@@ -96,7 +97,7 @@ def causal_graph(input, pars):
     # training set
     train_ds = ListDataset(
         [
-            {'start': "01/03/2015 00:00:00",
+            {'start': df.index[0],
             'target': original_data[:, 0: training_length].tolist()
             }
         ],
@@ -133,17 +134,19 @@ def causal_graph(input, pars):
         # save the model to disk
         pickle.dump(predictor, open(filename, 'wb'))
 
-    # Generate Knockoffs
-    data_actual = np.array(original_data[:, :]).transpose()
-    n = len(original_data[:, 0])
-    obj = Knockoffs()
-    params = {"length": n, "dim": dim, "col": columns}
-    knockoffs = obj.GenKnockoffs(data_actual, params)
+    # # Generate Knockoffs
+    # data_actual = np.array(original_data[:, :]).transpose()
+    # n = len(original_data[:, 0])
+    # obj = Knockoffs()
+    pars.update({"dim": dim, "col": columns})
+    # knockoffs = obj.GenKnockoffs(data_actual, params)
 
     # Function for estimating causal impact among variables
-    causal_matrix_thresholded, predicted_graph, end_time = deepCause(original_data, knockoffs, model_path, params)
+    causal_matrix_thresholded, predicted_graph, fmax, end_time = deepCause(original_data, model_path, pars)
 
     # Calculate difference
     elapsed_time = end_time - start_time
     # Print elapsed time
     print("Computation time:", round(elapsed_time/60), "mins")
+
+    return  causal_matrix_thresholded, predicted_graph, fmax, end_time

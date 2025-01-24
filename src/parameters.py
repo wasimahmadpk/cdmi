@@ -202,37 +202,36 @@ def get_geo_params():
 def get_rivernet_params():
 
     params = {
-        'epochs': 5,             # 125
-        'pred_len': 15,           # 15
-        'train_len': 1000,        # 1500
-        'num_layers': 3,          # 5
-        'num_samples': 40,
-        'num_cells': 20,          # 50
+
+        'epochs': 50,
+        'pred_len': 10,
+        'train_len': 555,
+        'num_layers': 4,
+        'num_cells': 40,
+        'num_samples': 5,
         'dropout_rate': 0.1,
-        'win_size': 1,
-        'step_size': 5,
-        'num_sliding_win': 20,
-        'sliding_win_size': 100,
-        'dim': 5,
+        'step_size': 1,
+        'num_sliding_win': 18,
+        'step_size': 1,
+        'dim': 8,
         'batch_size': 32,
-        'prior_graph': np.array([
-                      [1, 0, 0, 0, 1],
-                      [0, 1, 0, 0, 1],
-                      [0, 0, 1, 0, 1],
-                      [0, 0, 0, 1, 1],
-                      [0, 0, 0, 0, 1]]),
-        
-        'true_graph': [1, 1, 0, 0, 0,
-                       0, 1, 1, 0, 0,
+        'prior_graph': np.array([[1, 1, 1, 0, 1],
+                                 [0, 1, 0, 0, 0],
+                                 [0, 0, 1, 1, 0],
+                                 [0, 0, 0, 1, 1],
+                                 [0, 0, 0, 0, 1]]),
+        'true_graph': [1, 1, 1, 0, 1,
+                       0, 1, 0, 0, 0,
                        0, 0, 1, 1, 0,
-                       0, 0, 0, 1, 0,
-                       0, 0, 1, 0, 1],
-        'freq': 'H',
-        'plot_path': "/home/ahmad/Projects/cdmi/plots/",
-        'model_path': "/home/ahmad/Projects/cdmi/models/",
-        'model_name': 'trained_model_rivernet5.sav'
+                       0, 0, 0, 1, 1,
+                       0, 0, 0, 0, 1],
+        'freq': '6H',
+        'plot_path': "/home/ahmad/Projects/cdmi/plots/river_graphs/",
+        'model_path': "/home/ahmad/Projects/cdmi/models/rivernet/",
+        'model_name': 'trained_rivernet'
     }
     return params
+
 
 
 def get_hack_params():
