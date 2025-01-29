@@ -229,8 +229,6 @@ def remove_diagonal_and_flatten(matrix):
         list: A list of elements excluding the diagonal.
     """
     # Ensure the input is a 2D NumPy array
-    print(f'Len of mat shape: {len(matrix.shape)}:, {matrix}')
-    print(f'{isinstance(matrix, np.ndarray)}: {len(matrix.shape) != 2}')
     if not isinstance(matrix, np.ndarray) or len(matrix.shape) != 2:
         raise ValueError("Input must be a 2D NumPy array.")
     if matrix.shape[0] != matrix.shape[1]:
