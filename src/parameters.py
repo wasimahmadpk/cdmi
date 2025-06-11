@@ -203,9 +203,9 @@ def get_rivernet_params():
 
     params = {
 
-        'epochs': 50,
-        'pred_len': 10,
-        'train_len': 555,
+        'epochs': 10,
+        'pred_len': 3,
+        'train_len': 100,
         'num_layers': 4,
         'num_cells': 40,
         'num_samples': 5,

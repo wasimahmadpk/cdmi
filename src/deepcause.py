@@ -290,8 +290,8 @@ def deepCause(odata, model, pars):
             # plot residuals distribution
             fig = plt.figure()
             ax1 = fig.add_subplot(111)
-            sns.distplot(mapelol[0], color='red', label='Actual')
-            sns.distplot(mapelolint[0], color='green', label='Counterfactual')
+            sns.kdeplot(mapelol[0], color='red', label='Actual')
+            sns.kdeplot(mapelolint[0], color='green', label='Counterfactual')
 
             if len(columns) > 0:
                 # plt.ylabel(f"CSS: {columns[i]} ---> {columns[j]}")

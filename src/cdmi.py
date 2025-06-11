@@ -1,5 +1,4 @@
 import pickle
-import os
 import time
 import pathlib
 import parameters
@@ -134,13 +133,7 @@ def causal_graph(input, pars):
         # save the model to disk
         pickle.dump(predictor, open(filename, 'wb'))
 
-    # # Generate Knockoffs
-    # data_actual = np.array(original_data[:, :]).transpose()
-    # n = len(original_data[:, 0])
-    # obj = Knockoffs()
     pars.update({"dim": dim, "col": columns})
-    # knockoffs = obj.GenKnockoffs(data_actual, params)
-
     # Function for estimating causal impact among variables
     causal_matrix_thresholded, predicted_graph, fmax, end_time = deepCause(original_data, model_path, pars)
 
