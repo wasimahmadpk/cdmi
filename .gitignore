@@ -1,0 +1,44 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*.so
+
+# Environment files
+.env
+.venv
+env/
+venv/
+ENV/
+
+# Logs and output
+logs/
+*.log
+
+# Model outputs
+models/
+
+# Plot outputs
+plots/
+
+# Data files
+datasets/**/*.csv
+datasets/**/*.tar.gz
+
+# Optional: Ignore all datasets, or just large raw ones
+datasets/environment_dataset/
+datasets/fluxnet2015/
+datasets/geo_dataset/
+datasets/hackathon_data/
+datasets/netsim/
+datasets/nino/
+datasets/rivernet/
+datasets/sims/
+
+# Cache and IDE files
+*.swp
+.DS_Store
+.idea/
+.vscode/
+
+# Shell scripts and temporary outputs (optional)
+*.sh~
