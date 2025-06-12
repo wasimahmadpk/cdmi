@@ -8,7 +8,7 @@ import mxnet as mx
 import pandas as pd
 from math import sqrt
 import seaborn as sns
-import functions as func
+from functions import *
 from itertools import islice
 from datetime import datetime
 from knockoffs import Knockoffs
@@ -46,7 +46,7 @@ def deepCause(odata, model, pars):
     for a in range(len(odata)):
             x = odata[:].T
             y = odata[a].T
-            mi = func.mutual_information(x, y)
+            mi = mutual_information(x, y)
             # print("MI Value: ", mi)
             mutual_info.append(mi)
 
@@ -346,18 +346,23 @@ def deepCause(odata, model, pars):
     conf_mat.append(conf_mat_mean)
     conf_mat.append(conf_mat_uniform)
 
-    true_conf_mat = pars.get("true_graph")
+    true_conf_mat = pars.get("ground_truth")
     print(f'Actual graph: {np.array(true_conf_mat)}')
     # --------------- f1-max ------------------
     pred = np.array(pval_indist)   #1 - np.array(kld_matrix)
-    actual_lab = func.remove_diagonal_and_flatten(np.array(true_conf_mat))
-    pred_score = func.remove_diagonal_and_flatten(pred)
-    threshod, fmax = func.f1_max(actual_lab, pred_score)
+    actual_lab = remove_diagonal_and_flatten(np.array(true_conf_mat))
+    pred_score = remove_diagonal_and_flatten(pred)
+    threshod, fmax = f1_max(actual_lab, pred_score)
     print(f'F1-Max: {fmax}')
+
     # -----------------------------------------
     n = pars.get('dim')
     # Reshape the list into a n x n array (causal matrix)
     causal_matrix = np.array(pval_indist).reshape(n, n)
+    pred_conf_mat = conf_mat[0]
+
+     # Calculate metrics
+    metrics = evaluate_predicted_graph(true_conf_mat, pred_conf_mat)
 
     # Apply condition to the covariance matrix
     causal_matrix_thresholded = np.where(np.abs(causal_matrix) < 0.10, 1, 0)
@@ -366,6 +371,10 @@ def deepCause(odata, model, pars):
     # func.causal_heatmap(causal_matrix_thresholded, columns)
     print(f'Actual: {np.array(true_conf_mat)}')
     print(f'Predicted: {np.array(conf_mat[0]).reshape(n, n)}')
-    func.evaluate(np.array(true_conf_mat).flatten().tolist(), conf_mat, intervention_methods)
-    func.plot_causal_graph(causal_matrix_thresholded, columns, model_name)
-    return causal_matrix_thresholded, conf_mat, fmax, time.time()
+    evaluate(np.array(true_conf_mat).flatten().tolist(), conf_mat, intervention_methods)
+    plot_causal_graph(causal_matrix_thresholded, columns, model_name)
+
+    for metric, value in metrics.items():
+       print(f"{metric}: {value:.2f}")
+
+    return metrics, conf_mat, time.time()

@@ -450,7 +450,7 @@ def plot_multitests_boxplot(dictdata, plotpath, metricsname):
     # plt.show()
 
 # Function to compute metrics for each predicted graph and find the best one
-def evaluate_best_predicted_graph(actual, predicted_list):
+def evaluate_predicted_graph(actual, predicted_list):
 
     # Create a mask for off-diagonal elements (diagonal elements are set to 0)
     n = actual.shape[0]
