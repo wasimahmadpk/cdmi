@@ -256,7 +256,7 @@ def deepCause(odata, model, pars):
                 t, p = round(t, 2), round(p, 2)
                 # t, p = kstest(np.array(mapelolint[z]), np.array(mapelol[z]))
                 
-                kld = round(func.kl_divergence(np.array(mapelol[z]), np.array(mapelolint[z])), 2)
+                kld = round(kl_divergence(np.array(mapelol[z]), np.array(mapelolint[z])), 2)
                 kvals.append(kld)
                 
                 if i==j:
@@ -354,7 +354,6 @@ def deepCause(odata, model, pars):
     pred_score = remove_diagonal_and_flatten(pred)
     threshod, fmax = f1_max(actual_lab, pred_score)
     print(f'F1-Max: {fmax}')
-
     # -----------------------------------------
     n = pars.get('dim')
     # Reshape the list into a n x n array (causal matrix)
@@ -368,7 +367,7 @@ def deepCause(odata, model, pars):
     causal_matrix_thresholded = np.where(np.abs(causal_matrix) < 0.10, 1, 0)
     print("-------------*****-----------------------*****-------------")
     # print(f'Discovered Causal Structure:\n {causal_matrix_thresholded}')
-    # func.causal_heatmap(causal_matrix_thresholded, columns)
+    # causal_heatmap(causal_matrix_thresholded, columns)
     print(f'Actual: {np.array(true_conf_mat)}')
     print(f'Predicted: {np.array(conf_mat[0]).reshape(n, n)}')
     evaluate(np.array(true_conf_mat).flatten().tolist(), conf_mat, intervention_methods)
