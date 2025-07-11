@@ -81,7 +81,7 @@ def get_syn_params():
     # Parameters for synthetic data
     params = {
 
-        'epochs': 50,             # 125
+        'epochs': 5,             # 125
         'pred_len': 12,           # 15
         'train_len': 500,        # 1500
         'num_layers': 4,          # 5
@@ -90,8 +90,8 @@ def get_syn_params():
         'dropout_rate': 0.1,
         'win_size': 1,
         'step_size': 3,
-        'num_sliding_win': 20,
-        'sliding_win_size': 100,
+        'num_sliding_win': 10,
+        'sliding_win_size': 10,
         'dim': 5,
         'batch_size': 32,
         'prior_graph': np.array([[1, 1, 1, 1],

@@ -1,175 +1,162 @@
 import os
 import math
 import random
-import parameters
 import numpy as np
 import pandas as pd
 import networkx as nx
-from netCDF4 import Dataset
-import matplotlib.pyplot as plt
 from scipy.sparse import csr_matrix
-# np.random.seed(1)
+import matplotlib.pyplot as plt
 
-class structural_causal_models:
+# Parameters for signal generation
+def get_sig_params():
+    return {
+        "sample_rate": 100,  # Hz
+        "duration": 10       # seconds
+    }
 
-    def __init__(self, num_nodes, link_density=0.15, time_steps=2000):
-
+class StructuralCausalModels:
+    def __init__(self, num_nodes, link_density=0.15, time_steps=2000, random_seed=None):
         self.num_nodes = num_nodes
         self.link_density = link_density
         self.time_steps = time_steps
         self.ts_length = time_steps - 1000
         self.Tao = range(1, 6)
-        self.CoeffC, self.CoeffE = np.arange(0.25, 2.00, 0.25), np.arange(0.75, 1.0, 0.05)
+        self.CoeffC = np.arange(0.25, 2.00, 0.25)
+        self.CoeffE = np.linspace(0.75, 1.0, num=6)
         self.var = np.arange(0.25, 1.0, 0.25)
         self.lags = np.arange(0, 5)
         self.path = r'../datasets/synthetic_datasets'
         self.lag_list = []
         
+        if random_seed is not None:
+            np.random.seed(random_seed)
+            random.seed(random_seed)
+
+        # Generate adjacency matrix & links
         adj_mat = self.generate_adj_matrix()
-        # print('Matrix:\n', adj_mat)
         adj_mat_upp = np.triu(adj_mat)
-        res = np.where(adj_mat_upp==1)
-        
+        res = np.where(adj_mat_upp == 1)
         list_links_all = list(zip(res[0], res[1]))
-        self.list_links = []
-
-        for links in list_links_all:
-            if links[0]!=links[1]:
-                self.list_links.append(links)
+        self.list_links = [(src, tgt) for src, tgt in list_links_all if src != tgt]
         self.num_links = len(self.list_links)
-                
-        self.node_labels = [f'Z{l+1}'for l in range(num_nodes)]
-        self.generate_ts_DAG()
+        self.node_labels = [f'Z{l + 1}' for l in range(num_nodes)]
 
+        # Generate time series + causal structure immediately on init
+        self.df, self.links = self._generate_df_and_links()
 
-    def generate_sine_ts(self, freq, sample_rate, duration):
-        t = np.linspace(0, duration, sample_rate * duration, endpoint=False)
-        frequencies = t*freq
-        # 2pi because np.sin takes radians
-        y = np.sin((1*np.pi)*frequencies)
-        return t, y
+        # Generate binary causal matrix immediately
+        self.binary_matrix = self.links_to_binary_matrix(self.links, self.num_nodes)
 
-
-    # Time series base
     def generate_ts(self):
-         
-        # Generate sine wave and the gaussian noise 
-        pars = parameters.get_sig_params()
-        sample_rate = pars.get("sample_rate")  # Hertz
-        duration = pars.get("duration")  # Seconds
-
         multivariate_ts = []
-        
         for i in range(self.num_nodes):
-            # _, sin_ts = self.generate_sine_ts(6000, sample_rate, duration)
-            # timeseries = np.random.normal(0, random.choice(self.var), self.time_steps)
             t = np.arange(0, self.time_steps)
-            time_series = np.sin(0.75 * t) + np.random.normal(0.75, 0.33*(i+1), self.time_steps)
+            time_series = np.sin(0.75 * t) + np.random.normal(0.75, 0.33 * (i + 1), self.time_steps)
             multivariate_ts.append(time_series)
         return np.array(multivariate_ts)
-  
 
     def generate_adj_matrix(self):
+        nonzero_indices = np.random.choice(
+            self.num_nodes ** 2,
+            size=int((self.num_nodes ** 2) * self.link_density),
+            replace=False
+        )
+        data = np.ones(len(nonzero_indices), dtype=int)
+        row_indices = nonzero_indices // self.num_nodes
+        col_indices = nonzero_indices % self.num_nodes
+        sparse_binary_matrix = csr_matrix((data, (row_indices, col_indices)),
+                                          shape=(self.num_nodes, self.num_nodes))
+        return sparse_binary_matrix.toarray()
 
-            # Generate random indices for non-zero elements
-            nonzero_indices = np.random.choice(self.num_nodes**2, size=int((self.num_nodes**2) * self.link_density), replace=False)
-
-            # Create a binary matrix with ones at the specified indices
-            data = np.ones(len(nonzero_indices), dtype=int)
-            row_indices = nonzero_indices // self.num_nodes
-            col_indices = nonzero_indices % self.num_nodes
-
-            # Create a sparse binary matrix using CSR format
-            sparse_binary_matrix = csr_matrix((data, (row_indices, col_indices)), shape=(self.num_nodes, self.num_nodes))
-
-            # print(sparse_binary_matrix.toarray())
-            adj_matrix = sparse_binary_matrix.toarray()
-            return adj_matrix
-
-    # Linear cause-effect relation
     def linear(self, cause, effect, lag_cause, lag_effect, coeff_c, coeff_e):
-        
-        dynamic_noise = np.random.normal(0, 0.5, 2*self.time_steps)
+        dynamic_noise = np.random.normal(0, 0.5, 2 * self.time_steps)
         for t in range(max(self.lags), self.time_steps):
-            effect[t] = coeff_e*effect[t-lag_effect] + coeff_c*cause[t-lag_cause] + dynamic_noise[t]
-        return effect, len(effect)
-    
-    # NOn-linear dependency
+            effect[t] = coeff_e * effect[t - lag_effect] + coeff_c * cause[t - lag_cause] + dynamic_noise[t]
+        return effect
+
     def non_linear(self, cause, effect, lag_cause, lag_effect, coeff_c, coeff_e):
-        
-        dynamic_noise = np.random.normal(0, 0.10, 2*self.time_steps)
+        dynamic_noise = np.random.normal(0, 0.1, 2 * self.time_steps)
         for t in range(max(self.lags), self.time_steps):
-            effect[t] = coeff_e*effect[t-lag_effect] + coeff_c*np.sin(cause[t-lag_cause]) + dynamic_noise[t]
-        return effect, len(effect)
-    
+            effect[t] = coeff_e * effect[t - lag_effect] + coeff_c * np.sin(cause[t - lag_cause]) + dynamic_noise[t]
+        return effect
+
     def generate_ts_DAG(self):
-
         multivariate_dag_ts = self.generate_ts()
+        base_ts = multivariate_dag_ts.copy()
         nonlinear_prob = [1 if random.random() > 0.75 else 0 for _ in range(self.num_links)]
-        for links in range(self.num_links):
-            nonlinear_func = random.choice(nonlinear_prob)
-            cnode, enode = self.list_links[links][0], self.list_links[links][1]
 
-            coeff_c, coeff_e = random.choice(self.CoeffC), random.choice(self.CoeffE) 
+        for idx in range(self.num_links):
+            nonlinear_func = nonlinear_prob[idx]
+            cnode, enode = self.list_links[idx]
+            coeff_c, coeff_e = random.choice(self.CoeffC), random.choice(self.CoeffE)
             lag_cause, lag_effect = random.choice(self.lags), random.choice(self.lags)
             self.lag_list.append(lag_cause)
-            
+
             if nonlinear_func:
-                time_series , len = self.linear(multivariate_dag_ts[cnode], multivariate_dag_ts[enode], lag_cause, lag_effect, coeff_c, coeff_e)
+                time_series = self.linear(base_ts[cnode], multivariate_dag_ts[enode],
+                                          lag_cause, lag_effect, coeff_c, coeff_e)
             else:
-                time_series , len = self.non_linear(multivariate_dag_ts[cnode], multivariate_dag_ts[enode], lag_cause, lag_effect, coeff_c, coeff_e)
-            multivariate_dag_ts[enode] = time_series  
+                time_series = self.non_linear(base_ts[cnode], multivariate_dag_ts[enode],
+                                              lag_cause, lag_effect, coeff_c, coeff_e)
+
+            multivariate_dag_ts[enode] = time_series
 
         return multivariate_dag_ts
-    
-    def df_timeseries(self):
-        
-        data_dict = {}
-        timeseries = self.generate_ts_DAG()
-        
-        for nodes in range(self.num_nodes):
-            data_dict[self.node_labels[nodes]] = timeseries[nodes][:]
-        
-        df = pd.DataFrame(data=data_dict, columns=self.node_labels)
-        filename = 'synthetic_dataset.csv'
-        df.to_csv(os.path.join(self.path, filename), index_label=False, header=True)
-        return df, list(zip(self.list_links, self.lag_list))
-    
-    def plot_ts(self):
 
-        fig = plt.figure()
-        df, links = self.df_timeseries()
+    def _generate_df_and_links(self):
+        timeseries = self.generate_ts_DAG()
+        data_dict = {self.node_labels[nodes]: timeseries[nodes][:] for nodes in range(self.num_nodes)}
+        df = pd.DataFrame(data=data_dict, columns=self.node_labels)
+        links_with_lags = list(zip(self.list_links, self.lag_list))
+        return df, links_with_lags
+
+    @staticmethod
+    def links_to_binary_matrix(links, num_nodes):
+        matrix = np.zeros((num_nodes, num_nodes), dtype=int)
+        for (src, tgt), lag in links:
+            matrix[src, tgt] = 1
+        return matrix
+
+    def plot_ts(self):
+        fig = plt.figure(figsize=(10, 2 * self.num_nodes))
         for i in range(len(self.node_labels)):
-            ax = fig.add_subplot(int(f'{len(self.node_labels)}1{i+1}'))
-            ax.plot(df[df.columns[i]][100:1000].values)
-            ax.set_ylabel(f'{df.columns[i]}')
+            ax = fig.add_subplot(self.num_nodes, 1, i + 1)
+            ax.plot(self.df[self.df.columns[i]][100:1000].values)
+            ax.set_ylabel(f'{self.df.columns[i]}')
+        plt.tight_layout()
         plt.show()
 
     def draw_DAG(self):
-          
-        # Create an empty graph
         G = nx.DiGraph()
-
-        # Add nodes
         for n in range(self.num_nodes):
-            G.add_node(n+1, label='Z$_{' + str({n+1}) + '}$')
+            G.add_node(n + 1, label='Z$_{' + str(n + 1) + '}$')
 
         for e in range(len(self.list_links)):
-            G.add_edge(self.list_links[e][0]+1, self.list_links[e][1]+1)
+            G.add_edge(self.list_links[e][0] + 1, self.list_links[e][1] + 1)
 
-       # Draw the directed graph with labels
         pos = nx.circular_layout(G)
-        labels = nx.get_node_attributes(G, 'label')  # Get labels from node attributes
-        nx.draw(G, pos, with_labels=True, labels=labels, node_size=1000, node_color='lightblue', font_size=12, font_color='black', font_weight='bold', edge_color='gray', width=1.50, arrows=True)
-
-        # Display the directed graph with labels
+        labels = nx.get_node_attributes(G, 'label')
+        nx.draw(
+            G, pos, with_labels=True, labels=labels, node_size=1000,
+            node_color='lightblue', font_size=12, font_color='black',
+            font_weight='bold', edge_color='gray', width=1.5, arrows=True
+        )
         plt.show()
 
-
-
+# Example usage:
 if __name__ == '__main__':
-    
     nodes = 5
-    scms = structural_causal_models(nodes)
-    df = scms.df_timeseries()
+    scms = StructuralCausalModels(num_nodes=nodes, random_seed=42)
+    
+    # Now df and binary_matrix are directly available:
+    print("\nGenerated Time Series Data (head):")
+    print(scms.df.head())
+    
+    print("\nLinks & Lags Used:")
+    print(scms.links)
+    
+    print("\nBinary Adjacency Matrix:")
+    print(scms.binary_matrix)
+    
     scms.plot_ts()
+    scms.draw_DAG()

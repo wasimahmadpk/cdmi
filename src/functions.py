@@ -514,8 +514,6 @@ def evaluate_predicted_graph(actual, predicted_list):
     
     return best_metrics
 
-def test():
-    return 0
 # Function to compute metrics for each predicted graph and find the best one
 def evaluate_best_predicted_graph(actual, predicted_list):
 
