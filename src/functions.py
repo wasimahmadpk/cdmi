@@ -514,6 +514,74 @@ def evaluate_predicted_graph(actual, predicted_list):
     
     return best_metrics
 
+def test():
+    return 0
+# Function to compute metrics for each predicted graph and find the best one
+def evaluate_best_predicted_graph(actual, predicted_list):
+
+    # Create a mask for off-diagonal elements (diagonal elements are set to 0)
+    n = actual.shape[0]
+    mask = np.ones((n, n), dtype=bool)
+    np.fill_diagonal(mask, 0)  # Set diagonal to 0 to ignore
+
+    best_metrics = None
+    best_f1_score = -1  # Initialize with a low F1 score
+    best_tpr = -1       # Initialize TPR for tiebreakers
+    best_fpr = float('inf')  # Initialize FPR with high value for tiebreakers
+    
+    # Flatten actual graph once, since it's common for all predictions
+    y_true_flat = actual[mask].tolist()
+    # y_true_flat = [item for sublist in actual for item in sublist]
+    
+    for predicted in predicted_list:
+         # Flatten predicted graph
+        y_pred_flat = predicted[mask].tolist()
+        # y_pred_flat = [item for sublist in predicted for item in sublist]
+
+        # Calculate confusion matrix
+        cm = confusion_matrix(y_true_flat, y_pred_flat, labels=[0, 1])
+        tn, fp, fn, tp = cm.ravel()
+
+        # Calculate metrics
+        tpr = tp / (tp + fn) if (tp + fn) != 0 else 0  # True Positive Rate
+        tnr = tn / (tn + fp) if (tn + fp) != 0 else 0  # True Negative Rate
+        fpr = fp / (fp + tn) if (fp + tn) != 0 else 0  # False Positive Rate
+        fnr = fn / (fn + tp) if (fn + tp) != 0 else 0  # False Negative Rate
+        accuracy = (tp + tn) / (tp + tn + fp + fn) if (tp + tn + fp + fn) != 0 else 0
+        precision = tp / (tp + fp) if (tp + fp) != 0 else 0
+        recall = tp / (tp + fn) if (tp + fn) != 0 else 0
+        f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) != 0 else 0
+        shd = calculate_shd(np.array(actual), np.array(predicted))
+
+        # Check if this prediction has the highest F1 score, or if tied, check TPR and FPR
+        if (f1_score > best_f1_score or
+            (f1_score == best_f1_score and tpr > best_tpr) or
+            (f1_score == best_f1_score and tpr == best_tpr and fpr < best_fpr)):
+            
+            # Update the best metrics
+            best_f1_score = f1_score
+            best_tpr = tpr
+            best_fpr = fpr
+            
+            best_metrics = {
+                'TP': tp,
+                'TN': tn,
+                'FP': fp,
+                'FN': fn,
+                'TPR': tpr,
+                'TNR': tnr,
+                'FPR': fpr,
+                'FNR': fnr,
+                'Accuracy': accuracy,
+                'Precision': precision,
+                'Recall': recall,
+                'Fscore': f1_score,
+                'SHD': shd
+            }
+    
+    return best_metrics
+
+
 
 def test_link(actual, counterfactual, alpha=0.05):
     results = {}
