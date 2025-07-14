@@ -348,11 +348,11 @@ def deepCause(odata, model, pars):
     print("-------------*****-----------------------*****-------------")
     # print(f'Discovered Causal Structure:\n {causal_matrix_thresholded}')
     # causal_heatmap(causal_matrix_thresholded, columns)
-    print(f'Actual: {np.array(true_conf_mat)}')
-    print(f'Predicted: {np.array(pred_conf_mat)}')
+    print(f'Actual: \n {np.array(true_conf_mat)}')
+    print(f'Predicted: \n {np.array(pred_conf_mat)}')
     evaluate(np.array(true_conf_mat).flatten().tolist(), conf_mat, intervention_methods)
     plot_causal_graph(causal_matrix_thresholded, columns, model_name)
-
+    print("-------------*****-----------------------*****-------------")
     for metric, value in metrics.items():
        print(f"{metric}: {value:.2f}")
 
