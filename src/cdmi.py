@@ -135,11 +135,11 @@ def causal_graph(input, pars):
 
     pars.update({"dim": dim, "col": columns})
     # Function for estimating causal impact among variables
-    causal_matrix_thresholded, predicted_graph, fmax, end_time = deepCause(original_data, model_path, pars)
+    metrics, predicted_graph, end_time = deepCause(original_data, model_path, pars)
 
     # Calculate difference
     elapsed_time = end_time - start_time
     # Print elapsed time
     print("Computation time:", round(elapsed_time/60), "mins")
 
-    return  causal_matrix_thresholded, predicted_graph, fmax, end_time
+    return  metrics, predicted_graph, end_time

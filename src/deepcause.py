@@ -2,31 +2,18 @@ import re
 import time
 import pickle
 import pathlib
-import parameters
 import numpy as np
-import mxnet as mx
 import pandas as pd
 from math import sqrt
 import seaborn as sns
 from functions import *
-from itertools import islice
-from datetime import datetime
 from knockoffs import Knockoffs
 import matplotlib.pyplot as plt
 from forecast import modelTest
-from gluonts.evaluation import Evaluator
 from gluonts.dataset.common import ListDataset
-from gluonts.model.deepar import DeepAREstimator
-from gluonts.model.deepar._network import DeepARTrainingNetwork
-from gluonts.evaluation.backtest import make_evaluation_predictions
-from sklearn.feature_selection import f_regression, mutual_info_regression
-from gluonts.distribution.multivariate_gaussian import MultivariateGaussianOutput
 from scipy.stats import ttest_ind, ttest_ind_from_stats, ttest_1samp, ks_2samp, kstest, spearmanr
-from sklearn.metrics import confusion_matrix, f1_score, precision_score, recall_score, accuracy_score
 
 np.random.seed(1)
-mx.random.seed(2)
-
 
 def deepCause(odata, model, pars):
 
@@ -36,10 +23,10 @@ def deepCause(odata, model, pars):
     prediction_length = pars.get("pred_len")
     frequency = pars.get("freq")
     plot_path = pars.get("plot_path")
-    prior_graph = pars.get('prior_graph')
     num_windows = pars.get('num_sliding_win')
     step_size = pars.get('step_size')
     model_name = pars.get("model_name")
+    n = pars.get('dim')
 
     columns = pars.get('col')
     mutual_info = []
@@ -106,12 +93,6 @@ def deepCause(odata, model, pars):
             # print(f"Front/Backdoor Paths: {np.array(back_door) + 1} ---> {j + 1}")
             print("-------------*****-----------------------*****-------------")
 
-            pred_var = odata[j]
-            pred_var_name = "Z_" + str(j + 1) + ""
-
-            css_list = []
-            css_list_new = []
-            css_score_new = []
             mselol = []
             mapelol = []
             mselolint = []
@@ -123,10 +104,8 @@ def deepCause(odata, model, pars):
 
                 mselist = []      # list of MSE values for multiple realization without intervention
                 mselistint = []   # list of MSE values for multiple realization with intervention
-                acelist = []
                 mapelist = []     # list of MAPE values for multiple realization without intervention
                 mapelistint = []  # list of MAPE values for multiple realization with intervention
-                css_score = []    # list of causal scores for multiple realization
                 start = 0
 
                 for iter in range(num_windows):  # 30
@@ -347,7 +326,6 @@ def deepCause(odata, model, pars):
     conf_mat.append(conf_mat_uniform)
 
     true_conf_mat = pars.get("ground_truth")
-    print(f'Actual graph: {np.array(true_conf_mat)}')
     # --------------- f1-max ------------------
     pred = np.array(pval_indist)   #1 - np.array(kld_matrix)
     actual_lab = remove_diagonal_and_flatten(np.array(true_conf_mat))
@@ -355,13 +333,15 @@ def deepCause(odata, model, pars):
     threshod, fmax = f1_max(actual_lab, pred_score)
     print(f'F1-Max: {fmax}')
     # -----------------------------------------
-    n = pars.get('dim')
     # Reshape the list into a n x n array (causal matrix)
     causal_matrix = np.array(pval_indist).reshape(n, n)
-    pred_conf_mat = conf_mat[0]
+    pred_conf_mat = np.array(conf_mat[0]).reshape(n, n)
+
+    print(f'True: {true_conf_mat}')
+    print(f'Predicted: {pred_conf_mat}')
 
      # Calculate metrics
-    metrics = evaluate_predicted_graph(true_conf_mat, pred_conf_mat)
+    metrics = evaluate_predicted_graph(np.array(true_conf_mat), np.array(pred_conf_mat))
 
     # Apply condition to the covariance matrix
     causal_matrix_thresholded = np.where(np.abs(causal_matrix) < 0.10, 1, 0)
@@ -369,7 +349,7 @@ def deepCause(odata, model, pars):
     # print(f'Discovered Causal Structure:\n {causal_matrix_thresholded}')
     # causal_heatmap(causal_matrix_thresholded, columns)
     print(f'Actual: {np.array(true_conf_mat)}')
-    print(f'Predicted: {np.array(conf_mat[0]).reshape(n, n)}')
+    print(f'Predicted: {np.array(pred_conf_mat)}')
     evaluate(np.array(true_conf_mat).flatten().tolist(), conf_mat, intervention_methods)
     plot_causal_graph(causal_matrix_thresholded, columns, model_name)
 
