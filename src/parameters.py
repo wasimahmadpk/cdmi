@@ -81,17 +81,17 @@ def get_syn_params():
     # Parameters for synthetic data
     params = {
 
-        'epochs': 5,             # 125
-        'pred_len': 12,           # 15
+        'epochs': 50,             # 125
+        'pred_len': 5,           # 15
         'train_len': 500,        # 1500
-        'num_layers': 4,          # 5
-        'num_samples': 40,
+        'num_layers': 6,          # 5
+        'num_samples': 60,
         'num_cells': 20,          # 50
         'dropout_rate': 0.1,
         'win_size': 1,
         'step_size': 3,
-        'num_sliding_win': 10,
-        'sliding_win_size': 10,
+        'num_sliding_win': 30,
+        'sliding_win_size': 30,
         'dim': 5,
         'batch_size': 32,
         'ground_truth': [1, 1, 1, 1,
@@ -101,7 +101,7 @@ def get_syn_params():
                         ],
         'freq': '30min',
         'plot_path': "/home/ahmad/Projects/cdmi/plots/ablation/",
-        'model_path': "/home/ahmad/Projects/cdmi/models/",
+        'model_path': "/home/ahmad/Projects/cdmi/models/ablation/",
         'model_name': 'trained_model_syntest.sav'
     }
 

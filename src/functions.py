@@ -122,7 +122,7 @@ def plot_boxplots(methods_metrics_dict, plot_path, filename="method_metrics.json
         metric_data = df[df["Metric"] == metric]
         # Create a boxplot with Method on the x-axis and Value on the y-axis
         metric_data.boxplot(column="Value", by="Method", grid=False)
-        # plt.title(f"Boxplot for {metric}")
+        plt.title("")
         plt.suptitle("")  # Remove the automatic 'by' title
         plt.xlabel("Method", fontsize=14)
         plt.xticks(fontsize=14)
@@ -134,7 +134,8 @@ def plot_boxplots(methods_metrics_dict, plot_path, filename="method_metrics.json
         # Construct full PDF path and save the plot
         pdf_filename = f"boxplot_{metric}.pdf"
         pdf_full_path = os.path.join(plot_path, pdf_filename)
-        plt.savefig(pdf_full_path, format="pdf")
+        plt.tight_layout()
+        plt.savefig(pdf_full_path, format="pdf", dpi=600)
         plt.close()
 
 
