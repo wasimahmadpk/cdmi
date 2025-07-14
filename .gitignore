@@ -25,6 +25,7 @@ datasets/**/*.csv
 datasets/**/*.tar.gz
 
 # Optional: Ignore all datasets, or just large raw ones
+datasets/synthetic_datasets/*.csv
 datasets/environment_dataset/
 datasets/fluxnet2015/
 datasets/geo_dataset/
