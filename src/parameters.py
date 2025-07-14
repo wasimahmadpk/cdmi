@@ -100,7 +100,7 @@ def get_syn_params():
                          0, 0, 0, 1,
                         ],
         'freq': '30min',
-        'plot_path': "/home/ahmad/Projects/cdmi/plots/",
+        'plot_path': "/home/ahmad/Projects/cdmi/plots/ablation/",
         'model_path': "/home/ahmad/Projects/cdmi/models/",
         'model_name': 'trained_model_syntest.sav'
     }

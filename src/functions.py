@@ -449,70 +449,70 @@ def plot_multitests_boxplot(dictdata, plotpath, metricsname):
     # Show the plot
     # plt.show()
 
-# # Function to compute metrics for each predicted graph and find the best one
-# def evaluate_predicted_graph(actual, predicted_list):
+# Function to compute metrics for each predicted graph and find the best one
+def evaluate_predicted_graph(actual, predicted_list):
 
-#     # Create a mask for off-diagonal elements (diagonal elements are set to 0)
-#     n = actual.shape[0]
-#     mask = np.ones((n, n), dtype=bool)
-#     np.fill_diagonal(mask, 0)  # Set diagonal to 0 to ignore
+    # Create a mask for off-diagonal elements (diagonal elements are set to 0)
+    n = actual.shape[0]
+    mask = np.ones((n, n), dtype=bool)
+    np.fill_diagonal(mask, 0)  # Set diagonal to 0 to ignore
 
-#     best_metrics = None
-#     best_f1_score = -1  # Initialize with a low F1 score
-#     best_tpr = -1       # Initialize TPR for tiebreakers
-#     best_fpr = float('inf')  # Initialize FPR with high value for tiebreakers
+    best_metrics = None
+    best_f1_score = -1  # Initialize with a low F1 score
+    best_tpr = -1       # Initialize TPR for tiebreakers
+    best_fpr = float('inf')  # Initialize FPR with high value for tiebreakers
     
-#     # Flatten actual graph once, since it's common for all predictions
-#     # y_true_flat = actual[mask].tolist()
-#     y_true_flat = [item for sublist in actual for item in sublist]
+    # Flatten actual graph once, since it's common for all predictions
+    # y_true_flat = actual[mask].tolist()
+    y_true_flat = [item for sublist in actual for item in sublist]
     
-#     for predicted in predicted_list:
-#          # Flatten predicted graph
-#         # y_pred_flat = predicted[mask].tolist()
-#         y_pred_flat = [item for sublist in predicted for item in sublist]
+    for predicted in predicted_list:
+         # Flatten predicted graph
+        # y_pred_flat = predicted[mask].tolist()
+        y_pred_flat = [item for sublist in predicted for item in sublist]
 
-#         # Calculate confusion matrix
-#         cm = confusion_matrix(y_true_flat, y_pred_flat, labels=[0, 1])
-#         tn, fp, fn, tp = cm.ravel()
+        # Calculate confusion matrix
+        cm = confusion_matrix(y_true_flat, y_pred_flat, labels=[0, 1])
+        tn, fp, fn, tp = cm.ravel()
 
-#         # Calculate metrics
-#         tpr = tp / (tp + fn) if (tp + fn) != 0 else 0  # True Positive Rate
-#         tnr = tn / (tn + fp) if (tn + fp) != 0 else 0  # True Negative Rate
-#         fpr = fp / (fp + tn) if (fp + tn) != 0 else 0  # False Positive Rate
-#         fnr = fn / (fn + tp) if (fn + tp) != 0 else 0  # False Negative Rate
-#         accuracy = (tp + tn) / (tp + tn + fp + fn) if (tp + tn + fp + fn) != 0 else 0
-#         precision = tp / (tp + fp) if (tp + fp) != 0 else 0
-#         recall = tp / (tp + fn) if (tp + fn) != 0 else 0
-#         f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) != 0 else 0
-#         shd = calculate_shd(np.array(actual), np.array(predicted))
+        # Calculate metrics
+        tpr = tp / (tp + fn) if (tp + fn) != 0 else 0  # True Positive Rate
+        tnr = tn / (tn + fp) if (tn + fp) != 0 else 0  # True Negative Rate
+        fpr = fp / (fp + tn) if (fp + tn) != 0 else 0  # False Positive Rate
+        fnr = fn / (fn + tp) if (fn + tp) != 0 else 0  # False Negative Rate
+        accuracy = (tp + tn) / (tp + tn + fp + fn) if (tp + tn + fp + fn) != 0 else 0
+        precision = tp / (tp + fp) if (tp + fp) != 0 else 0
+        recall = tp / (tp + fn) if (tp + fn) != 0 else 0
+        f1_score = 2 * (precision * recall) / (precision + recall) if (precision + recall) != 0 else 0
+        shd = calculate_shd(np.array(actual), np.array(predicted))
 
-#         # Check if this prediction has the highest F1 score, or if tied, check TPR and FPR
-#         if (f1_score > best_f1_score or
-#             (f1_score == best_f1_score and tpr > best_tpr) or
-#             (f1_score == best_f1_score and tpr == best_tpr and fpr < best_fpr)):
+        # Check if this prediction has the highest F1 score, or if tied, check TPR and FPR
+        if (f1_score > best_f1_score or
+            (f1_score == best_f1_score and tpr > best_tpr) or
+            (f1_score == best_f1_score and tpr == best_tpr and fpr < best_fpr)):
             
-#             # Update the best metrics
-#             best_f1_score = f1_score
-#             best_tpr = tpr
-#             best_fpr = fpr
+            # Update the best metrics
+            best_f1_score = f1_score
+            best_tpr = tpr
+            best_fpr = fpr
             
-#             best_metrics = {
-#                 'TP': tp,
-#                 'TN': tn,
-#                 'FP': fp,
-#                 'FN': fn,
-#                 'TPR': tpr,
-#                 'TNR': tnr,
-#                 'FPR': fpr,
-#                 'FNR': fnr,
-#                 'Accuracy': accuracy,
-#                 'Precision': precision,
-#                 'Recall': recall,
-#                 'Fscore': f1_score,
-#                 'SHD': shd
-#             }
+            best_metrics = {
+                'TP': tp,
+                'TN': tn,
+                'FP': fp,
+                'FN': fn,
+                'TPR': tpr,
+                'TNR': tnr,
+                'FPR': fpr,
+                'FNR': fnr,
+                'Accuracy': accuracy,
+                'Precision': precision,
+                'Recall': recall,
+                'Fscore': f1_score,
+                'SHD': shd
+            }
     
-#     return best_metrics
+    return best_metrics
 
 # Function to compute metrics for each predicted graph and find the best one
 def evaluate_best_predicted_graph(actual, predicted_list):
@@ -1498,18 +1498,18 @@ def plot_metrics(methods_performance_dict, plot_path, metric_name):
     ax.set_xticks(x)
     plt.xticks(fontsize=14)
     ax.set_ylim(-0.1, 1.1)
-    plt.xlabel('Groups', fontsize=14)
+    plt.xlabel('Variables', fontsize=14)
     plt.ylabel(metric_name, fontsize=14)
     ax.set_yticks(np.arange(0, 1.10, 0.10))  # Set finer ticks
     plt.yticks(fontsize=14)
-    plt.grid(True)
+    # plt.grid(True)
     plt.legend(fontsize=13, ncol=2)
     # plt.legend().remove()
 
     plt.tight_layout()
     
     rnd = random.randint(1, 9999)
-    filename = pathlib.Path(plot_path) / f'{metric_name}_groups_{rnd}.pdf'
+    filename = pathlib.Path(plot_path) / f'{metric_name}_{rnd}.pdf'
     plt.savefig(filename)  # Save the figure
     # plt.show()
 
@@ -1533,7 +1533,7 @@ def plot_metrics_tier(methods_performance_dict, plot_path, metric_name):
     ax.set_xticks(x)
     plt.xticks(fontsize=14)
     ax.set_ylim(-0.1, 1.1)
-    plt.xlabel('Groups', fontsize=14)
+    plt.xlabel('Variables', fontsize=14)
     plt.ylabel(metric_name, fontsize=14)
     ax.set_yticks(np.arange(0, 1.10, 0.10))  # Set finer ticks
     plt.yticks(fontsize=14)
@@ -1560,7 +1560,7 @@ def plot_real_metrics(methods_performance_dict, plot_path, metric_name):
     ax.set_xticks(x)
     ax.set_ylim(-0.1, 1.1)
     ax.set_yticks(np.arange(0, 1.10, 0.10))  # Set finer ticks
-    plt.xlabel('Groups', fontsize=14)
+    plt.xlabel('Variables', fontsize=14)
     plt.ylabel(metric_name, fontsize=14)
     plt.xticks(fontsize=14)
     plt.yticks(fontsize=14)
