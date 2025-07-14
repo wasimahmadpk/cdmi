@@ -341,7 +341,7 @@ def deepCause(odata, model, pars):
     print(f'Predicted: {pred_conf_mat}')
 
      # Calculate metrics
-    metrics = evaluate_predicted_graph(np.array(true_conf_mat), np.array(pred_conf_mat))
+    metrics = evaluate_best_predicted_graph(np.array(true_conf_mat), np.array([pred_conf_mat]))
 
     # Apply condition to the covariance matrix
     causal_matrix_thresholded = np.where(np.abs(causal_matrix) < 0.10, 1, 0)
