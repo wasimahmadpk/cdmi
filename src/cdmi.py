@@ -88,7 +88,7 @@ def causal_graph(input, pars):
     train_ds = ListDataset(
         [
             {'start': df.index[0],
-             'target': df.iloc[:training_length].T.values.tolist()
+             'target': df.iloc[:training_length].values.T.tolist()
             }
         ],
         freq=freq,

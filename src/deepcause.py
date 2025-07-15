@@ -58,12 +58,15 @@ def deepCause(df, model, pars):
         kvi, kvo, kvm, kvu = [], [], [], []
 
          # Generate Knockoffs
-        data_actual = df.iloc[0:training_length + prediction_length, :].to_numpy().T
+        data_actual = df.iloc[0:training_length + prediction_length, :].to_numpy()
+        print(f'Data: {data_actual}')
         n = df.shape[1]
         pars.update({'length': n})
         obj = Knockoffs()
         knockoffs = obj.Generate_Knockoffs(data_actual, pars)
+        print(f'Knockoffs: {knockoffs}')
         knockoff_sample = np.array(knockoffs[:, i])
+        print(knockoff_sample.shape)
         
         mean = np.random.normal(0, 0.05, len(knockoff_sample)) + df.iloc[:, i].mean()
         outdist = np.random.normal(11, 11, len(knockoff_sample))
@@ -101,23 +104,25 @@ def deepCause(df, model, pars):
                     mapelistint_batch = []
                     for r in range(1):
 
-                        test_data = df.iloc[start : start + training_length + prediction_length, :].copy()
+                        test_data = df.iloc[start : start + training_length + prediction_length].copy()
                         test_ds = ListDataset(
                             [
                                 {'start': test_data.index[0],
-                                 'target': test_data
+                                 'target': test_data.values.T.tolist()
                                  }
                             ],
                             freq=frequency,
                             one_dim_target=False
                         )
 
-                        int_data = df.iloc[start : start + training_length + prediction_length, :].copy()
-                        int_data[i, :] = intervene
+                        int_data = df.iloc[start : start + training_length + prediction_length].copy()
+                        print(f'Shape of intervention dataset: {int_data.shape}')
+                        print(f'Intervention length: {len(intervene)}')
+                        int_data.iloc[:, i] = intervene.T
                         test_dsint = ListDataset(
                             [
                                 {'start': int_data.index[0],
-                                 'target': int_data
+                                 'target': int_data.values.T.tolist()
                                  }
                             ],
                             freq=frequency,
