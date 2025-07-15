@@ -15,7 +15,7 @@ from scipy.stats import ttest_ind, ttest_ind_from_stats, ttest_1samp, ks_2samp, 
 
 np.random.seed(1)
 
-def deepCause(odata, model, pars):
+def deepCause(df, model, pars):
 
     num_samples = pars.get("num_samples")
     training_length = pars.get("train_len")
@@ -26,15 +26,7 @@ def deepCause(odata, model, pars):
     step_size = pars.get('step_size')
     model_name = pars.get("model_name")
     n = pars.get('dim')
-
     columns = pars.get('col')
-    mutual_info = []
-    for a in range(len(odata)):
-            x = odata[:].T
-            y = odata[a].T
-            mi = mutual_information(x, y)
-            # print("MI Value: ", mi)
-            mutual_info.append(mi)
 
     filename = pathlib.Path(model)
     if not filename.exists():
@@ -55,10 +47,8 @@ def deepCause(odata, model, pars):
     kvalues = []
     kval_indist, kval_outdist, kval_mean, kval_uniform = [], [], [], []
 
-    for i in range(len(odata)):
+    for i, col in enumerate(df.columns):
 
-        int_var = odata[i]
-        int_var_name = "Z_" + str(i + 1) + ""
         var_list = []
         causal_decision = []
         mean_cause = []
@@ -72,20 +62,20 @@ def deepCause(odata, model, pars):
         kvi, kvo, kvm, kvu = [], [], [], []
 
          # Generate Knockoffs
-        data_actual = np.array(odata[: , 0: training_length + prediction_length]).transpose()
+        data_actual = df.iloc[0 : training_length + prediction_length].to_numpy().T
         n = len(data_actual[:, 0])
         pars.update({'length': n})
         obj = Knockoffs()
         knockoffs = obj.Generate_Knockoffs(data_actual, pars)
         knockoff_sample = np.array(knockoffs[0: training_length+prediction_length, i])
 
-        mean = np.random.normal(0, 0.05, len(knockoff_sample)) + np.mean(odata[i])
+        mean = np.random.normal(0, 0.05, len(knockoff_sample)) + df.iloc[:, i].mean()
         outdist = np.random.normal(150, 120, len(knockoff_sample))
-        uniform = np.random.uniform(np.min(odata[i]), np.max(odata[i]), len(knockoff_sample))
+        uniform = np.random.uniform(df.iloc[:, i].min(), df.iloc[:, i].max(), len(knockoff_sample))
         interventionlist = [knockoff_sample, outdist[: len(knockoff_sample)], mean, uniform]
         intervention_methods = ['Knockoffs', 'Out-dist', 'Mean', 'Uniform']
 
-        for j in range(len(odata)):
+        for j, col in enumerate(df.columns):
             # back_door_int = []
             # back_door = prior_graph[:, j].nonzero()[0]
             # print("-------------*****-----------------------*****-------------")
@@ -115,21 +105,22 @@ def deepCause(odata, model, pars):
                     mapelistint_batch = []
                     for r in range(1):
 
-                        test_data = odata[:, start: start + training_length + prediction_length].copy()
+                        test_data = df.iloc[start : start + training_length + prediction_length, :].copy()
                         test_ds = ListDataset(
                             [
-                                {'start': "01/04/2001 00:00:00",
+                                {'start': test_data.index[0],
                                  'target': test_data
                                  }
                             ],
                             freq=frequency,
                             one_dim_target=False
                         )
-                        int_data = odata[:, start: start + training_length + prediction_length].copy()
+
+                        int_data = df.iloc[start : start + training_length + prediction_length, :].copy()
                         int_data[i, :] = intervene
                         test_dsint = ListDataset(
                             [
-                                {'start': "01/04/2001 00:00:00",
+                                {'start': int_data.index[0],
                                  'target': int_data
                                  }
                             ],
@@ -146,9 +137,8 @@ def deepCause(odata, model, pars):
 
                         if m == 0:
                             # Generate multiple version Knockoffs
-                            data_actual = np.array(odata[:, start: start + training_length + prediction_length]).transpose()
+                            data_actual = df.iloc[:, start : start + training_length + prediction_length].to_numpy().T
                             obj = Knockoffs()
-                            n = len(odata[:, 0])
                             knockoffs = obj.Generate_Knockoffs(data_actual, pars)
                             knockoff_sample = np.array(knockoffs[:, i])
                             intervene = knockoff_sample
@@ -316,19 +306,18 @@ def deepCause(odata, model, pars):
     conf_mat.append(conf_mat_uniform)
 
     true_conf_mat = pars.get("ground_truth")
-    # --------------- f1-max ------------------
+    # -------------------------------------- 
+    #                 F-max 
+    # --------------------------------------
     pred = np.array(pval_indist)   #1 - np.array(kld_matrix)
     actual_lab = remove_diagonal_and_flatten(np.array(true_conf_mat))
     pred_score = remove_diagonal_and_flatten(pred)
     threshod, fmax = f1_max(actual_lab, pred_score)
-    print(f'F1-Max: {fmax}')
+    print(f'F-max: {fmax}')
     # -----------------------------------------
     # Reshape the list into a n x n array (causal matrix)
     causal_matrix = np.array(pval_indist).reshape(n, n)
     pred_conf_mat = np.array(conf_mat[0]).reshape(n, n)
-
-    print(f'True: {true_conf_mat}')
-    print(f'Predicted: {pred_conf_mat}')
 
      # Calculate metrics
     metrics = evaluate_best_predicted_graph(np.array(true_conf_mat), np.array([pred_conf_mat]))

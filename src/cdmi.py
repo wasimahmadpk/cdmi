@@ -86,18 +86,12 @@ def causal_graph(input, pars):
     else:
         print("Error: Input must be a path to a CSV file or a pandas DataFrame.")
 
-    original_data = []
     dim, columns = len(df.columns), df.columns
-
-    for col in df:
-        original_data.append(df[col])
-
-    original_data = np.array(original_data)
     # training set
     train_ds = ListDataset(
         [
             {'start': df.index[0],
-             'target': original_data[:, 0: training_length].tolist()
+             'target': df.iloc[:training_length].T.values.tolist()
             }
         ],
         freq=freq,
@@ -135,7 +129,7 @@ def causal_graph(input, pars):
 
     pars.update({"dim": dim, "col": columns})
     # Function for estimating causal impact among variables
-    metrics, predicted_graph, end_time = deepCause(original_data, model_path, pars)
+    metrics, predicted_graph, end_time = deepCause(df, model_path, pars)
 
     # Calculate difference
     elapsed_time = end_time - start_time
