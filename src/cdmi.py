@@ -63,11 +63,8 @@ def causal_graph(input, pars):
     batch_size = pars.get("batch_size")
     plot_path = pars.get("plot_path")
     model_name = pars.get("model_name")
-    print(f'COnfMat: {len(np.array(pars.get("true_graph")).shape)}')
-    
     
     # Your function logic using data and params
-
 
     if isinstance(input, str):
         if input.endswith('.csv'):

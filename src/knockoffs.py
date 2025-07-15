@@ -45,6 +45,10 @@ class Knockoffs:
         # Compute the empirical covariance matrix of the training data
         SigmaHat = np.cov(X_train, rowvar=False)
 
+        # Add ridge regularization to ensure positive semi-definiteness
+        ridge = 1e-3  # You can increase this slightly if needed
+        SigmaHat += np.eye(SigmaHat.shape[0]) * ridge
+
         # Initialize generator of second-order knockoffs
         second_order = GaussianKnockoffs(SigmaHat, mu=np.mean(X_train, 0), method="sdp")
 

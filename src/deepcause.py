@@ -63,11 +63,10 @@ def deepCause(df, model, pars):
         pars.update({'length': n})
         obj = Knockoffs()
         knockoffs = obj.Generate_Knockoffs(data_actual, pars)
-        knockoff_sample = np.array(knockoffs[0: training_length+prediction_length, i])
-        print(knockoff_sample.shape())
-
+        knockoff_sample = np.array(knockoffs[:, i])
+        
         mean = np.random.normal(0, 0.05, len(knockoff_sample)) + df.iloc[:, i].mean()
-        outdist = np.random.normal(150, 120, len(knockoff_sample))
+        outdist = np.random.normal(11, 11, len(knockoff_sample))
         uniform = np.random.uniform(df.iloc[:, i].min(), df.iloc[:, i].max(), len(knockoff_sample))
         interventionlist = [knockoff_sample, outdist[: len(knockoff_sample)], mean, uniform]
         intervention_methods = ['Knockoffs', 'Out-dist', 'Mean', 'Uniform']
@@ -175,8 +174,7 @@ def deepCause(df, model, pars):
                 print("-------------*****-----------------------*****-------------")
                 fnamehist = plot_path + "{Z_[i + 1]}_{Z_[j + 1]}:hist"
             
-            pvals = []
-            kvals = []
+            pvals, kvals = [], []
 
             # ------------------------- plot residuals ---------------------------------------
 
