@@ -59,14 +59,12 @@ def deepCause(df, model, pars):
 
          # Generate Knockoffs
         data_actual = df.iloc[0:training_length + prediction_length, :].to_numpy()
-        print(f'Data: {data_actual}')
         n = df.shape[1]
         pars.update({'length': n})
         obj = Knockoffs()
         knockoffs = obj.Generate_Knockoffs(data_actual, pars)
         print(f'Knockoffs: {knockoffs}')
         knockoff_sample = np.array(knockoffs[:, i])
-        print(knockoff_sample.shape)
         
         mean = np.random.normal(0, 0.05, len(knockoff_sample)) + df.iloc[:, i].mean()
         outdist = np.random.normal(11, 11, len(knockoff_sample))
@@ -105,7 +103,6 @@ def deepCause(df, model, pars):
                     for r in range(1):
 
                         test_data = df.iloc[start : start + training_length + prediction_length].copy()
-                        print(test_data.head())
                         test_ds = ListDataset(
                             [
                                 {'start': test_data.index[0],
@@ -117,9 +114,6 @@ def deepCause(df, model, pars):
                         )
 
                         int_data = df.iloc[start : start + training_length + prediction_length].copy()
-                        
-                        print(f'Shape of intervention dataset: {int_data.shape}')
-                        print(f'Intervention length: {len(intervene)}')
                         
                         int_data.iloc[:, i] = intervene.T
                         print(int_data.head())
