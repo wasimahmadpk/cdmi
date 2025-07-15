@@ -49,12 +49,8 @@ def deepCause(df, model, pars):
 
     for i, col in enumerate(df.columns):
 
-        var_list = []
-        causal_decision = []
-        mean_cause = []
-        indist_cause = []
-        outdist_cause = []
-        uni_cause = []
+        var_list, causal_decision = [], []
+        mean_cause, indist_cause, outdist_cause, uni_cause = [], [], [], []
 
         # P-Values
         pvi, pvo, pvm, pvu = [], [], [], []
@@ -62,12 +58,13 @@ def deepCause(df, model, pars):
         kvi, kvo, kvm, kvu = [], [], [], []
 
          # Generate Knockoffs
-        data_actual = df.iloc[0 : training_length + prediction_length].to_numpy().T
-        n = len(data_actual[:, 0])
+        data_actual = df.iloc[0:training_length + prediction_length, :].to_numpy().T
+        n = df.shape[1]
         pars.update({'length': n})
         obj = Knockoffs()
         knockoffs = obj.Generate_Knockoffs(data_actual, pars)
         knockoff_sample = np.array(knockoffs[0: training_length+prediction_length, i])
+        print(knockoff_sample.shape())
 
         mean = np.random.normal(0, 0.05, len(knockoff_sample)) + df.iloc[:, i].mean()
         outdist = np.random.normal(150, 120, len(knockoff_sample))

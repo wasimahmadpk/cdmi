@@ -14,7 +14,7 @@ class Knockoffs:
     def __init__(self):
         self.n = 32
 
-    def Generate_Knockoffs(self, datax, params):
+    def Generate_Knockoffs(self, data_input, params):
 
         # Number of features
         p = params.get('dim')
@@ -36,7 +36,8 @@ class Knockoffs:
 
         # Sample training data
         # X_train = DataSampler.sample(n)
-        X_train = datax[0:round(len(datax)*1.0), :]
+        X_train = data_input[0:round(len(data_input)*1.0), :]
+
         # print("Train shape:", X_train.shape)
 
         # print("Generated a training dataset of size: {} x {}.".format(X_train.shape, X_train.shape))
@@ -106,7 +107,8 @@ class Knockoffs:
 
         # Sample test data
         # X_test = DataSampler.sample(n, test=True)
-        X_test = datax[:round(len(datax)*1.0):, :]
+        X_test = data_input[:round(len(data_input)*1.0):, :]
+
         # print("Test shape:", X_test.shape)
         # print("Generated a test dataset of size: %d x %d." % (X_test.shape))
 
