@@ -133,16 +133,16 @@ def deepCause(df, model, pars):
                             one_dim_target=False
                         )
 
-                        mse, mape, ypred = modelTest(model, test_ds, num_samples, test_data[j], j,
+                        mse, mape, ypred = modelTest(model, test_ds, num_samples, test_data.iloc[:, j], j,
                                                      prediction_length, iter, False, 0)
 
                         mseint, mapeint, ypredint = modelTest(model, test_dsint, num_samples,
-                                                              test_data[j], j,
+                                                              test_data.iloc[:, j], j,
                                                               prediction_length, iter, True, m)
 
                         if m == 0:
                             # Generate multiple version Knockoffs
-                            data_actual = df.iloc[:, start : start + training_length + prediction_length].to_numpy().T
+                            data_actual = df.iloc[start : start + training_length + prediction_length, :].to_numpy()
                             obj = Knockoffs()
                             knockoffs = obj.Generate_Knockoffs(data_actual, pars)
                             knockoff_sample = np.array(knockoffs[:, i])
