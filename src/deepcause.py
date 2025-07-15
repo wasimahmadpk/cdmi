@@ -105,6 +105,7 @@ def deepCause(df, model, pars):
                     for r in range(1):
 
                         test_data = df.iloc[start : start + training_length + prediction_length].copy()
+                        print(test_data.head())
                         test_ds = ListDataset(
                             [
                                 {'start': test_data.index[0],
@@ -116,12 +117,15 @@ def deepCause(df, model, pars):
                         )
 
                         int_data = df.iloc[start : start + training_length + prediction_length].copy()
+                        
                         print(f'Shape of intervention dataset: {int_data.shape}')
                         print(f'Intervention length: {len(intervene)}')
+                        
                         int_data.iloc[:, i] = intervene.T
+                        print(int_data.head())
                         test_dsint = ListDataset(
                             [
-                                {'start': int_data.index[0],
+                                {'start': test_data.index[0],
                                  'target': int_data.values.T.tolist()
                                  }
                             ],
