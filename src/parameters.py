@@ -88,11 +88,10 @@ def get_syn_params():
         'num_samples': 60,
         'num_cells': 20,          # 50
         'dropout_rate': 0.1,
-        'win_size': 1,
         'step_size': 3,
-        'num_sliding_win': 30,
-        'sliding_win_size': 30,
+        'num_sliding_win': 100,
         'dim': 5,
+        'alpha': 0.10,
         'batch_size': 32,
         'ground_truth': [1, 1, 1, 1,
                          0, 1, 0, 0,

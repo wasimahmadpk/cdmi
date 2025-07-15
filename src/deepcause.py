@@ -18,7 +18,6 @@ np.random.seed(1)
 def deepCause(odata, model, pars):
 
     num_samples = pars.get("num_samples")
-    step = pars.get("step_size")
     training_length = pars.get("train_len")
     prediction_length = pars.get("pred_len")
     frequency = pars.get("freq")
@@ -84,7 +83,7 @@ def deepCause(odata, model, pars):
         outdist = np.random.normal(150, 120, len(knockoff_sample))
         uniform = np.random.uniform(np.min(odata[i]), np.max(odata[i]), len(knockoff_sample))
         interventionlist = [knockoff_sample, outdist[: len(knockoff_sample)], mean, uniform]
-        intervention_methods = ['In-dist', 'Out-dist', 'Mean', 'Uniform']
+        intervention_methods = ['Knockoffs', 'Out-dist', 'Mean', 'Uniform']
 
         for j in range(len(odata)):
             # back_door_int = []
@@ -218,7 +217,7 @@ def deepCause(odata, model, pars):
 
             # plt.show()
             # ---------------------------------------------------------------------------------
-            
+            alpha = pars['alpha']
             for z in range(len(intervention_methods)):
 
                  # Calculate Spearman correlation coefficient and its p-value
@@ -238,23 +237,14 @@ def deepCause(odata, model, pars):
                 kld = round(kl_divergence(np.array(mapelol[z]), np.array(mapelolint[z])), 2)
                 kvals.append(kld)
                 
-                if i==j:
-                    pvals.append(0)
-                    p = 0
-                else:
-                    pvals.append(p)
-                
+                pvals.append(p)
                 print(f'Test statistic: {t}, p-value: {p}, KLD: {kld}')
-                if p < 0.05 or i==j:         # or mutual_info[i][j] > 0.90:
+                if p < alpha:         # or mutual_info[i][j] > 0.90:
                     print("\033[92mNull hypothesis is rejected\033[0m")
                     causal_decision.append(1)
                 else:
-                     if pv_corr > 0.05:
-                        print("\033[92mNull hypothesis is rejected\033[0m")
-                        causal_decision.append(1)
-                     else:
-                        print("\033[94mFail to reject null hypothesis\033[0m")
-                        causal_decision.append(0)
+                    print("\033[94mFail to reject null hypothesis\033[0m")
+                    causal_decision.append(0)
 
             pvi.append(pvals[0])
             pvo.append(pvals[1])
