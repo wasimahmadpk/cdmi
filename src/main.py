@@ -5,7 +5,7 @@ import parameters
 import numpy as np
 import mxnet as mx
 import pandas as pd
-import functions as func
+from functions import *
 import dataloader as datasets
 import matplotlib.pyplot as plt
 from knockoffs import Knockoffs
@@ -39,7 +39,7 @@ model_name = pars.get("model_name")
 df = datasets.load_geo_data()
 df.plot(figsize=(9, 4), linewidth=0.66, use_index=True)
 plt.show()
-func.corr_heatmap(df)
+corr_heatmap(df)
 
 # # --------Identify Regimes in Time series--------
 # regimes, _, _, newdf = get_regimes(data, slidingwin_size)

@@ -1,3 +1,4 @@
+import os
 import re
 import time
 import pickle
@@ -13,8 +14,9 @@ from forecast import model_inference
 from gluonts.dataset.common import ListDataset
 from scipy.stats import ks_2samp, spearmanr
 
+np.random.seed(1)
+
 def execute_causal_pipeline(df, model_path, pars):
-    np.random.seed(1)
 
     # Extract Parameters
     num_samples = pars.get("num_samples")
@@ -26,16 +28,16 @@ def execute_causal_pipeline(df, model_path, pars):
     step_size = pars.get("step_size")
     model_name = pars.get("model_name")
     columns = pars.get('col')
+    plot_forecasts = pars.get('plot_forecasts', False)
+
+    if plot_forecasts and plot_path:
+        os.makedirs(plot_path, exist_ok=True)
 
     n = df.shape[1]
     pars['dim'] = n
     pars['length'] = n
 
     filename = pathlib.Path(model_path)
-    if not filename.exists():
-        print("Training forecasting model....")
-        predictor = estimator.train(train_ds)  # Ensure 'estimator' is defined
-        pickle.dump(predictor, open(filename, 'wb'))
 
     conf_mat_all = [[] for _ in range(4)]
     pvalues_all = [[] for _ in range(4)]
@@ -63,7 +65,7 @@ def execute_causal_pipeline(df, model_path, pars):
 
             for m, intervention in enumerate(interventionlist):
                 start = 0
-                for _ in range(num_windows):
+                for win in range(num_windows):
                     test_data = df.iloc[start:start + training_length + prediction_length].copy()
                     int_data = test_data.copy()
                     int_data.iloc[:, i] = intervention
@@ -78,11 +80,28 @@ def execute_causal_pipeline(df, model_path, pars):
                         'target': int_data.values.T.tolist()
                     }], freq=frequency, one_dim_target=False)
 
-                    mse, mape, _ = model_inference(model_path, test_ds, num_samples, test_data.iloc[:, j], j, prediction_length, 0, False, 0)
-                    mseint, mapeint, _ = model_inference(model_path, test_dsint, num_samples, test_data.iloc[:, j], j, prediction_length, 0, True, m)
+                    # Run forecasting with intervention
+                    forecast_actual, mse, mape = model_inference(model_path, test_ds, num_samples, test_data.iloc[:, j], j, prediction_length, 0, False, 0)
+                    forecast_int, mseint, mapeint = model_inference(model_path, test_dsint, num_samples, test_data.iloc[:, j], j, prediction_length, 0, True, m)
 
                     results[m].append(mape)
                     results_int[m].append(mapeint)
+
+                    if plot_forecasts and plot_path:
+                        plt.figure(figsize=(8, 4))
+                        true_values = test_data.iloc[-prediction_length:, j].values
+                        plt.plot(true_values, label="True", linestyle='--')
+                        plt.plot(forecast_actual, label="Forecast (original)", color='blue')
+                        plt.plot(forecast_int, label=f"Forecast (intervened: {intervention_methods[m]})", color='red')
+                        plt.title(f"Z{i} → Z{j} [{intervention_methods[m]}]")
+                        plt.xlabel("Time")
+                        plt.ylabel(f"Z{j}")
+                        plt.legend()
+                        filename = f"{plot_path}/forecast_{i}_to_{j}_{intervention_methods[m].lower()}.pdf"
+                        plt.tight_layout()
+                        plt.savefig(filename, dpi=600)
+                        plt.close()
+
                     start += step_size
 
             for m in range(4):
@@ -92,7 +111,7 @@ def execute_causal_pipeline(df, model_path, pars):
 
                 decision = 1 if p < pars['alpha'] else 0
 
-                cause_type = ['Knockoffs', 'Out-dist', 'Mean', 'Uniform'][m]
+                cause_type = intervention_methods[m]
                 status = "REJECTED" if decision == 1 else "ACCEPTED"
                 print(f"[{cause_type}] Hypothesis for link {columns[i]} → {columns[j]}: {status} (p = {p:.4f})")
 
@@ -103,6 +122,7 @@ def execute_causal_pipeline(df, model_path, pars):
 
                 pval_lists[m].append(p)
                 kval_lists[m].append(kld)
+
             print('-------------***-------------***---------------***------------')
 
         for m in range(4):

@@ -99,8 +99,8 @@ def get_syn_params():
                          0, 0, 0, 1,
                         ],
         'freq': '30min',
-        'plot_path': "/home/ahmad/Projects/cdmi/plots/ablation/",
-        'model_path': "/home/ahmad/Projects/cdmi/models/ablation/",
+        'plot_path': '/home/ahmad/Projects/cdmi/plots/ablation/',
+        'model_path': '/home/ahmad/Projects/cdmi/models/ablation/',
         'model_name': 'trained_model_syntest.sav',
         'plot_forecasts': True  # set to False to disable saving plots
     }

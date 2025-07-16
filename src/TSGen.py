@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+from functions import *
 import matplotlib.pyplot as plt
 import networkx as nx
 import random
@@ -27,7 +28,7 @@ class RandomCausalSimulator:
         adj = np.triu((np.random.rand(self.n, self.n) < self.edge_prob).astype(int), 1)
         for i in range(self.n):
             if np.random.rand() < self.self_dep_prob:
-                adj[i, i] = 1  # Add self-loop with given probability
+                adj[i, i] = 1  # Self-loop (autoregressive)
         return adj
 
     def _nonlinear(self, x):
@@ -53,6 +54,11 @@ class RandomCausalSimulator:
         lags = np.random.randint(1, 6, size=(self.n, self.n))
         coeffs = np.random.uniform(0.15, 1.5, size=(self.n, self.n))
 
+        # Add seasonality parameters
+        periods = np.random.randint(20, 200, size=self.n)
+        amplitudes = np.random.uniform(0.2, 2.0, size=self.n)
+        phases = np.random.uniform(0, 2 * np.pi, size=self.n)
+
         for t in range(10, self.T):
             for child in range(self.n):
                 val = np.random.normal(self.noise_means[child], self.noise_stds[child])
@@ -67,9 +73,14 @@ class RandomCausalSimulator:
                             val += coef * self._nonlinear(parent_val)
                         else:
                             val += coef * parent_val
+                #  Add seasonal component
+                seasonal = amplitudes[child] * np.sin(2 * np.pi * t / periods[child] + phases[child])
+                val += seasonal
+
                 data[f'Z{child}'].append(val)
 
         self.data = pd.DataFrame({k: v[33:] for k, v in data.items()})
+        self.data = self.data.apply(normalize)
         return self.data, self.adj
 
     def draw_dag(self, layout='spring', figsize=(6, 6)):
