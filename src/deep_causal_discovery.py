@@ -97,7 +97,7 @@ def execute_causal_pipeline(df, model_path, pars):
                         plt.xlabel("Time")
                         plt.ylabel(f"Z{j}")
                         plt.legend()
-                        filename = f"{plot_path}/forecast_{i}_to_{j}_{intervention_methods[m].lower()}.pdf"
+                        filename = f"{plot_path}/forecasts/forecast_{i}_to_{j}_{intervention_methods[m].lower()}.pdf"
                         plt.tight_layout()
                         plt.savefig(filename, dpi=600)
                         plt.close()
