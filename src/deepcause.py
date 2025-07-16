@@ -9,7 +9,7 @@ import seaborn as sns
 from functions import *
 from knockoffs import Knockoffs
 import matplotlib.pyplot as plt
-from forecast import modelTest
+from forecast import model_inference
 from gluonts.dataset.common import ListDataset
 from scipy.stats import ttest_ind, ttest_ind_from_stats, ttest_1samp, ks_2samp, kstest, spearmanr
 
@@ -63,7 +63,6 @@ def deepCause(df, model, pars):
         pars.update({'length': n})
         obj = Knockoffs()
         knockoffs = obj.Generate_Knockoffs(data_actual, pars)
-        print(f'Knockoffs: {knockoffs}')
         knockoff_sample = np.array(knockoffs[:, i])
         
         mean = np.random.normal(0, 0.05, len(knockoff_sample)) + df.iloc[:, i].mean()
@@ -116,7 +115,6 @@ def deepCause(df, model, pars):
                         int_data = df.iloc[start : start + training_length + prediction_length].copy()
                         
                         int_data.iloc[:, i] = intervene.T
-                        print(int_data.head())
                         test_dsint = ListDataset(
                             [
                                 {'start': test_data.index[0],
@@ -127,10 +125,10 @@ def deepCause(df, model, pars):
                             one_dim_target=False
                         )
 
-                        mse, mape, ypred = modelTest(model, test_ds, num_samples, test_data.iloc[:, j], j,
+                        mse, mape, ypred = model_inference(model, test_ds, num_samples, test_data.iloc[:, j], j,
                                                      prediction_length, iter, False, 0)
 
-                        mseint, mapeint, ypredint = modelTest(model, test_dsint, num_samples,
+                        mseint, mapeint, ypredint = model_inference(model, test_dsint, num_samples,
                                                               test_data.iloc[:, j], j,
                                                               prediction_length, iter, True, m)
 

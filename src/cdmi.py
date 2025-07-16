@@ -10,6 +10,7 @@ import dataloader as datasets
 import matplotlib.pyplot as plt
 from regimes import get_regimes
 from deepcause import deepCause
+from deep_causal_discovery import execute_causal_pipeline
 from gluonts.trainer import Trainer
 from gluonts.dataset.common import ListDataset
 from gluonts.model.deepar import DeepAREstimator
@@ -126,7 +127,8 @@ def causal_graph(input, pars):
 
     pars.update({"dim": dim, "col": columns})
     # Function for estimating causal impact among variables
-    metrics, predicted_graph, end_time = deepCause(df, model_path, pars)
+    # metrics, predicted_graph, end_time = deepCause(df, model_path, pars)
+    metrics, predicted_graph, end_time = execute_causal_pipeline(df, model_path, pars)
 
     # Calculate difference
     elapsed_time = end_time - start_time

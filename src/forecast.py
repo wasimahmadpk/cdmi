@@ -27,7 +27,7 @@ def mean_absolute_percentage_error(y_true, y_pred):
     return mape
 
 
-def modelTest(model_path, test_ds, num_samples, data, idx, prediction_length, count, intervention, in_type):
+def model_inference(model_path, test_ds, num_samples, data, idx, prediction_length, count, intervention, in_type):
     filename = pathlib.Path(model_path)
     # load the model from disk
     predictor = pickle.load(open(filename, 'rb'))
