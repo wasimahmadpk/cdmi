@@ -1,11 +1,8 @@
 import os
-import re
 import time
-import pickle
 import pathlib
 import numpy as np
 import pandas as pd
-from math import sqrt
 import seaborn as sns
 import matplotlib.pyplot as plt
 from functions import *
@@ -17,7 +14,6 @@ from scipy.stats import ks_2samp, spearmanr
 np.random.seed(1)
 
 def execute_causal_pipeline(df, model_path, pars):
-
     # Extract Parameters
     num_samples = pars.get("num_samples")
     training_length = pars.get("train_len")
@@ -32,12 +28,12 @@ def execute_causal_pipeline(df, model_path, pars):
 
     if plot_forecasts and plot_path:
         os.makedirs(plot_path, exist_ok=True)
+        os.makedirs(f"{plot_path}/forecasts", exist_ok=True)
+        os.makedirs(f"{plot_path}/kde", exist_ok=True)
 
     n = df.shape[1]
     pars['dim'] = n
     pars['length'] = n
-
-    filename = pathlib.Path(model_path)
 
     conf_mat_all = [[] for _ in range(4)]
     pvalues_all = [[] for _ in range(4)]
@@ -48,25 +44,28 @@ def execute_causal_pipeline(df, model_path, pars):
         pval_lists = [[] for _ in range(4)]
         kval_lists = [[] for _ in range(4)]
 
-        data_actual = df.iloc[:training_length + prediction_length].to_numpy()
-        obj = Knockoffs()
-        knockoffs = obj.Generate_Knockoffs(data_actual, pars)
-        knockoff_sample = np.array(knockoffs[:, i])
-
-        mean = np.random.normal(0, 0.05, len(knockoff_sample)) + df.iloc[:, i].mean()
-        outdist = np.random.normal(3, 3, len(knockoff_sample))
-        uniform = np.random.uniform(df.iloc[:, i].min(), df.iloc[:, i].max(), len(knockoff_sample))
-        interventionlist = [knockoff_sample, outdist, mean, uniform]
-        intervention_methods = ['Knockoffs', 'Out-dist', 'Mean', 'Uniform']
-
         for j in range(n):
             results = {k: [] for k in range(4)}
             results_int = {k: [] for k in range(4)}
 
-            for m, intervention in enumerate(interventionlist):
-                start = 0
-                for win in range(num_windows):
-                    test_data = df.iloc[start:start + training_length + prediction_length].copy()
+            for win in range(num_windows):
+                start = win * step_size
+                end = start + training_length + prediction_length
+                test_data = df.iloc[start:end].copy()
+
+                data_actual = test_data.to_numpy()
+                obj = Knockoffs()
+                knockoff_samples = obj.Generate_Knockoffs(data_actual, pars)
+
+                knockoffs = np.array(knockoff_samples[:, i])
+                mean = np.random.normal(0, 0.05, len(knockoffs)) + test_data.iloc[:, i].mean()
+                outdist = np.random.normal(3, 3, len(knockoffs))
+                uniform = np.random.uniform(test_data.iloc[:, i].min(), test_data.iloc[:, i].max(), len(knockoffs))
+
+                interventionlist = [knockoffs, outdist, mean, uniform]
+                intervention_methods = ['Knockoffs', 'Out-dist', 'Mean', 'Uniform']
+
+                for m, intervention in enumerate(interventionlist):
                     int_data = test_data.copy()
                     int_data.iloc[:, i] = intervention
 
@@ -80,9 +79,10 @@ def execute_causal_pipeline(df, model_path, pars):
                         'target': int_data.values.T.tolist()
                     }], freq=frequency, one_dim_target=False)
 
-                    # Run forecasting with intervention
-                    forecast_actual, mse, mape = model_inference(model_path, test_ds, num_samples, test_data.iloc[:, j], j, prediction_length, 0, False, 0)
-                    forecast_int, mseint, mapeint = model_inference(model_path, test_dsint, num_samples, test_data.iloc[:, j], j, prediction_length, 0, True, m)
+                    forecast_actual, _, mape = model_inference(model_path, test_ds, num_samples, test_data.iloc[:, j], j,
+                                                               prediction_length, 0, False, 0)
+                    forecast_int, _, mapeint = model_inference(model_path, test_dsint, num_samples, test_data.iloc[:, j], j,
+                                                               prediction_length, 0, True, m)
 
                     results[m].append(mape)
                     results_int[m].append(mapeint)
@@ -90,36 +90,55 @@ def execute_causal_pipeline(df, model_path, pars):
                     if plot_forecasts and plot_path:
                         plt.figure(figsize=(8, 4))
                         true_values = test_data.iloc[-prediction_length:, j].values
+
                         plt.plot(true_values, label="True", linestyle='--')
-                        plt.plot(forecast_actual, label="Forecast (original)", color='blue')
-                        plt.plot(forecast_int, label=f"Forecast (intervened: {intervention_methods[m]})", color='red')
-                        plt.title(f"Z{i} → Z{j} [{intervention_methods[m]}]")
-                        plt.xlabel("Time")
-                        plt.ylabel(f"Z{j}")
-                        plt.legend()
-                        filename = f"{plot_path}/forecasts/forecast_{i}_to_{j}_{intervention_methods[m].lower()}.pdf"
+                        plt.plot(forecast_actual, label="Actual", color='blue')
+                        plt.plot(forecast_int, label=f"Counterfactual: {intervention_methods[m]}", color='red')
+
+                        plt.xlabel("Forecast horizon", fontsize=20)
+                        plt.ylabel(f"Z{j}", fontsize=20)
+                        plt.xticks(fontsize=18)
+                        plt.yticks(fontsize=18)
+                        plt.ylim(top=1.3)
+                        plt.legend(fontsize=16, loc='upper right')
+
+                        filename = f"{plot_path}/forecasts/forecast_Z{i}_to_Z{j}_{intervention_methods[m].lower()}_win{win}.pdf"
                         plt.tight_layout()
-                        plt.savefig(filename, dpi=600)
+                        plt.savefig(filename, dpi=600, format='pdf')
                         plt.close()
 
-                    start += step_size
+                # KDE plot
+                if plot_forecasts and plot_path:
+                    for m in range(4):
+                        baseline_arr = np.array(results[m])
+                        intervened_arr = np.array(results_int[m])
 
+                        plt.figure(figsize=(8, 5))
+                        sns.kdeplot(baseline_arr, label="Actual", color='green', fill=True)
+                        sns.kdeplot(intervened_arr, label=f"Counterfactual: ({intervention_methods[m]})", color='yellow', fill=True)
+
+                        plt.xlabel("Residuals", fontsize=18)
+                        plt.ylabel("Density", fontsize=18)
+                        plt.xticks(fontsize=16)
+                        plt.yticks(fontsize=16)
+                        plt.legend(fontsize=16, loc='upper right')
+                        plt.tight_layout()
+
+                        kde_file = f"{plot_path}/kde/kde_Z{i}_to_Z{j}_{intervention_methods[m].lower()}.pdf"
+                        plt.savefig(kde_file, dpi=600, format='pdf')
+                        plt.close()
+
+            # Statistical tests
             for m in range(4):
                 corr, pv_corr = spearmanr(results[m], results_int[m])
                 t, p = ks_2samp(np.array(results[m]), np.array(results_int[m]))
                 kld = kl_divergence(np.array(results[m]), np.array(results_int[m]))
-
                 decision = 1 if p < pars['alpha'] else 0
 
-                cause_type = intervention_methods[m]
-                status = "REJECTED" if decision == 1 else "ACCEPTED"
-                print(f"[{cause_type}] Hypothesis for link {columns[i]} → {columns[j]}: {status} (p = {p:.4f})")
+                status = "REJECTED" if decision else "ACCEPTED"
+                print(f"[{intervention_methods[m]}] Hypothesis {columns[i]} → {columns[j]}: {status} (p = {p:.4f})")
 
-                if m == 0: indist_cause.append(decision)
-                if m == 1: outdist_cause.append(decision)
-                if m == 2: mean_cause.append(decision)
-                if m == 3: uni_cause.append(decision)
-
+                [indist_cause, outdist_cause, mean_cause, uni_cause][m].append(decision)
                 pval_lists[m].append(p)
                 kval_lists[m].append(kld)
 
@@ -141,12 +160,10 @@ def execute_causal_pipeline(df, model_path, pars):
     print(f'F-max: {fmax:.2f}')
 
     pred_conf_mat = np.array(conf_mat_all[3]).reshape(n, n)
-
-    print(f'Actual: \n {pars["ground_truth"]}')
-    print(f'Predicted: \n {pred_conf_mat}')
+    print(f'Actual: \n{pars["ground_truth"]}')
+    print(f'Predicted: \n{pred_conf_mat}')
 
     metrics = evaluate_best_predicted_graph(np.array(pars['ground_truth']), np.array([pred_conf_mat]))
-
     causal_matrix_thresholded = np.where(np.abs(np.array(pvalues_all[0])) < 0.10, 1, 0)
     plot_causal_graph(causal_matrix_thresholded, columns, model_name)
     evaluate(np.array(pars['ground_truth']).flatten(), conf_mat_all, intervention_methods)
