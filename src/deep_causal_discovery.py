@@ -108,7 +108,7 @@ def execute_causal_pipeline(df, model_path, pars):
                         plt.close()
 
                 # KDE plot
-                if plot_forecasts and plot_path:
+                if plot_forecasts and win < 5 and plot_path:
                     for m in range(4):
                         baseline_arr = np.array(results[m])
                         intervened_arr = np.array(results_int[m])
