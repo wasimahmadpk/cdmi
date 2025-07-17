@@ -82,11 +82,12 @@ def get_syn_params():
     params = {
 
         'epochs': 25,             # 125
-        'pred_len': 5,           # 15
-        'train_len': 500,        # 1500
-        'num_layers': 5,          # 5
-        'num_samples': 50,
-        'num_cells': 20,          # 50
+        'pred_len': 50,  
+        'context_len': 100,         # 15
+        'train_len': 1000,        # 1500
+        'num_layers': 2,          # 5
+        'num_cells': 60,
+        'num_samples': 5,          # 50
         'dropout_rate': 0.1,
         'step_size': 3,
         'num_sliding_win': 30,

@@ -99,7 +99,7 @@ def causal_graph(input, pars):
     # create estimator
     estimator = DeepAREstimator(
         prediction_length=prediction_length,
-        context_length=prediction_length,
+        context_length=2*prediction_length,
         freq=freq,
         num_layers=num_layers,
         num_cells=num_cells,
@@ -108,8 +108,8 @@ def causal_graph(input, pars):
             ctx="cpu",
             epochs=epochs,
             hybridize=False,
-            learning_rate=1E-4,
-            batch_size=32
+            learning_rate=1E-3,
+            batch_size=48
         ),
         distr_output=MultivariateGaussianOutput(dim=dim)
     )

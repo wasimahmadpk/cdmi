@@ -6,7 +6,7 @@ import networkx as nx
 import random
 
 class RandomCausalSimulator:
-    def __init__(self, n_nodes=5, edge_prob=0.3, self_dep_prob=0.8, nonlinear_prob=0.5, seed=None):
+    def __init__(self, n_nodes=5, edge_prob=0.3, nonlinear_prob=0.5, self_dep_prob=0.0, seed=None):
         self.n = n_nodes
         self.T = 5000
         self.edge_prob = edge_prob
