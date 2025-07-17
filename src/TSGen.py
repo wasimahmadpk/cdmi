@@ -54,11 +54,6 @@ class RandomCausalSimulator:
         lags = np.random.randint(1, 6, size=(self.n, self.n))
         coeffs = np.random.uniform(0.15, 1.5, size=(self.n, self.n))
 
-        # Add seasonality parameters
-        periods = np.random.randint(20, 200, size=self.n)
-        amplitudes = np.random.uniform(0.2, 2.0, size=self.n)
-        phases = np.random.uniform(0, 2 * np.pi, size=self.n)
-
         for t in range(10, self.T):
             for child in range(self.n):
                 val = np.random.normal(self.noise_means[child], self.noise_stds[child])
@@ -73,10 +68,6 @@ class RandomCausalSimulator:
                             val += coef * self._nonlinear(parent_val)
                         else:
                             val += coef * parent_val
-                #  Add seasonal component
-                seasonal = amplitudes[child] * np.sin(2 * np.pi * t / periods[child] + phases[child])
-                val += seasonal
-
                 data[f'Z{child}'].append(val)
 
         self.data = pd.DataFrame({k: v[33:] for k, v in data.items()})
