@@ -114,14 +114,17 @@ def execute_causal_pipeline(df, model_path, pars):
                         intervened_arr = np.array(results_int[m])
 
                         plt.figure(figsize=(8, 5))
-                        sns.kdeplot(baseline_arr, label="Actual", color='green', fill=True)
+                        sns.kdeplot(baseline_arr, label="Actual", color='green', fill=True, alpha=0.5)
                         sns.kdeplot(intervened_arr, label=f"Counterfactual: ({intervention_methods[m]})", color='yellow', fill=True)
+
+                        sns.kdeplot(baseline_arr, label="Actual", color='#008080', fill=True, alpha=0.77)   # Teal
+                        sns.kdeplot(intervened_arr, label=f"Intervened: ({intervention_methods[m]})", color='#FFA500', fill=True, alpha=0.6)  # Orange
 
                         plt.xlabel("Residuals", fontsize=18)
                         plt.ylabel("Density", fontsize=18)
                         plt.xticks(fontsize=16)
                         plt.yticks(fontsize=16)
-                        plt.legend(fontsize=16, loc='upper right')
+                        plt.legend(fontsize=16)
                         plt.tight_layout()
 
                         kde_file = f"{plot_path}/kde/kde_Z{i}_to_Z{j}_{intervention_methods[m].lower()}.pdf"
