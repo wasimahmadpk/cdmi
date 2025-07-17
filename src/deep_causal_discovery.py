@@ -54,7 +54,7 @@ def execute_causal_pipeline(df, model_path, pars):
         knockoff_sample = np.array(knockoffs[:, i])
 
         mean = np.random.normal(0, 0.05, len(knockoff_sample)) + df.iloc[:, i].mean()
-        outdist = np.random.normal(11, 11, len(knockoff_sample))
+        outdist = np.random.normal(3, 3, len(knockoff_sample))
         uniform = np.random.uniform(df.iloc[:, i].min(), df.iloc[:, i].max(), len(knockoff_sample))
         interventionlist = [knockoff_sample, outdist, mean, uniform]
         intervention_methods = ['Knockoffs', 'Out-dist', 'Mean', 'Uniform']
@@ -140,7 +140,7 @@ def execute_causal_pipeline(df, model_path, pars):
     _, fmax = f1_max(actual, pred_score)
     print(f'F-max: {fmax:.2f}')
 
-    pred_conf_mat = np.array(conf_mat_all[0]).reshape(n, n)
+    pred_conf_mat = np.array(conf_mat_all[3]).reshape(n, n)
 
     print(f'Actual: \n {pars["ground_truth"]}')
     print(f'Predicted: \n {pred_conf_mat}')
