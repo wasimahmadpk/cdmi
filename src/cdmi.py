@@ -53,19 +53,12 @@ def causal_graph(input, pars):
 
     freq = pars.get("freq")
     epochs = pars.get("epochs")
-    win_size = pars.get("win_size")
-    slidingwin_size = pars.get("slidingwin_size")
     training_length = pars.get("train_len")
     prediction_length = pars.get("pred_len")
-    num_samples = pars.get("num_samples")
     num_layers = pars.get("num_layers")
     num_cells = pars.get("num_cells")
     dropout_rate = pars.get("dropout_rate")
-    batch_size = pars.get("batch_size")
-    plot_path = pars.get("plot_path")
     model_name = pars.get("model_name")
-    
-    # Your function logic using data and params
 
     if isinstance(input, str):
         if input.endswith('.csv'):
