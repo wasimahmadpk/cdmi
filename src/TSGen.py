@@ -1,6 +1,6 @@
 import numpy as np
 import pandas as pd
-from functions import *
+from functions import *  # Assumes normalize() is defined here
 import matplotlib.pyplot as plt
 import networkx as nx
 import random
@@ -18,8 +18,10 @@ class RandomCausalSimulator:
             np.random.seed(seed)
             random.seed(seed)
 
-        self.noise_stds = np.random.uniform(0.05, 0.3, size=self.n)
-        self.noise_means = np.random.uniform(0.0, 0.5, size=self.n)
+        # Lower noise for clearer signals
+        self.noise_stds = np.random.uniform(0.01, 0.05, size=self.n)
+        self.noise_means = np.random.uniform(0.0, 0.1, size=self.n)
+
         self.adj = None
         self.graph = None
         self.data = None
@@ -28,18 +30,33 @@ class RandomCausalSimulator:
         adj = np.triu((np.random.rand(self.n, self.n) < self.edge_prob).astype(int), 1)
         for i in range(self.n):
             if np.random.rand() < self.self_dep_prob:
-                adj[i, i] = 1  # Self-loop (autoregressive)
+                adj[i, i] = 1  # self-loop
         return adj
 
     def _nonlinear(self, x):
-        return np.tanh(x) + 0.1 * np.sin(x)
+        # More complex nonlinear function with clipping to prevent explosion
+        val = np.tanh(x) + 0.2 * np.sin(2 * x) + 0.01 * (x ** 2)
+        return np.clip(val, -3, 3)
 
     def simulate(self):
         self.adj = self._generate_random_dag()
         G = nx.DiGraph()
-        data = {f'Z{i}': list(np.zeros(10)) for i in range(self.n)}
+
+        # Faster cycles (shorter periodicity)
+        freqs = np.linspace(0.1, 0.3, self.n)
+        np.random.shuffle(freqs)
+        phases = np.random.uniform(0, 2 * np.pi, size=self.n)
+        amplitudes = np.random.uniform(0.5, 1.0, size=self.n)
+
+        data = {}
+        for i in range(self.n):
+            time = np.arange(self.T)
+            base_signal = amplitudes[i] * np.sin(freqs[i] * time + phases[i])
+            noise = np.random.normal(loc=self.noise_means[i], scale=self.noise_stds[i], size=self.T)
+            data[f'Z{i}'] = list(base_signal + noise)
+
         nonlinear_mask = (np.random.rand(self.n, self.n) < self.nonlinear_prob) & (self.adj == 1)
-        print(f'NOnlinear Mask: \n {nonlinear_mask}')
+        print(f'Nonlinear Mask:\n{nonlinear_mask}')
 
         for i in range(self.n):
             G.add_node(f'Z{i}')
@@ -48,31 +65,30 @@ class RandomCausalSimulator:
                 if self.adj[i, j] == 1 and i != j:
                     G.add_edge(f'Z{i}', f'Z{j}')
                 elif i == j and self.adj[i, i] == 1:
-                    G.add_edge(f'Z{i}', f'Z{i}')  # Self-loop
+                    G.add_edge(f'Z{i}', f'Z{i}')
 
         self.graph = G
 
-        lags = np.random.randint(1, 6, size=(self.n, self.n))
-        coeffs = np.random.uniform(0.75, 1.5, size=(self.n, self.n))
+        lags = np.random.randint(1, 4, size=(self.n, self.n))  # shorter lags
+        coeffs = np.random.uniform(2.0, 3.0, size=(self.n, self.n))  # strong causal effect
 
-        for t in range(10, self.T):
+        for t in range(self.T):
             for child in range(self.n):
-                val = np.random.normal(self.noise_means[child], self.noise_stds[child])
                 for parent in range(self.n):
-                    if self.adj[parent, child] == 1:
+                    if self.adj[parent, child] == 1 and parent != child:
                         lag = lags[parent, child]
-                        coef = coeffs[parent, child]
                         if t - lag < 0:
                             continue
                         parent_val = data[f'Z{parent}'][t - lag]
+                        coef = coeffs[parent, child]
                         if nonlinear_mask[parent, child]:
-                            val += coef * self._nonlinear(parent_val)
+                            data[f'Z{child}'][t] += coef * self._nonlinear(parent_val)
                         else:
-                            val += coef * parent_val
-                data[f'Z{child}'].append(val)
+                            data[f'Z{child}'][t] += coef * parent_val
+                # Clip after all parent influences to avoid explosion or vanishing
+                data[f'Z{child}'][t] = np.clip(data[f'Z{child}'][t], -10, 10)
 
-        self.data = pd.DataFrame({k: v[33:] for k, v in data.items()})
-        self.data = self.data.apply(normalize)
+        self.data = pd.DataFrame(data).apply(normalize)
         return self.data, self.adj
 
     def draw_dag(self, layout='spring', figsize=(6, 6)):
