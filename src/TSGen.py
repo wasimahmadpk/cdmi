@@ -56,7 +56,7 @@ class RandomCausalSimulator:
             data[f'Z{i}'] = list(base_signal + noise)
 
         nonlinear_mask = (np.random.rand(self.n, self.n) < self.nonlinear_prob) & (self.adj == 1)
-        print(f'Nonlinear Mask:\n{nonlinear_mask}')
+        # print(f'Nonlinear Mask:\n{nonlinear_mask}')
 
         for i in range(self.n):
             G.add_node(f'Z{i}')

@@ -108,28 +108,34 @@ def execute_causal_pipeline(df, model_path, pars):
                         plt.close()
 
                 # KDE plot
-                if plot_forecasts and win < 5 and plot_path:
+                if plot_forecasts and win < 2 and plot_path:
                     for m in range(4):
                         baseline_arr = np.array(results[m])
                         intervened_arr = np.array(results_int[m])
 
-                        plt.figure(figsize=(8, 5))
-                        sns.kdeplot(baseline_arr, label="Actual", color='green', fill=True, alpha=0.5)
-                        sns.kdeplot(intervened_arr, label=f"Counterfactual: ({intervention_methods[m]})", color='yellow', fill=True)
+                        fig = plt.figure(figsize=(8, 5))
+                        ax = fig.add_subplot(111)
 
-                        sns.kdeplot(baseline_arr, label="Actual", color='#008080', fill=True, alpha=0.77)   # Teal
-                        sns.kdeplot(intervened_arr, label=f"Intervened: ({intervention_methods[m]})", color='#FFA500', fill=True, alpha=0.6)  # Orange
+                        sns.kdeplot(baseline_arr, label="Actual", color='#008080', fill=True, alpha=0.77, ax=ax)
+                        sns.kdeplot(intervened_arr, label=f"Intervened: ({intervention_methods[m]})", color='#FFA500', fill=True, alpha=0.6, ax=ax)
 
                         plt.xlabel("Residuals", fontsize=18)
                         plt.ylabel("Density", fontsize=18)
                         plt.xticks(fontsize=16)
                         plt.yticks(fontsize=16)
-                        plt.legend(fontsize=16)
+
+                        # Get the latest two collections for legend handles (since you plotted two KDEs)
+                        handles = ax.collections[-2:]  
+                        labels = ["Actual", f"Intervened: ({intervention_methods[m]})"]
+
+                        ax.legend(handles=handles, labels=labels, fontsize=16)
+
                         plt.tight_layout()
 
                         kde_file = f"{plot_path}/kde/kde_Z{i}_to_Z{j}_{intervention_methods[m].lower()}.pdf"
                         plt.savefig(kde_file, dpi=600, format='pdf')
                         plt.close()
+
 
             # Statistical tests
             for m in range(4):

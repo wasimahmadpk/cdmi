@@ -258,7 +258,7 @@ def deepCause(df, model, pars):
             plt.gcf()
             ax1.legend()
             filename = pathlib.Path(plot_path + f"{columns[i]} ---> {columns[j]}.pdf")
-            plt.savefig(filename,  dpi=350)
+            plt.savefig(filename,  dpi=600)
             plt.close()
 
             indist_cause.append(causal_decision[0])
