@@ -87,7 +87,7 @@ def execute_causal_pipeline(df, model_path, pars):
                     results[m].append(mape)
                     results_int[m].append(mapeint)
 
-                    if plot_forecasts and plot_path:
+                    if plot_forecasts and plot_path and win < 1:
                         plt.figure(figsize=(8, 4))
                         true_values = test_data.iloc[-prediction_length:, j].values
 
@@ -107,34 +107,26 @@ def execute_causal_pipeline(df, model_path, pars):
                         plt.savefig(filename, dpi=600, format='pdf')
                         plt.close()
 
-                # KDE plot
-                if plot_forecasts and win < 2 and plot_path:
-                    for m in range(4):
-                        baseline_arr = np.array(results[m])
-                        intervened_arr = np.array(results_int[m])
+            # KDE plot
+            if plot_forecasts and plot_path:
+                for m in range(4):
+                    baseline_arr = np.array(results[m])
+                    intervened_arr = np.array(results_int[m])
 
-                        fig = plt.figure(figsize=(8, 5))
-                        ax = fig.add_subplot(111)
+                    plt.figure(figsize=(8, 5))
+                    sns.kdeplot(baseline_arr, label="Actual", color='#008080', fill=True, alpha=0.77)
+                    sns.kdeplot(intervened_arr, label=f"Intervened: ({intervention_methods[m]})", color='#FFA500', fill=True, alpha=0.6)
 
-                        sns.kdeplot(baseline_arr, label="Actual", color='#008080', fill=True, alpha=0.77, ax=ax)
-                        sns.kdeplot(intervened_arr, label=f"Intervened: ({intervention_methods[m]})", color='#FFA500', fill=True, alpha=0.6, ax=ax)
+                    plt.xlabel('Residuals', fontsize=18)
+                    plt.ylabel(f"Z{i} --> Z{j}", fontsize=18)
+                    plt.xticks(fontsize=16)
+                    plt.yticks(fontsize=16)
+                    plt.legend(fontsize=16)
 
-                        plt.xlabel("Residuals", fontsize=18)
-                        plt.ylabel("Density", fontsize=18)
-                        plt.xticks(fontsize=16)
-                        plt.yticks(fontsize=16)
-
-                        # Get the latest two collections for legend handles (since you plotted two KDEs)
-                        handles = ax.collections[-2:]  
-                        labels = ["Actual", f"Intervened: ({intervention_methods[m]})"]
-
-                        ax.legend(handles=handles, labels=labels, fontsize=16)
-
-                        plt.tight_layout()
-
-                        kde_file = f"{plot_path}/kde/kde_Z{i}_to_Z{j}_{intervention_methods[m].lower()}.pdf"
-                        plt.savefig(kde_file, dpi=600, format='pdf')
-                        plt.close()
+                    plt.tight_layout()
+                    kde_file = f"{plot_path}/kde/kde_Z{i}_to_Z{j}_{intervention_methods[m].lower()}.pdf"
+                    plt.savefig(kde_file, dpi=600, format='pdf')
+                    plt.close()
 
 
             # Statistical tests
@@ -168,7 +160,7 @@ def execute_causal_pipeline(df, model_path, pars):
     _, fmax = f1_max(actual, pred_score)
     print(f'F-max: {fmax:.2f}')
 
-    pred_conf_mat = np.array(conf_mat_all[3]).reshape(n, n)
+    pred_conf_mat = np.array(conf_mat_all[0]).reshape(n, n)
     print(f'Actual: \n{pars["ground_truth"]}')
     print(f'Predicted: \n{pred_conf_mat}')
 
