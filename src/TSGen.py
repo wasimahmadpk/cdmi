@@ -6,7 +6,7 @@ import networkx as nx
 import random
 
 class RandomCausalSimulator:
-    def __init__(self, n_nodes=5, edge_prob=0.3, nonlinear_prob=0.5, self_dep_prob=0.0, seed=None):
+    def __init__(self, n_nodes=5, edge_prob=0.3, nonlinear_prob=0.5, self_dep_prob=1.0, seed=None):
         self.n = n_nodes
         self.T = 5000
         self.edge_prob = edge_prob
@@ -39,6 +39,7 @@ class RandomCausalSimulator:
         G = nx.DiGraph()
         data = {f'Z{i}': list(np.zeros(10)) for i in range(self.n)}
         nonlinear_mask = (np.random.rand(self.n, self.n) < self.nonlinear_prob) & (self.adj == 1)
+        print(f'NOnlinear Mask: \n {nonlinear_mask}')
 
         for i in range(self.n):
             G.add_node(f'Z{i}')
@@ -52,7 +53,7 @@ class RandomCausalSimulator:
         self.graph = G
 
         lags = np.random.randint(1, 6, size=(self.n, self.n))
-        coeffs = np.random.uniform(0.15, 1.5, size=(self.n, self.n))
+        coeffs = np.random.uniform(0.75, 1.5, size=(self.n, self.n))
 
         for t in range(10, self.T):
             for child in range(self.n):
