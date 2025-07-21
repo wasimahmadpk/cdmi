@@ -71,7 +71,7 @@ class RandomCausalSimulator:
         self.graph = G
 
         lags = np.random.randint(1, 4, size=(self.n, self.n))  # shorter lags
-        coeffs = np.random.uniform(2.0, 3.0, size=(self.n, self.n))  # strong causal effect
+        coeffs = np.random.uniform(1.0, 5.0, size=(self.n, self.n))  # strong causal effect
 
         for t in range(self.T):
             for child in range(self.n):

@@ -46,7 +46,7 @@ class Knockoffs:
         SigmaHat = np.cov(X_train, rowvar=False)
 
         # Add ridge regularization to ensure positive semi-definiteness
-        ridge = 1e-3  # You can increase this slightly if needed
+        ridge = 1e-5  # You can increase this slightly if needed
         SigmaHat += np.eye(SigmaHat.shape[0]) * ridge
 
         # Initialize generator of second-order knockoffs
