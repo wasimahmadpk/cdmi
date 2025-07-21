@@ -31,7 +31,7 @@ class RandomCausalSimulator:
         for i in range(self.n):
             if np.random.rand() < self.self_dep_prob:
                 adj[i, i] = 1  # self-loop
-        np.fill_diagonal(adj, 1)  # Always add self-loops
+        # np.fill_diagonal(adj, 1)  # Always add self-loops
         return adj
 
     def _nonlinear(self, x):

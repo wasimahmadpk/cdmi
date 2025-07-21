@@ -1499,7 +1499,7 @@ def plot_metrics(methods_performance_dict, plot_path, metric_name):
     ax.set_xticks(x)
     plt.xticks(fontsize=14)
     ax.set_ylim(-0.1, 1.1)
-    plt.xlabel('Variables', fontsize=14)
+    plt.xlabel('Nonlinearity', fontsize=14)
     plt.ylabel(metric_name, fontsize=14)
     ax.set_yticks(np.arange(0, 1.10, 0.10))  # Set finer ticks
     plt.yticks(fontsize=14)
@@ -1534,7 +1534,7 @@ def plot_metrics_tier(methods_performance_dict, plot_path, metric_name):
     ax.set_xticks(x)
     plt.xticks(fontsize=14)
     ax.set_ylim(-0.1, 1.1)
-    plt.xlabel('Variables', fontsize=14)
+    plt.xlabel('Nonlinearity', fontsize=14)
     plt.ylabel(metric_name, fontsize=14)
     ax.set_yticks(np.arange(0, 1.10, 0.10))  # Set finer ticks
     plt.yticks(fontsize=14)
