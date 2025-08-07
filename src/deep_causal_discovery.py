@@ -168,7 +168,7 @@ def execute_causal_pipeline(df, model_path, pars):
     causal_matrix_thresholded = np.where(np.abs(np.array(pvalues_all[0])) < 0.10, 1, 0)
     plot_causal_graph(causal_matrix_thresholded, columns, model_name)
     evaluate(np.array(pars['ground_truth']).flatten(), conf_mat_all, intervention_methods)
-
+    metrics['Fscore'] = fmax
     for metric, value in metrics.items():
         print(f"{metric}: {value:.2f}")
 
