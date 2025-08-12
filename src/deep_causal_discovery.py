@@ -91,8 +91,8 @@ def execute_causal_pipeline(df, model_path, pars):
                         plt.figure(figsize=(8, 4))
                         true_values = test_data.iloc[-prediction_length:, j].values
 
-                        plt.plot(true_values, label="True", linestyle='--')
-                        plt.plot(forecast_actual, label="Actual", color='blue')
+                        plt.plot(true_values, label="True", linestyle='--', color='green')
+                        plt.plot(forecast_actual, label="Forecast", color='blue')
 
                         plt.xlabel("Forecast horizon", fontsize=20)
                         plt.ylabel(f"Z{j}", fontsize=20)
@@ -120,7 +120,7 @@ def execute_causal_pipeline(df, model_path, pars):
 
                     plt.figure(figsize=(8, 5))
                     sns.kdeplot(baseline_arr, label="Actual", color='#008080', fill=True, alpha=0.77)
-                    sns.kdeplot(intervened_arr, label=f"Intervened: ({intervention_methods[m]})", color='#FFA500', fill=True, alpha=0.6)
+                    sns.kdeplot(intervened_arr, label=f"Intervened", color='#FFA500', fill=True, alpha=0.6)
 
                     plt.xlabel('Residuals', fontsize=18)
                     plt.ylabel(f"Z{i} --> Z{j}", fontsize=18)

@@ -36,7 +36,7 @@ class RandomCausalSimulator:
 
     def _nonlinear(self, x):
         # More complex nonlinear function with clipping to prevent explosion
-        val = np.tanh(x) + 0.2 * np.sin(2 * x) + 0.01 * (x ** 2)
+        val = 0.2 * np.sin(2 * x) + 0.01 * (x ** 2)
         return np.clip(val, -3, 3)
 
     def simulate(self):
