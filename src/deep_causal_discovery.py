@@ -57,7 +57,7 @@ def execute_causal_pipeline(df, model_path, pars):
                 obj = Knockoffs()
                 knockoff_samples = obj.Generate_Knockoffs(data_actual, pars)
 
-                knockoffs = np.array(knockoff_samples[:, i])
+                knockoffs = np.array(knockoff_samples[:, i]) + np.random.normal(0, 0.5, len(knockoff_samples[:, i]))
                 mean = np.random.normal(0, 0.05, len(knockoffs)) + test_data.iloc[:, i].mean()
                 outdist = np.random.normal(3, 3, len(knockoffs))
                 uniform = np.random.uniform(test_data.iloc[:, i].min(), test_data.iloc[:, i].max(), len(knockoffs))
@@ -93,7 +93,6 @@ def execute_causal_pipeline(df, model_path, pars):
 
                         plt.plot(true_values, label="True", linestyle='--')
                         plt.plot(forecast_actual, label="Actual", color='blue')
-                        plt.plot(forecast_int, label=f"Counterfactual: {intervention_methods[m]}", color='red')
 
                         plt.xlabel("Forecast horizon", fontsize=20)
                         plt.ylabel(f"Z{j}", fontsize=20)
@@ -102,6 +101,12 @@ def execute_causal_pipeline(df, model_path, pars):
                         plt.ylim(top=1.3)
                         plt.legend(fontsize=16, loc='upper right')
 
+                        filename = f"{plot_path}/forecasts/forecast_Z{j}_win{win}.pdf"
+                        plt.tight_layout()
+                        plt.savefig(filename, dpi=600, format='pdf')
+
+                        plt.plot(forecast_int, label=f"Counterfactual: {intervention_methods[m]}", color='red')
+                        plt.legend(fontsize=16, loc='upper right')
                         filename = f"{plot_path}/forecasts/forecast_Z{i}_to_Z{j}_{intervention_methods[m].lower()}_win{win}.pdf"
                         plt.tight_layout()
                         plt.savefig(filename, dpi=600, format='pdf')
