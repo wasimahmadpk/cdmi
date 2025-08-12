@@ -1497,14 +1497,14 @@ def plot_metrics(methods_performance_dict, plot_path, metric_name):
         ax.plot(x, y, marker='.', linestyle='-', label=f'{method}')
     
     ax.set_xticks(x)
-    plt.xticks(fontsize=14)
+    plt.xticks(fontsize=12)
     ax.set_ylim(-0.1, 1.1)
     plt.xlabel('Nonlinearity', fontsize=14)
     plt.ylabel(metric_name, fontsize=14)
     ax.set_yticks(np.arange(0, 1.10, 0.10))  # Set finer ticks
-    plt.yticks(fontsize=14)
-    # plt.grid(True)
-    plt.legend(fontsize=13, ncol=2)
+    plt.yticks(fontsize=12)
+    plt.grid(True, axis='y')
+    plt.legend(fontsize=12, ncol=3)
     # plt.legend().remove()
 
     plt.tight_layout()
