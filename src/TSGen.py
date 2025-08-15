@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import networkx as nx
 import random
 
-class RandomCausalSimulator:
+class CausalSimulator:
     def __init__(self, n_nodes=5, edge_prob=0.3, nonlinear_prob=0.5, self_dep_prob=1.0, seed=None):
         self.n = n_nodes
         self.T = 5000

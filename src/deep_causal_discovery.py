@@ -57,7 +57,7 @@ def execute_causal_pipeline(df, model_path, pars):
                 obj = Knockoffs()
                 knockoff_samples = obj.Generate_Knockoffs(data_actual, pars)
 
-                knockoffs = np.array(knockoff_samples[:, i]) + np.random.normal(0, 0.5, len(knockoff_samples[:, i]))
+                knockoffs = np.array(knockoff_samples[:, i]) + np.random.normal(0, 2.5, len(knockoff_samples[:, i]))
                 mean = np.random.normal(0, 0.05, len(knockoffs)) + test_data.iloc[:, i].mean()
                 outdist = np.random.normal(3, 3, len(knockoffs))
                 uniform = np.random.uniform(test_data.iloc[:, i].min(), test_data.iloc[:, i].max(), len(knockoffs))
@@ -175,7 +175,7 @@ def execute_causal_pipeline(df, model_path, pars):
     causal_matrix_thresholded = np.where(np.abs(np.array(pvalues_all[0])) < 0.10, 1, 0)
     plot_causal_graph(causal_matrix_thresholded, columns, model_name)
     # evaluate(np.array(pars['ground_truth']).flatten(), conf_mat_all[0], intervention_methods)
-    metrics['Fscore'] = fmax
+    # metrics['Fscore'] = fmax
     for metric, value in metrics.items():
         print(f"{metric}: {value:.2f}")
 
