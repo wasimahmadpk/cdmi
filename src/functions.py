@@ -529,13 +529,13 @@ def evaluate_best_predicted_graph(actual, predicted_list):
     best_fpr = float('inf')  # Initialize FPR with high value for tiebreakers
     
     # Flatten actual graph once, since it's common for all predictions
-    # y_true_flat = actual[mask].tolist()
-    y_true_flat = [item for sublist in actual for item in sublist]
+    y_true_flat = actual[mask].tolist()
+    # y_true_flat = [item for sublist in actual for item in sublist]
     
     for predicted in predicted_list:
          # Flatten predicted graph
-        # y_pred_flat = predicted[mask].tolist()
-        y_pred_flat = [item for sublist in predicted for item in sublist]
+        y_pred_flat = predicted[mask].tolist()
+        # y_pred_flat = [item for sublist in predicted for item in sublist]
 
         # Calculate confusion matrix
         cm = confusion_matrix(y_true_flat, y_pred_flat, labels=[0, 1])
