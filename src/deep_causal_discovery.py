@@ -98,10 +98,12 @@ def execute_causal_pipeline(df, model_path, pars):
                         plt.ylabel(f"Z{j}", fontsize=20)
                         plt.xticks(fontsize=18)
                         plt.yticks(fontsize=18)
-                        plt.ylim(top=1.3)
+                        # plt.ylim(top=1.3)
                         plt.legend(fontsize=16, loc='upper right')
 
-                        filename = f"{plot_path}/forecasts/forecast_Z{j}_win{win}.pdf"
+                        # Generate a random integer
+                        rnd = random.randint(1, 9999)
+                        filename = f"{plot_path}/forecasts/forecast_Z{j}_win{win}_{rnd}.pdf"
                         plt.tight_layout()
                         plt.savefig(filename, dpi=600, format='pdf')
 
