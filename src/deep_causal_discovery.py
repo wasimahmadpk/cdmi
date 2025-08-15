@@ -137,7 +137,7 @@ def execute_causal_pipeline(df, model_path, pars):
 
 
             # Statistical tests
-            for m in range(4):
+            for m in range(1):
                 corr, pv_corr = spearmanr(results[m], results_int[m])
                 t, p = ks_2samp(np.array(results[m]), np.array(results_int[m]))
                 kld = kl_divergence(np.array(results[m]), np.array(results_int[m]))
