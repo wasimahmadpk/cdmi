@@ -62,8 +62,8 @@ def execute_causal_pipeline(df, model_path, pars):
                 outdist = np.random.normal(3, 3, len(knockoffs))
                 uniform = np.random.uniform(test_data.iloc[:, i].min(), test_data.iloc[:, i].max(), len(knockoffs))
 
-                interventionlist = [knockoffs, outdist, mean, uniform]
-                intervention_methods = ['Knockoffs', 'Out-dist', 'Mean', 'Uniform']
+                interventionlist = [knockoffs] #, outdist, mean, uniform
+                intervention_methods = ['Knockoffs'] #, 'Out-dist', 'Mean', 'Uniform'
 
                 for m, intervention in enumerate(interventionlist):
                     int_data = test_data.copy()
@@ -116,7 +116,7 @@ def execute_causal_pipeline(df, model_path, pars):
 
             # KDE plot
             if plot_forecasts and plot_path:
-                for m in range(4):
+                for m in range(len(intervention_methods)):
                     baseline_arr = np.array(results[m])
                     intervened_arr = np.array(results_int[m])
 
@@ -137,7 +137,7 @@ def execute_causal_pipeline(df, model_path, pars):
 
 
             # Statistical tests
-            for m in range(1):
+            for m in range(len(intervention_methods)):
                 corr, pv_corr = spearmanr(results[m], results_int[m])
                 t, p = ks_2samp(np.array(results[m]), np.array(results_int[m]))
                 kld = kl_divergence(np.array(results[m]), np.array(results_int[m]))
@@ -152,7 +152,7 @@ def execute_causal_pipeline(df, model_path, pars):
 
             print('-------------***-------------***---------------***------------')
 
-        for m in range(4):
+        for m in range(len(intervention_methods)):
             pvalues_all[m].append(pval_lists[m])
             kvalues_all[m].append(kval_lists[m])
 
@@ -174,7 +174,7 @@ def execute_causal_pipeline(df, model_path, pars):
     metrics = evaluate_best_predicted_graph(np.array(pars['ground_truth']), np.array([pred_conf_mat]))
     causal_matrix_thresholded = np.where(np.abs(np.array(pvalues_all[0])) < 0.10, 1, 0)
     plot_causal_graph(causal_matrix_thresholded, columns, model_name)
-    evaluate(np.array(pars['ground_truth']).flatten(), conf_mat_all, intervention_methods)
+    # evaluate(np.array(pars['ground_truth']).flatten(), conf_mat_all[0], intervention_methods)
     metrics['Fscore'] = fmax
     for metric, value in metrics.items():
         print(f"{metric}: {value:.2f}")
