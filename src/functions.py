@@ -1503,7 +1503,7 @@ def plot_metrics(methods_performance_dict, plot_path, metric_name):
     plt.ylabel(metric_name, fontsize=14)
     ax.set_yticks(np.arange(0, 1.10, 0.10))  # Set finer ticks
     plt.yticks(fontsize=12)
-    plt.grid(True, axis='y')
+    plt.grid(False)
     plt.legend(fontsize=12, ncol=3)
     # plt.legend().remove()
 
