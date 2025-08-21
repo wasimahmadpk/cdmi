@@ -90,7 +90,7 @@ def get_syn_params():
         'num_samples': 5,          # 50
         'dropout_rate': 0.1,
         'step_size': 3,
-        'num_sliding_win': 25,
+        'num_sliding_win': 30,
         'dim': 5,
         'alpha': 0.10,
         'batch_size': 32,
