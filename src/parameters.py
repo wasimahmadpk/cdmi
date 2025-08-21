@@ -81,18 +81,18 @@ def get_syn_params():
     # Parameters for synthetic data
     params = {
 
-        'epochs': 20,             # 125
-        'pred_len': 5,  
-        'context_len': 25,         # 15
-        'train_len': 400,        # 1500
+        'epochs': 50,             # 125
+        'pred_len': 8,  
+        'context_len': 50,         # 15
+        'train_len': 1000,        # 1500
         'num_layers': 2,          # 5
-        'num_cells': 20,
+        'num_cells': 40,
         'num_samples': 5,          # 50
         'dropout_rate': 0.1,
         'step_size': 3,
         'num_sliding_win': 25,
         'dim': 5,
-        'alpha': 0.05,
+        'alpha': 0.10,
         'batch_size': 32,
         'ground_truth': [1, 1, 1, 1,
                          0, 1, 0, 0,
