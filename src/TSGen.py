@@ -25,7 +25,7 @@ class CausalSimulator:
             np.random.seed(seed)
             random.seed(seed)
 
-        self.noise_stds = np.random.uniform(0.1, 0.3, size=self.n)
+        self.noise_stds = np.random.uniform(0.3, 0.9, size=self.n)
         self.noise_means = np.zeros(self.n)
         self.adj = None
         self.graph = None
@@ -49,11 +49,11 @@ class CausalSimulator:
         # define thresholds for each nonlinear term
         thresholds = [0.1, 0.3, 0.5, 0.7, 0.9]
         nonlinear_terms = [
-            lambda x: 0.2 * np.sin(x),
+            lambda x: 0.5 * np.sin(2 * x),
             lambda x: 0.5 * (x ** 2) / (1 + np.abs(x)),
-            lambda x: 0.3 * (x ** 3) / (1 + x ** 2),
-            lambda x: 0.2 * np.cos(2 * x) + 0.2 * (x ** 2),
-            lambda x: 0.1 * np.sin(3 * x)+ 0.2 * (x ** 4) 
+            lambda x: 0.5 * (x ** 3) / (1 + x ** 2),
+            lambda x: 0.5 * np.cos(2 * x) + 0.2 * (x ** 2),
+            lambda x: 0.5 * np.tan(4 * x) + 0.2 * (x ** 3) 
         ]
 
         for t, func in zip(thresholds, nonlinear_terms):
@@ -79,8 +79,8 @@ class CausalSimulator:
                     G.add_edge(f'Z{i}', f'Z{j}')
         self.graph = G
 
-        lags = np.random.randint(1, 5, size=(self.n, self.n))
-        coeffs = np.random.uniform(1.5, 3.0, size=(self.n, self.n))  # mild linear coefficients
+        lags = np.random.randint(1, 7, size=(self.n, self.n))
+        coeffs = np.random.uniform(1, 3, size=(self.n, self.n))  # mild linear coefficients
 
         # Simulation loop
         for t in range(self.T):
@@ -95,7 +95,7 @@ class CausalSimulator:
                         mixed_effect = self._nonlinear(parent_val, self.nonlinear_prob)
 
                         # Add adaptive noise proportional to nonlinear_prob
-                        noise_scale = 0.5 * self.nonlinear_prob  # base + adaptive
+                        noise_scale = 0.2 + 0.5 * self.nonlinear_prob  # base + adaptive
                         adaptive_noise = np.random.normal(0, noise_scale)
 
                         data[f'Z{child}'][t] += coef * mixed_effect + adaptive_noise
