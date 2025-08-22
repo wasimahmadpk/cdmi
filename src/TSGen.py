@@ -1,12 +1,19 @@
 import numpy as np
 import pandas as pd
-from functions import *  # Assumes normalize() is defined here
 import matplotlib.pyplot as plt
 import networkx as nx
 import random
 
+def safe_normalize(x):
+    min_val = np.min(x)
+    max_val = np.max(x)
+    if max_val - min_val < 1e-8:
+        return np.zeros_like(x)
+    return (x - min_val) / (max_val - min_val)
+
 class CausalSimulator:
-    def __init__(self, n_nodes=5, edge_prob=0.3, nonlinear_prob=0.5, self_dep_prob=1.0, seed=None):
+    def __init__(self, n_nodes=5, edge_prob=0.3, nonlinear_prob=0.0,
+                 self_dep_prob=1.0, seed=None):
         self.n = n_nodes
         self.T = 5000
         self.edge_prob = edge_prob
@@ -18,10 +25,8 @@ class CausalSimulator:
             np.random.seed(seed)
             random.seed(seed)
 
-        # Lower noise for clearer signals
-        self.noise_stds = np.random.uniform(0.01, 0.05, size=self.n)
-        self.noise_means = np.random.uniform(0.0, 0.1, size=self.n)
-
+        self.noise_stds = np.random.uniform(0.01, 0.02, size=self.n)
+        self.noise_means = np.zeros(self.n)
         self.adj = None
         self.graph = None
         self.data = None
@@ -30,95 +35,96 @@ class CausalSimulator:
         adj = np.triu((np.random.rand(self.n, self.n) < self.edge_prob).astype(int), 1)
         for i in range(self.n):
             if np.random.rand() < self.self_dep_prob:
-                adj[i, i] = 1  # self-loop
-        # np.fill_diagonal(adj, 1)  # Always add self-loops
+                adj[i, i] = 1
         return adj
 
-    def _nonlinear(self, x):
-        # More complex nonlinear function with clipping to prevent explosion
-        val = 0.2 * np.sin(2 * x) + 0.01 * (x ** 2)
-        return np.clip(val, -3, 3)
+    def _nonlinear(self, x, nonlin_prob):
+        """
+        Progressive nonlinear function that adds more nonlinearities
+        cumulatively as nonlin_prob increases.
+        """
+        x = np.clip(x, -5, 5)  # keep base in safe range
+        y = x
+
+        # define thresholds for each nonlinear term
+        thresholds = [0.1, 0.3, 0.5, 0.7, 0.9]
+        nonlinear_terms = [
+            lambda x: 0.2 * np.sin(x),
+            lambda x: 0.05 * (x ** 2) / (1 + np.abs(x)),
+            lambda x: 0.03 * (x ** 3) / (1 + x ** 2),
+            lambda x: 0.02 * np.cos(2 * x),
+            lambda x: 0.015 * np.sin(3 * x)
+        ]
+
+        for t, func in zip(thresholds, nonlinear_terms):
+            if nonlin_prob >= t:
+                y += func(x)
+
+        return y
+
 
     def simulate(self):
         self.adj = self._generate_random_dag()
         G = nx.DiGraph()
-
-        # Faster cycles (shorter periodicity)
-        freqs = np.linspace(0.1, 0.3, self.n)
-        np.random.shuffle(freqs)
-        phases = np.random.uniform(0, 2 * np.pi, size=self.n)
-        amplitudes = np.random.uniform(0.5, 1.0, size=self.n)
-
-        data = {}
-        for i in range(self.n):
-            time = np.arange(self.T)
-            base_signal = amplitudes[i] * np.sin(freqs[i] * time + phases[i])
-            noise = np.random.normal(loc=self.noise_means[i], scale=self.noise_stds[i], size=self.T)
-            data[f'Z{i}'] = list(base_signal + noise)
-
-        nonlinear_mask = (np.random.rand(self.n, self.n) < self.nonlinear_prob) & (self.adj == 1)
-        # print(f'Nonlinear Mask:\n{nonlinear_mask}')
+        data = {f'Z{i}': np.random.normal(loc=self.noise_means[i],
+                                        scale=self.noise_stds[i],
+                                        size=self.T)
+                for i in range(self.n)}
 
         for i in range(self.n):
             G.add_node(f'Z{i}')
         for i in range(self.n):
             for j in range(self.n):
-                if self.adj[i, j] == 1 and i != j:
+                if self.adj[i, j] == 1:
                     G.add_edge(f'Z{i}', f'Z{j}')
-                elif i == j and self.adj[i, i] == 1:
-                    G.add_edge(f'Z{i}', f'Z{i}')
-
         self.graph = G
 
-        lags = np.random.randint(1, 4, size=(self.n, self.n))  # shorter lags
-        coeffs = np.random.uniform(1.0, 5.0, size=(self.n, self.n))  # strong causal effect
+        lags = np.random.randint(1, 5, size=(self.n, self.n))
+        coeffs = np.random.uniform(1.5, 3.0, size=(self.n, self.n))  # mild linear coefficients
 
+        # Simulation loop
         for t in range(self.T):
             for child in range(self.n):
                 for parent in range(self.n):
-                    if self.adj[parent, child] == 1 and parent != child:
+                    if self.adj[parent, child] == 1 and t - lags[parent, child] >= 0:
                         lag = lags[parent, child]
-                        if t - lag < 0:
-                            continue
                         parent_val = data[f'Z{parent}'][t - lag]
                         coef = coeffs[parent, child]
-                        if nonlinear_mask[parent, child]:
-                            data[f'Z{child}'][t] += coef * self._nonlinear(parent_val)
-                        else:
-                            data[f'Z{child}'][t] += coef * parent_val
-                # Clip after all parent influences to avoid explosion or vanishing
-                data[f'Z{child}'][t] = np.clip(data[f'Z{child}'][t], -10, 10)
 
-        self.data = pd.DataFrame(data).apply(normalize)
+                        # Apply progressive nonlinearity (safe & additive)
+                        mixed_effect = self._nonlinear(parent_val, self.nonlinear_prob)
+
+                        data[f'Z{child}'][t] += coef * mixed_effect
+
+                # Clip values to avoid explosion
+                data[f'Z{child}'][t] = np.clip(data[f'Z{child}'][t], -20, 20)
+
+        # Normalize final data to [0,1]
+        self.data = pd.DataFrame({col: safe_normalize(vals) for col, vals in data.items()})
         return self.data, self.adj
+
 
     def draw_dag(self, layout='spring', figsize=(6, 6)):
         if self.graph is None:
-            raise ValueError("Call simulate() first to generate the graph.")
-
-        layout_func = {
-            'spring': nx.spring_layout,
-            'circular': nx.circular_layout,
-            'kamada_kawai': nx.kamada_kawai_layout
-        }.get(layout, nx.spring_layout)
-
+            raise ValueError("Call simulate() first.")
+        layout_func = {'spring': nx.spring_layout,
+                       'circular': nx.circular_layout,
+                       'kamada_kawai': nx.kamada_kawai_layout}.get(layout, nx.spring_layout)
         pos = layout_func(self.graph)
         plt.figure(figsize=figsize)
         nx.draw(self.graph, pos, with_labels=True,
                 node_size=2000, node_color='lightblue',
                 font_weight='bold', arrows=True, arrowstyle='-|>')
-        plt.title("Generated Causal DAG (with possible self-loops)")
+        plt.title("Generated Causal DAG")
         plt.show()
 
 
-# Example usage
 if __name__ == "__main__":
-    sim = RandomCausalSimulator(n_nodes=5, edge_prob=0.4, nonlinear_prob=0.6, seed=42)
+    # Start almost linear, then gradually add nonlinearity
+    sim = CausalSimulator(n_nodes=5, edge_prob=0.4, nonlinear_prob=0.7, seed=42)
     df, adj = sim.simulate()
-
-    print("Adjacency Matrix (adj[i, j] == 1 means row i causes column j):")
+    print("Adjacency Matrix:")
     print(adj)
     print("\nSample Data:")
     print(df.head())
-
     sim.draw_dag()
