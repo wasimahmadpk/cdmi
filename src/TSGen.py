@@ -25,7 +25,7 @@ class CausalSimulator:
             np.random.seed(seed)
             random.seed(seed)
 
-        self.noise_stds = np.random.uniform(0.01, 0.02, size=self.n)
+        self.noise_stds = np.random.uniform(0.1, 0.3, size=self.n)
         self.noise_means = np.zeros(self.n)
         self.adj = None
         self.graph = None
@@ -50,10 +50,10 @@ class CausalSimulator:
         thresholds = [0.1, 0.3, 0.5, 0.7, 0.9]
         nonlinear_terms = [
             lambda x: 0.2 * np.sin(x),
-            lambda x: 0.05 * (x ** 2) / (1 + np.abs(x)),
-            lambda x: 0.03 * (x ** 3) / (1 + x ** 2),
-            lambda x: 0.02 * np.cos(2 * x),
-            lambda x: 0.015 * np.sin(3 * x)
+            lambda x: 0.5 * (x ** 2) / (1 + np.abs(x)),
+            lambda x: 0.3 * (x ** 3) / (1 + x ** 2),
+            lambda x: 0.2 * np.cos(2 * x) + 0.2 * (x ** 2),
+            lambda x: 0.1 * np.sin(3 * x)+ 0.2 * (x ** 4) 
         ]
 
         for t, func in zip(thresholds, nonlinear_terms):
@@ -91,10 +91,14 @@ class CausalSimulator:
                         parent_val = data[f'Z{parent}'][t - lag]
                         coef = coeffs[parent, child]
 
-                        # Apply progressive nonlinearity (safe & additive)
+                        # Apply progressive nonlinearity
                         mixed_effect = self._nonlinear(parent_val, self.nonlinear_prob)
 
-                        data[f'Z{child}'][t] += coef * mixed_effect
+                        # Add adaptive noise proportional to nonlinear_prob
+                        noise_scale = 0.5 * self.nonlinear_prob  # base + adaptive
+                        adaptive_noise = np.random.normal(0, noise_scale)
+
+                        data[f'Z{child}'][t] += coef * mixed_effect + adaptive_noise
 
                 # Clip values to avoid explosion
                 data[f'Z{child}'][t] = np.clip(data[f'Z{child}'][t], -20, 20)
@@ -102,6 +106,7 @@ class CausalSimulator:
         # Normalize final data to [0,1]
         self.data = pd.DataFrame({col: safe_normalize(vals) for col, vals in data.items()})
         return self.data, self.adj
+
 
 
     def draw_dag(self, layout='spring', figsize=(6, 6)):
