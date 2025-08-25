@@ -96,7 +96,7 @@ class CausalSimulator:
 
                         # Add adaptive noise proportional to nonlinear_prob
                         noise_scale = 0.5 * self.nonlinear_prob  # base + adaptive
-                        adaptive_noise = np.random.normal(1, 1.00)
+                        adaptive_noise = np.random.normal(0, 0.05)
 
                         data[f'Z{child}'][t] += coef * mixed_effect + adaptive_noise
 
