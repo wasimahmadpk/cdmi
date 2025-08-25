@@ -79,8 +79,8 @@ class CausalSimulator:
                     G.add_edge(f'Z{i}', f'Z{j}')
         self.graph = G
 
-        lags = np.random.randint(1, 7, size=(self.n, self.n))
-        coeffs = np.random.uniform(1, 3, size=(self.n, self.n))  # mild linear coefficients
+        lags = np.random.randint(1, 2, size=(self.n, self.n))
+        coeffs = np.random.uniform(1, 2.5, size=(self.n, self.n))  # mild linear coefficients
 
         # Simulation loop
         for t in range(self.T):
@@ -95,8 +95,8 @@ class CausalSimulator:
                         mixed_effect = self._nonlinear(parent_val, self.nonlinear_prob)
 
                         # Add adaptive noise proportional to nonlinear_prob
-                        noise_scale = 0.2 + 0.5 * self.nonlinear_prob  # base + adaptive
-                        adaptive_noise = np.random.normal(0, noise_scale)
+                        noise_scale = 0.5 * self.nonlinear_prob  # base + adaptive
+                        adaptive_noise = np.random.normal(1, 1.00)
 
                         data[f'Z{child}'][t] += coef * mixed_effect + adaptive_noise
 

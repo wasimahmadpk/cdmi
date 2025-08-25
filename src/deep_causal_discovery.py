@@ -95,7 +95,7 @@ def execute_causal_pipeline(df, model_path, pars):
                         plt.plot(forecast_actual, label="Forecast", color='blue')
 
                         plt.xlabel("Forecast horizon", fontsize=20)
-                        plt.ylabel(f"Z{j}", fontsize=20)
+                        plt.ylabel(f"$Z_{{{j}}}$", fontsize=20)  # subscript j
                         plt.xticks(fontsize=18)
                         plt.yticks(fontsize=18)
                         # plt.ylim(top=1.3)
@@ -125,7 +125,7 @@ def execute_causal_pipeline(df, model_path, pars):
                     sns.kdeplot(intervened_arr, label=f"Intervened", color='#FFA500', fill=True, alpha=0.6)
 
                     plt.xlabel('Residuals', fontsize=18)
-                    plt.ylabel(f"Z{i} --> Z{j}", fontsize=18)
+                    plt.ylabel(f"$Z_{{{i}}} \\; \\rightarrow \\; Z_{{{j}}}$", fontsize=18)
                     plt.xticks(fontsize=16)
                     plt.yticks(fontsize=16)
                     plt.legend(fontsize=16)
