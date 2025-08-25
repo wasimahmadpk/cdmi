@@ -87,7 +87,7 @@ def get_syn_params():
         'train_len': 666,        # 1500
         'num_layers': 2,          # 5
         'num_cells': 40,
-        'num_samples': 5,          # 50
+        'num_samples': 3,          # 50
         'dropout_rate': 0.1,
         'step_size': 3,
         'num_sliding_win': 21,
