@@ -25,7 +25,7 @@ class CausalSimulator:
             np.random.seed(seed)
             random.seed(seed)
 
-        self.noise_stds = np.random.uniform(0.1, 0.5, size=self.n)
+        self.noise_stds = np.random.uniform(0.1, 0.11, size=self.n)
         self.noise_means = np.zeros(self.n)
         self.adj = None
         self.graph = None
@@ -43,17 +43,17 @@ class CausalSimulator:
         Progressive nonlinear function that adds more nonlinearities
         cumulatively as nonlin_prob increases.
         """
-        x = np.clip(x, -10, 10)  # keep base in safe range
-        y = 0.5*np.sin(x)
+        x = np.clip(x, -5, 5)  # keep base in safe range
+        y = x
 
         # define thresholds for each nonlinear term
         thresholds = [0.1, 0.3, 0.5, 0.7, 0.9]
         nonlinear_terms = [
-             lambda x: 0.5 * np.sin(2 * x) + 0.2 * (x ** 2) + x**2 / (1 + 0.05 * x**2) - 0.4 * x / (1 + np.abs(x)),
-             lambda x: 0.5 * (x ** 2) / (1 + - 0.6 * np.sin(5 * x)) + + 0.5 * np.cos(2 * x),
-             lambda x: 0.5 * (x ** 3) / (1 + x ** 2) + np.exp(-0.08 * x**2),
-             lambda x: 0.5 * np.cos(2 * x) + 0.2 * (x ** 2) + x**2 / (1 + 0.05 * x**2) - 0.4 * x / (1 + np.abs(x)),
-             lambda x: np.where(np.abs(x) < 1.2, 0.45 * np.sin(4 * x) + 0.2 * x**2, 0.6 * np.sign(x))
+             lambda x: 0.2 * np.sin(x),
+             lambda x: 0.2 * np.cos(2 * x),
+             lambda x: 0.3 * (2*x) / np.exp(-0.1 * x**2),
+             lambda x: 0.4 * x / (1 - 0.5 * x**2),
+             lambda x: 0.5 * np.sin(2 * x)
          ]
     
 
@@ -80,8 +80,8 @@ class CausalSimulator:
                     G.add_edge(f'Z{i}', f'Z{j}')
         self.graph = G
 
-        lags = np.random.randint(1, 14, size=(self.n, self.n))
-        coeffs = np.random.uniform(1, 10, size=(self.n, self.n))  # mild linear coefficients
+        lags = np.random.randint(1, 5, size=(self.n, self.n))
+        coeffs = np.random.uniform(1, 5, size=(self.n, self.n))  # mild linear coefficients
 
         # Simulation loop
         for t in range(self.T):
@@ -96,8 +96,8 @@ class CausalSimulator:
                         mixed_effect = self._nonlinear(parent_val, self.nonlinear_prob)
 
                         # Add adaptive noise proportional to nonlinear_prob
-                        noise_scale = 0.5 * self.nonlinear_prob  # base + adaptive
-                        adaptive_noise = np.random.normal(0, 5.0)
+                        noise_scale = 0.25 * self.nonlinear_prob  # base + adaptive
+                        adaptive_noise = np.random.normal(0, 1.0)
 
                         data[f'Z{child}'][t] += coef * mixed_effect + adaptive_noise
 

@@ -110,7 +110,7 @@ def execute_causal_pipeline(df, model_path, pars):
                         plt.tight_layout()
                         plt.savefig(filename, dpi=600, format='pdf')
 
-                        plt.plot(forecast_int, label=f"Counterfactual: {intervention_methods[m]}", color='red')
+                        plt.plot(horizon, forecast_int, label=f"Counterfactual: {intervention_methods[m]}", color='red')
                         plt.legend(fontsize=16, loc='upper right')
                         filename = f"{plot_path}/forecasts/forecast_Z{i}_to_Z{j}_{intervention_methods[m].lower()}_win{win}.pdf"
                         plt.tight_layout()
