@@ -91,12 +91,15 @@ def execute_causal_pipeline(df, model_path, pars):
                         plt.figure(figsize=(8, 4))
                         true_values = test_data.iloc[-prediction_length:, j].values
 
-                        plt.plot(true_values, label="True", linestyle='--', color='green')
-                        plt.plot(forecast_actual, label="Forecast", color='blue')
+                        # Generate horizon indices [1, 2, ..., N]
+                        horizon = np.arange(1, len(true_values) + 1)
+
+                        plt.plot(horizon, true_values, label="True", linestyle='--', color='green')
+                        plt.plot(horizon, forecast_actual, label="Forecast", color='blue')
 
                         plt.xlabel("Forecast horizon", fontsize=20)
                         plt.ylabel(f"$Z_{{{j}}}$", fontsize=20)  # subscript j
-                        plt.xticks(fontsize=18)
+                        plt.xticks(horizon, fontsize=18)
                         plt.yticks(fontsize=18)
                         # plt.ylim(top=1.3)
                         plt.legend(fontsize=16, loc='upper right')
