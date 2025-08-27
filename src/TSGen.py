@@ -43,20 +43,19 @@ class CausalSimulator:
         Progressive nonlinear function that adds more nonlinearities
         cumulatively as nonlin_prob increases.
         """
-        x = np.clip(x, -5, 5)  # keep base in safe range
-        y = x
+        x = np.clip(x, -10, 10)  # keep base in safe range
+        y = 0.5*np.sin(x)
 
         # define thresholds for each nonlinear term
         thresholds = [0.1, 0.3, 0.5, 0.7, 0.9]
         nonlinear_terms = [
-             lambda x: 0.5 * np.sin(2 * x) + 0.5 * np.cos(2 * x) + 0.2 * (x ** 2) + x**2 / (1 + 0.05 * x**2) - 0.4 * x / (1 + np.abs(x)),
-             lambda x: 0.5 * (x ** 2) / (1 + - 0.6 * np.sin(5 * x)) + + 0.5 * np.cos(2 * x) ,
+             lambda x: 0.5 * np.sin(2 * x) + 0.2 * (x ** 2) + x**2 / (1 + 0.05 * x**2) - 0.4 * x / (1 + np.abs(x)),
+             lambda x: 0.5 * (x ** 2) / (1 + - 0.6 * np.sin(5 * x)) + + 0.5 * np.cos(2 * x),
              lambda x: 0.5 * (x ** 3) / (1 + x ** 2) + np.exp(-0.08 * x**2),
              lambda x: 0.5 * np.cos(2 * x) + 0.2 * (x ** 2) + x**2 / (1 + 0.05 * x**2) - 0.4 * x / (1 + np.abs(x)),
              lambda x: np.where(np.abs(x) < 1.2, 0.45 * np.sin(4 * x) + 0.2 * x**2, 0.6 * np.sign(x))
          ]
-     
-
+    
 
         for t, func in zip(thresholds, nonlinear_terms):
             if nonlin_prob >= t:
