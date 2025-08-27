@@ -9,7 +9,7 @@ from functions import *
 from knockoffs import Knockoffs
 from forecast import model_inference
 from gluonts.dataset.common import ListDataset
-from scipy.stats import ks_2samp, spearmanr, ttest_ind
+from scipy.stats import ks_2samp, spearmanr, ttest_ind, anderson_ksamp
 
 np.random.seed(1)
 
@@ -57,10 +57,10 @@ def execute_causal_pipeline(df, model_path, pars):
                 obj = Knockoffs()
                 knockoff_samples = obj.Generate_Knockoffs(data_actual, pars)
 
-                knockoffs = np.array(knockoff_samples[:, i]) + np.random.normal(0, 2.00, len(knockoff_samples[:, i]))
+                knockoffs = np.array(knockoff_samples[:, i]) + np.random.normal(0, 3.00, len(knockoff_samples[:, i]))
                 mean = np.random.normal(0, 0.05, len(knockoffs)) + test_data.iloc[:, i].mean()
                 outdist = np.random.normal(3, 3, len(knockoffs))
-                knockoffs = np.random.uniform(test_data.iloc[:, i].min(), test_data.iloc[:, i].max(), len(knockoffs))
+                uniform = np.random.uniform(test_data.iloc[:, i].min(), test_data.iloc[:, i].max(), len(knockoffs))
 
                 interventionlist = [knockoffs] #, outdist, mean, uniform
                 intervention_methods = ['Knockoffs'] #, 'Out-dist', 'Mean', 'Uniform'
@@ -139,8 +139,10 @@ def execute_causal_pipeline(df, model_path, pars):
             # Statistical tests
             for m in range(len(intervention_methods)):
                 corr, pv_corr = spearmanr(results[m], results_int[m])
-                # t, p = ks_2samp(np.array(results[m]), np.array(results_int[m]))
-                t, p = ttest_ind(np.array(results[m]), np.array(results_int[m]), equal_var=False)
+                t, p = ks_2samp(np.array(results[m]), np.array(results_int[m]))
+                # t, p = ttest_ind(np.array(results[m]), np.array(results_int[m]), equal_var=False)
+                # result = anderson_ksamp([np.array(results[m]), np.array(results_int[m])])
+                # t, p = result.statistic, result.significance_level
                 kld = kl_divergence(np.array(results[m]), np.array(results_int[m]))
                 decision = 1 if p < pars['alpha'] else 0
 
