@@ -13,9 +13,9 @@ def safe_normalize(x):
 
 class CausalSimulator:
     def __init__(self, n_nodes=5, edge_prob=0.3, nonlinear_prob=0.0,
-                 self_dep_prob=1.0, seed=None):
+                 self_dep_prob=1.0, timesteps=500, seed=None):
         self.n = n_nodes
-        self.T = 5000
+        self.T = timesteps
         self.edge_prob = edge_prob
         self.self_dep_prob = self_dep_prob
         self.nonlinear_prob = nonlinear_prob
@@ -42,26 +42,31 @@ class CausalSimulator:
         """
         Progressive nonlinear function that adds more nonlinearities
         cumulatively as nonlin_prob increases.
+        Ensures stability by bounding outputs.
         """
-        x = np.clip(x, -5, 5)  # keep base in safe range
-        y = x
+        x = np.clip(x, -5, 5)  # keep input in safe range
+        y = 0.5 * np.sin(x)
 
-        # define thresholds for each nonlinear term
-        thresholds = [0.1, 0.3, 0.5, 0.7, 0.9]
         nonlinear_terms = [
-             lambda x: 0.2 * np.sin(x),
-             lambda x: 0.2 * np.cos(2 * x),
-             lambda x: 0.3 * (2*x) / np.exp(-0.1 * x**2),
-             lambda x: 0.4 * x / (1 - 0.5 * x**2),
-             lambda x: 0.5 * np.sin(2 * x)
-         ]
-    
+            lambda x: 0.2 * np.cos(x),
+            lambda x: 0.2 * np.cos(2 * x) + 0.2 * np.sin(x),
+            lambda x: 0.3 * (2 * x) / np.exp(-0.1 * x**2 + 1e-3),  # avoid div/0
+            lambda x: 0.4 * x / (1 + 0.5 * x**2),  # bounded rational function
+            lambda x: 0.5 * np.tanh(2 * x)        # tanh instead of raw tan
+        ]
+
+        thresholds = np.linspace(0.1, 1.0, len(nonlinear_terms))
 
         for t, func in zip(thresholds, nonlinear_terms):
             if nonlin_prob >= t:
-                y += func(x)
+                term = func(x)
+                # clip each term before adding
+                term = np.clip(term, -5, 5)
+                y += term
 
-        return y
+        # squash final output to [-5, 5] to prevent explosion
+        return 5 * np.tanh(y / 5)
+
 
 
     def simulate(self):
@@ -97,12 +102,12 @@ class CausalSimulator:
 
                         # Add adaptive noise proportional to nonlinear_prob
                         noise_scale = 0.25 * self.nonlinear_prob  # base + adaptive
-                        adaptive_noise = np.random.normal(0, 1.0)
+                        adaptive_noise = np.random.normal(0, 0.33)
 
                         data[f'Z{child}'][t] += coef * mixed_effect + adaptive_noise
 
                 # Clip values to avoid explosion
-                data[f'Z{child}'][t] = np.clip(data[f'Z{child}'][t], -20, 20)
+                data[f'Z{child}'][t] = np.clip(data[f'Z{child}'][t], -10, 10)
 
         # Normalize final data to [0,1]
         self.data = pd.DataFrame({col: safe_normalize(vals) for col, vals in data.items()})
