@@ -83,9 +83,13 @@ def execute_causal_pipeline(df, model_path, pars):
                                                                prediction_length, 0, False, 0)
                     forecast_int, _, mapeint = model_inference(model_path, test_dsint, num_samples, test_data.iloc[:, j], j,
                                                                prediction_length, 0, True, m)
+                    
                     mape, mapeint = forecast_actual, forecast_int
+                    
                     results[m].append(mape)
                     results_int[m].append(mapeint)
+
+                    results, results_int = forecast_actual, forecast_int
 
                     if plot_forecasts and plot_path and win < 1:
                         plt.figure(figsize=(8, 4))
@@ -141,6 +145,7 @@ def execute_causal_pipeline(df, model_path, pars):
 
             # Statistical tests
             for m in range(len(intervention_methods)):
+                print(results[m])
                 corr, pv_corr = spearmanr(results[m], results_int[m])
                 t, p = ks_2samp(np.array(results[m]), np.array(results_int[m]))
                 # t, p = ttest_ind(np.array(results[m]), np.array(results_int[m]), equal_var=False)

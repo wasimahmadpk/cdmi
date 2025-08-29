@@ -113,4 +113,4 @@ def model_inference(model_path, test_ds, num_samples, data, idx, prediction_leng
 
     # return agg_metrics['MSE'], agg_metrics['MAPE'], list(np.mean(y_pred, axis=0))
 
-    return list(np.mean(y_pred, axis=0)), mse, mape
+    return np.array(list(np.mean(y_pred, axis=0))), mse, mape
