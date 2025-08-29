@@ -92,7 +92,7 @@ def get_syn_params():
         'step_size': 3,
         'num_sliding_win': 21,
         'dim': 5,
-        'alpha': 0.10,
+        'alpha': 0.30,
         'batch_size': 32,
         'ground_truth': [1, 1, 1, 1,
                          0, 1, 0, 0,
