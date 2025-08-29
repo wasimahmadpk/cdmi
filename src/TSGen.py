@@ -8,7 +8,8 @@ def safe_normalize(x):
     min_val = np.min(x)
     max_val = np.max(x)
     if max_val - min_val < 1e-8:
-        return np.zeros_like(x)
+        # inject tiny noise instead of flat zero series
+        return np.random.normal(0, 1e-2, size=len(x))
     return (x - min_val) / (max_val - min_val)
 
 class CausalSimulator:
@@ -25,7 +26,7 @@ class CausalSimulator:
             np.random.seed(seed)
             random.seed(seed)
 
-        self.noise_stds = np.random.uniform(0.1, 0.11, size=self.n)
+        self.noise_stds = np.random.uniform(0.1, 0.50, size=self.n)
         self.noise_means = np.zeros(self.n)
         self.adj = None
         self.graph = None
@@ -60,14 +61,10 @@ class CausalSimulator:
         for t, func in zip(thresholds, nonlinear_terms):
             if nonlin_prob >= t:
                 term = func(x)
-                # clip each term before adding
-                term = np.clip(term, -5, 5)
+                term = np.clip(term, -5, 5)  # clip each term
                 y += term
 
-        # squash final output to [-5, 5] to prevent explosion
-        return 5 * np.tanh(y / 5)
-
-
+        return 5 * np.tanh(y / 5)  # squash to [-5,5]
 
     def simulate(self):
         self.adj = self._generate_random_dag()
@@ -97,23 +94,16 @@ class CausalSimulator:
                         parent_val = data[f'Z{parent}'][t - lag]
                         coef = coeffs[parent, child]
 
-                        # Apply progressive nonlinearity
                         mixed_effect = self._nonlinear(parent_val, self.nonlinear_prob)
 
-                        # Add adaptive noise proportional to nonlinear_prob
-                        noise_scale = 0.25 * self.nonlinear_prob  # base + adaptive
-                        adaptive_noise = np.random.normal(0, 0.33)
-
+                        adaptive_noise = np.random.normal(0, 0.50)
                         data[f'Z{child}'][t] += coef * mixed_effect + adaptive_noise
 
-                # Clip values to avoid explosion
                 data[f'Z{child}'][t] = np.clip(data[f'Z{child}'][t], -10, 10)
 
-        # Normalize final data to [0,1]
+        # Normalize, with guaranteed non-constant output
         self.data = pd.DataFrame({col: safe_normalize(vals) for col, vals in data.items()})
         return self.data, self.adj
-
-
 
     def draw_dag(self, layout='spring', figsize=(6, 6)):
         if self.graph is None:
@@ -131,7 +121,6 @@ class CausalSimulator:
 
 
 if __name__ == "__main__":
-    # Start almost linear, then gradually add nonlinearity
     sim = CausalSimulator(n_nodes=5, edge_prob=0.4, nonlinear_prob=0.7, seed=42)
     df, adj = sim.simulate()
     print("Adjacency Matrix:")

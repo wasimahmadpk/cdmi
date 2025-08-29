@@ -81,14 +81,14 @@ def get_syn_params():
     # Parameters for synthetic data
     params = {
 
-        'epochs': 100,             # 125
-        'pred_len': 10,  
+        'epochs': 33,             # 125
+        'pred_len': 5,  
         'context_len': 50,         # 15
         'train_len': 1000,        # 1500
-        'num_layers': 2,          # 5
-        'num_cells': 40,
+        'num_layers': 5,          # 5
+        'num_cells': 50,
         'num_samples': 5,          # 50
-        'dropout_rate': 0.1,
+        'dropout_rate': 0.15,
         'step_size': 3,
         'num_sliding_win': 21,
         'dim': 5,
@@ -103,7 +103,7 @@ def get_syn_params():
         'plot_path': '/home/ahmad/Projects/cdmi/plots/ablation_plots/',
         'model_path': '/home/ahmad/Projects/cdmi/models/ablation_models/',
         'model_name': 'trained_model_syntest.sav',
-        'plot_forecasts': True  # set to False to disable saving plots
+        'plot_forecasts': False  # set to False to disable saving plots
     }
 
     return params
