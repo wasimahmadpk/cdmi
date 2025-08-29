@@ -48,7 +48,7 @@ def execute_causal_pipeline(df, model_path, pars):
             results = {k: [] for k in range(4)}
             results_int = {k: [] for k in range(4)}
 
-            for win in range(1): #num_windows
+            for win in range(5): #num_windows
                 start = win * step_size
                 end = start + training_length + prediction_length
                 test_data = df.iloc[start:end].copy()
@@ -57,7 +57,7 @@ def execute_causal_pipeline(df, model_path, pars):
                 obj = Knockoffs()
                 knockoff_samples = obj.Generate_Knockoffs(data_actual, pars)
 
-                knockoffs = np.array(knockoff_samples[:, i]) + np.random.normal(2.00, 3.00, len(knockoff_samples[:, i]))
+                knockoffs = np.array(knockoff_samples[:, i]) + np.random.normal(0.00, 0.30, len(knockoff_samples[:, i]))
                 mean = np.random.normal(0, 0.05, len(knockoffs)) + test_data.iloc[:, i].mean()
                 outdist = np.random.normal(3, 3, len(knockoffs))
                 uniform = np.random.uniform(test_data.iloc[:, i].min(), test_data.iloc[:, i].max(), len(knockoffs))
@@ -83,13 +83,10 @@ def execute_causal_pipeline(df, model_path, pars):
                                                                prediction_length, 0, False, 0)
                     forecast_int, _, mapeint = model_inference(model_path, test_dsint, num_samples, test_data.iloc[:, j], j,
                                                                prediction_length, 0, True, m)
-                    
+    
                     mape, mapeint = forecast_actual, forecast_int
-                    
-                    results[m].append(mape)
-                    results_int[m].append(mapeint)
-
-                    results, results_int = forecast_actual, forecast_int
+                    results[m].extend(mape)
+                    results_int[m].extend(mapeint)
 
                     if plot_forecasts and plot_path and win < 1:
                         plt.figure(figsize=(8, 4))
@@ -145,9 +142,9 @@ def execute_causal_pipeline(df, model_path, pars):
 
             # Statistical tests
             for m in range(len(intervention_methods)):
-                print(results[m])
+
                 corr, pv_corr = spearmanr(results[m], results_int[m])
-                t, p = ks_2samp(np.array(results[m]), np.array(results_int[m]))
+                t, p = ks_2samp(np.array(results[m]).ravel(), np.array(results_int[m]).ravel())
                 # t, p = ttest_ind(np.array(results[m]), np.array(results_int[m]), equal_var=False)
                 # result = anderson_ksamp([np.array(results[m]), np.array(results_int[m])])
                 # t, p = result.statistic, result.significance_level
