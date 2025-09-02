@@ -88,7 +88,7 @@ def get_syn_params():
         'num_layers': 3,          # 5
         'num_cells': 60,
         'num_samples': 5,          # 50
-        'dropout_rate': 0.1,
+        'dropout_rate': 0.01,
         'step_size': 3,
         'num_sliding_win': 21,
         'dim': 5,
