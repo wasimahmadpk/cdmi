@@ -48,7 +48,7 @@ def execute_causal_pipeline(df, model_path, pars):
             results = {k: [] for k in range(4)}
             results_int = {k: [] for k in range(4)}
 
-            for win in range(3): #num_windows
+            for win in range(num_windows):
                 start = win * step_size
                 end = start + training_length + prediction_length
                 test_data = df.iloc[start:end].copy()
@@ -57,7 +57,7 @@ def execute_causal_pipeline(df, model_path, pars):
                 obj = Knockoffs()
                 knockoff_samples = obj.Generate_Knockoffs(data_actual, pars)
 
-                knockoffs = np.array(knockoff_samples[:, i]) + np.random.normal(0.0, 0.05, len(knockoff_samples[:, i]))
+                knockoffs = np.array(knockoff_samples[:, i]) + np.random.normal(3.0, 3.0, len(knockoff_samples[:, i]))
                 mean = np.random.normal(0, 0.05, len(knockoffs)) + test_data.iloc[:, i].mean()
                 outdist = np.random.normal(3, 3, len(knockoffs))
                 uniform = np.random.uniform(test_data.iloc[:, i].min(), test_data.iloc[:, i].max(), len(knockoffs))
@@ -145,7 +145,7 @@ def execute_causal_pipeline(df, model_path, pars):
 
                 corr, pv_corr = spearmanr(results[m], results_int[m])
                 t, p = ks_2samp(np.array(results[m]).ravel(), np.array(results_int[m]).ravel())
-                t, p = ttest_ind(np.array(results[m]), np.array(results_int[m]), equal_var=False)
+                # t, p = ttest_ind(np.array(results[m]), np.array(results_int[m]), equal_var=False)
                 # result = anderson_ksamp([np.array(results[m]), np.array(results_int[m])])
                 # t, p = result.statistic, result.significance_level
                 kld = kl_divergence(np.array(results[m]), np.array(results_int[m]))
