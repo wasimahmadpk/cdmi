@@ -82,9 +82,9 @@ def get_syn_params():
     params = {
 
         'epochs': 25,             # 125
-        'pred_len': 15,  
-        'context_len': 50,         # 15
-        'train_len': 666,        # 1500
+        'pred_len': 3,  
+        'context_len': 33,         # 15
+        'train_len': 200,        # 1500
         'num_layers': 3,          # 5
         'num_cells': 60,
         'num_samples': 5,          # 50

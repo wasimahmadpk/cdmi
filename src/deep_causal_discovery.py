@@ -48,7 +48,7 @@ def execute_causal_pipeline(df, model_path, pars):
             results = {k: [] for k in range(4)}
             results_int = {k: [] for k in range(4)}
 
-            for win in range(num_windows):
+            for win in range(num_windows): #
                 start = win * step_size
                 end = start + training_length + prediction_length
                 test_data = df.iloc[start:end].copy()
@@ -84,9 +84,9 @@ def execute_causal_pipeline(df, model_path, pars):
                     forecast_int, _, mapeint = model_inference(model_path, test_dsint, num_samples, test_data.iloc[:, j], j,
                                                                prediction_length, 0, True, m)
     
-                    mape, mapeint = forecast_actual, forecast_int
-                    results[m].extend(mape)
-                    results_int[m].extend(mapeint)
+                    # mape, mapeint = forecast_actual, forecast_int
+                    results[m].append(mape)
+                    results_int[m].append(mapeint)
 
                     if plot_forecasts and plot_path and win < 1:
                         plt.figure(figsize=(8, 4))
