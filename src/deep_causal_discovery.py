@@ -48,7 +48,7 @@ def execute_causal_pipeline(df, model_path, pars):
             results = {k: [] for k in range(4)}
             results_int = {k: [] for k in range(4)}
 
-            for win in range(20): #num_windows
+            for win in range(3): #num_windows
                 start = win * step_size
                 end = start + training_length + prediction_length
                 test_data = df.iloc[start:end].copy()
