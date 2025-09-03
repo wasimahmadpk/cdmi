@@ -97,7 +97,7 @@ class CausalSimulator:
 
                         mixed_effect = self._nonlinear(parent_val, self.nonlinear_prob)
 
-                        adaptive_noise = np.random.normal(self.noise_scale, 0.50 + self.noise_scale)
+                        adaptive_noise = np.random.normal(self.noise_scale, 0.50 + self.noise_scale) # replace self.noise_scale with 0 mean
                         data[f'Z{child}'][t] += coef * mixed_effect + adaptive_noise
 
                 data[f'Z{child}'][t] = np.clip(data[f'Z{child}'][t], -10, 10)
