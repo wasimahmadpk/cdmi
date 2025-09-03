@@ -20,8 +20,9 @@ class CausalSimulator:
         self.edge_prob = edge_prob
         self.self_dep_prob = self_dep_prob
         self.nonlinear_prob = nonlinear_prob
-        self.seed = seed
         self.noise_scale = noise_scale
+        self.seed = seed
+      
 
         if seed is not None:
             np.random.seed(seed)
