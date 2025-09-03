@@ -14,13 +14,14 @@ def safe_normalize(x):
 
 class CausalSimulator:
     def __init__(self, n_nodes=5, edge_prob=0.3, nonlinear_prob=0.0,
-                 self_dep_prob=1.0, timesteps=500, seed=None):
+                 self_dep_prob=1.0, timesteps=500, noise_scale=0, seed=None):
         self.n = n_nodes
         self.T = timesteps
         self.edge_prob = edge_prob
         self.self_dep_prob = self_dep_prob
         self.nonlinear_prob = nonlinear_prob
         self.seed = seed
+        self.noise_scale = noise_scale
 
         if seed is not None:
             np.random.seed(seed)
@@ -96,7 +97,7 @@ class CausalSimulator:
 
                         mixed_effect = self._nonlinear(parent_val, self.nonlinear_prob)
 
-                        adaptive_noise = np.random.normal(0, 0.50)
+                        adaptive_noise = np.random.normal(self.noise_scale, 0.50 + self.noise_scale)
                         data[f'Z{child}'][t] += coef * mixed_effect + adaptive_noise
 
                 data[f'Z{child}'][t] = np.clip(data[f'Z{child}'][t], -10, 10)
