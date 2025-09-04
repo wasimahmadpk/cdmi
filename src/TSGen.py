@@ -48,7 +48,7 @@ class CausalSimulator:
         Ensures stability by bounding outputs.
         """
         x = np.clip(x, -5, 5)  # keep input in safe range
-        y = 0.5 * np.sin(x)
+        y = 0.5 * np.sin(x) + self.noise_scale
 
         nonlinear_terms = [
             lambda x: 0.2 * np.cos(x),
@@ -98,7 +98,7 @@ class CausalSimulator:
 
                         mixed_effect = self._nonlinear(parent_val, self.nonlinear_prob)
 
-                        adaptive_noise = np.random.normal(self.noise_scale, 0.50) # replace self.noise_scale with 0 mean
+                        adaptive_noise = np.random.normal(0, 0.50) # replace self.noise_scale with 0 mean
                         data[f'Z{child}'][t] += coef * mixed_effect + adaptive_noise
 
                 data[f'Z{child}'][t] = np.clip(data[f'Z{child}'][t], -10, 10)
