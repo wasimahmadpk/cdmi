@@ -207,7 +207,7 @@ def get_rivernet_params():
         'num_samples': 5,
         'dropout_rate': 0.1,
         'step_size': 1,
-        'num_sliding_win': 50,
+        'num_sliding_win': 100,
         'step_size': 1,
         'dim': 8,
         'batch_size': 32,
