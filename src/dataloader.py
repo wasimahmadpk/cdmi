@@ -96,8 +96,8 @@ def load_fnirs(file):
 def load_rivernet(river):
     
     # Load river discharges data
-    path_data = f'/home/ahmad/Projects/gCause/datasets/rivernet/{river}_data.csv'
-    path_ground_truth = f'/home/ahmad/Projects/gCause/datasets/rivernet/{river}_label.csv'
+    path_data = f'/home/ahmad/Projects/cdmi/datasets/rivernet/{river}_data.csv'
+    path_ground_truth = f'/home/ahmad/Projects/cdmi/datasets/rivernet/{river}_label.csv'
 
     data = pd.read_csv(path_data)
 
