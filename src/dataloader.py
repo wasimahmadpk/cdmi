@@ -50,7 +50,7 @@ def load_river_data():
     average_discharges['Date'] = pd.to_datetime(average_discharges['Date'])
     average_discharges.set_index('Date', inplace=True)
     df = average_discharges.apply(normalize)
-    graph = [[1, 0, 0], [1, 1, 0], [0, 0, 1]]
+    graph = np.array([[1, 0, 0], [1, 1, 0], [0, 0, 1]])
     return df, graph
 
 def load_climate_data():

@@ -51,11 +51,11 @@ class CausalSimulator:
         y = 0.5 * np.sin(x)
 
         nonlinear_terms = [
-            lambda x: 0.2 * self.noise_scale * np.cos(x),
-            lambda x: 0.2 * self.noise_scale * np.cos(2 * x) + 0.2 * np.sin(x),
-            lambda x: 0.3 * self.noise_scale * (2 * x) / np.exp(-0.1 * x**2 + 1e-3),  # avoid div/0
-            lambda x: 0.4 * self.noise_scale * x / (1 + 0.5 * x**2),  # bounded rational function
-            lambda x: 0.5 * self.noise_scale * np.tanh(2 * x)        # tanh instead of raw tan
+            lambda x: 0.2 * np.cos(x),
+            lambda x: 0.2 * np.cos(2 * x) + 0.2 * np.sin(x),
+            lambda x: 0.3 * (2 * x) / np.exp(-0.1 * x**2 + 1e-3),  # avoid div/0
+            lambda x: 0.4 * x / (1 + 0.5 * x**2),  # bounded rational function
+            lambda x: 0.5 * np.tanh(2 * x)        # tanh instead of raw tan
         ]
 
         thresholds = np.linspace(0.1, 1.0, len(nonlinear_terms))

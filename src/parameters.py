@@ -211,6 +211,7 @@ def get_rivernet_params():
         'step_size': 1,
         'dim': 8,
         'batch_size': 32,
+        'alpha': 0.10,
         'prior_graph': [],
         'true_graph': [],
         'freq': '6H',
