@@ -49,7 +49,7 @@ class CausalSimulator:
         """
         x = np.clip(x, -5, 5)  # keep input in safe range
         y = 0.5 * np.sin(x)
-        
+
         nonlinear_terms = [
             lambda x: 0.2 * self.noise_scale * np.cos(x),
             lambda x: 0.2 * self.noise_scale * np.cos(2 * x) + 0.2 * np.sin(x),
