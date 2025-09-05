@@ -199,15 +199,15 @@ def get_rivernet_params():
 
     params = {
 
-        'epochs': 10,
-        'pred_len': 3,
-        'train_len': 100,
+        'epochs': 15,
+        'pred_len': 1,
+        'train_len': 111,
         'num_layers': 4,
         'num_cells': 40,
         'num_samples': 5,
         'dropout_rate': 0.1,
         'step_size': 1,
-        'num_sliding_win': 18,
+        'num_sliding_win': 50,
         'step_size': 1,
         'dim': 8,
         'batch_size': 32,

@@ -57,7 +57,7 @@ def execute_causal_pipeline(df, model_path, pars):
                 obj = Knockoffs()
                 knockoff_samples = obj.Generate_Knockoffs(data_actual, pars)
 
-                knockoffs = np.array(knockoff_samples[:, i]) + np.random.normal(0.0, 1.11, len(knockoff_samples[:, i]))
+                knockoffs = np.array(knockoff_samples[:, i]) + np.random.normal(10.0, 11.11, len(knockoff_samples[:, i]))
                 mean = np.random.normal(0, 0.05, len(knockoffs)) + test_data.iloc[:, i].mean()
                 outdist = np.random.normal(3, 3, len(knockoffs))
                 uniform = np.random.uniform(test_data.iloc[:, i].min(), test_data.iloc[:, i].max(), len(knockoffs))
