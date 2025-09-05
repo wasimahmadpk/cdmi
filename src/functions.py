@@ -124,7 +124,7 @@ def plot_boxplots(methods_metrics_dict, plot_path, filename="method_metrics.json
         metric_data.boxplot(column="Value", by="Method", grid=False)
         plt.title("")
         plt.suptitle("")  # Remove the automatic 'by' title
-        plt.xlabel("Method", fontsize=14)
+        plt.xlabel("", fontsize=14)
         plt.xticks(fontsize=14)
         plt.ylabel(metric, fontsize=14)
         ax.set_yticks(np.arange(0, 1.10, 0.10))  # Set finer ticks
