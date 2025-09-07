@@ -90,7 +90,7 @@ def get_syn_params():
         'num_samples': 5,          # 50
         'dropout_rate': 0.01,
         'step_size': 3,
-        'num_sliding_win': 21,
+        'num_sliding_win': 10,
         'dim': 5,
         'alpha': 0.10,
         'batch_size': 32,
@@ -207,7 +207,7 @@ def get_rivernet_params():
         'num_samples': 5,
         'dropout_rate': 0.1,
         'step_size': 1,
-        'num_sliding_win': 50,
+        'num_sliding_win': 15,
         'step_size': 1,
         'dim': 8,
         'batch_size': 32,

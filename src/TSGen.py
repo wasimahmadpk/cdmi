@@ -28,7 +28,7 @@ class CausalSimulator:
             np.random.seed(seed)
             random.seed(seed)
 
-        self.noise_stds = np.random.uniform(0.1, 0.50, size=self.n)
+        self.noise_stds = np.random.uniform(0.1, self.noise_scale* 0.50, size=self.n)
         self.noise_means = np.zeros(self.n)
         self.adj = None
         self.graph = None
