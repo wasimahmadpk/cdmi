@@ -146,8 +146,6 @@ def execute_causal_pipeline(df, model_path, pars):
                 corr, pv_corr = spearmanr(results[m], results_int[m])
                 t, p = ks_2samp(np.array(results[m]).ravel(), np.array(results_int[m]).ravel())
                 # t, p = ttest_ind(np.array(results[m]), np.array(results_int[m]), equal_var=False)
-                # result = anderson_ksamp([np.array(results[m]), np.array(results_int[m])])
-                # t, p = result.statistic, result.significance_level
                 kld = kl_divergence(np.array(results[m]), np.array(results_int[m]))
                 decision = 1 if p < pars['alpha'] else 0
 
